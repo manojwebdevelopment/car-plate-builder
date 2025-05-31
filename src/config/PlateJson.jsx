@@ -102,14 +102,15 @@ export const shadowOptions = [
 ];
 
 export const borderOptions = [
-    { name: 'No Border', key: 'none', price: 0, color: 'transparent', thickness: 0 },
-    { name: 'Black Border', key: 'black', price: 2, color: '#000000', thickness: 0.05 },
-    { name: 'Yellow Border', key: 'yellow', price: 2, color: '#FFD700', thickness: 0.05 },
-    { name: 'Blue Border', key: 'blue', price: 3, color: '#0033cc', thickness: 0.05 },
-    { name: 'Red Border', key: 'red', price: 3, color: '#cc0000', thickness: 0.05 },
-    { name: 'White Border', key: 'white', price: 2, color: '#FFFFFF', thickness: 0.05 },
-    { name: 'Chrome Border', key: 'chrome', price: 8, color: '#c0c0c0', thickness: 0.06 }
+  { name: 'No Border', key: 'none', price: 0, color: 'transparent', thickness: 0 },
+  { name: 'Black Border', key: 'black', price: 2, color: '#000000', thickness: 0.01 },
+  { name: 'Yellow Border', key: 'yellow', price: 2, color: '#FFD700', thickness: 0.02 },
+  { name: 'Blue Border', key: 'blue', price: 3, color: '#0033cc', thickness: 0.02 },
+  { name: 'Red Border', key: 'red', price: 3, color: '#cc0000', thickness: 0.02 },
+  { name: 'White Border', key: 'white', price: 2, color: '#FFFFFF', thickness: 0.015 },
+  { name: 'Chrome Border', key: 'chrome', price: 8, color: '#c0c0c0', thickness: 0.025 }
 ];
+
 
 export const countryOptions = [
     { name: 'No Badge', key: 'none' },
