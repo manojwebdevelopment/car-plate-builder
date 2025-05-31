@@ -72,38 +72,38 @@ const PlatePreview = ({
 
         // If badge is selected, show border around text area only
         if (selectedCountry !== 'none' && countryBadge !== 'none') {
-            const badgeWidth = 1.0;
-            const textAreaWidth = 5.0;
+            const badgeWidth = 1.2;
+            const textAreaWidth = 7.0;
             // Keep border in same position, just make it smaller
-            const xOffset = badgePosition === 'left' ? 0.5 : -0.5;
+            const xOffset = badgePosition === 'left' ? 0.65 : -0.65;
 
             return (
                 <group>
                     {/* Border around text area - same position, smaller width */}
                     <mesh position={[xOffset, 0, 0.13]}>
-                        <boxGeometry args={[textAreaWidth + 0.1, 2.5, 0.02]} />
+                        <boxGeometry args={[textAreaWidth + 0.1, 1.9, 0.02]} />
                         <meshBasicMaterial color={borderColor} />
                     </mesh>
                     {/* Inner text area */}
                     <mesh position={[xOffset, 0, 0.14]}>
-                        <boxGeometry args={[textAreaWidth - 0.1, 2.3, 0.02]} />
+                        <boxGeometry args={[textAreaWidth - 0.1, 1.7, 0.02]} />
                         <meshBasicMaterial color={plateColor} />
                     </mesh>
                 </group>
             );
         }
 
-        // If no badge, show border around entire plate with proper margin
+        // If no badge, show border around entire plate with proper margin and thickness
         return (
             <group>
-                {/* Outer border frame */}
+                {/* Outer border frame - thicker border */}
                 <mesh position={[0, 0, 0.13]}>
-                    <boxGeometry args={[6.2, 2.7, 0.02]} />
+                    <boxGeometry args={[8.5, 2.0, 0.03]} />
                     <meshBasicMaterial color={borderColor} />
                 </mesh>
-                {/* Inner area with margin */}
+                {/* Inner area with proper margin */}
                 <mesh position={[0, 0, 0.14]}>
-                    <boxGeometry args={[5.8, 2.3, 0.02]} />
+                    <boxGeometry args={[8.0, 1.5, 0.03]} />
                     <meshBasicMaterial color={plateColor} />
                 </mesh>
             </group>
@@ -118,9 +118,9 @@ const PlatePreview = ({
         if (!flagData) return null;
 
         const flagText = countryBadge === 'custom-upload' ? customFlagText : flagData.text;
-        const position = badgePosition === 'right' ? [2.6, 0, 0.13] : [-2.6, 0, 0.13];
-        const badgeWidth = 1.0;
-        const badgeHeight = 2.7;
+        const position = badgePosition === 'right' ? [3.65, 0, 0.13] : [-3.65, 0, 0.13];
+        const badgeWidth = 1.1;
+        const badgeHeight = 1.7;
 
         return (
             <group>
@@ -131,14 +131,14 @@ const PlatePreview = ({
                 </mesh>
 
                 {/* Flag area - top section */}
-                <mesh position={[position[0], position[1] + 0.5, position[2] + 0.01]}>
+                <mesh position={[position[0], position[1] + 0.1, position[2] + 0.01]}>
                     <boxGeometry args={[badgeWidth * 0.9, 1.4, 0.01]} />
-                    <meshBasicMaterial color="#FFFFFF" />
+                    <meshBasicMaterial color={badgeBorderColor} />
                 </mesh>
 
                 {/* Flag image */}
                 {flagData.flagImage && (
-                    <mesh position={[position[0], position[1] + 0.5, position[2] + 0.02]}>
+                    <mesh position={[position[0], position[1] + 0.1, position[2] + 0.02]}>
                         <planeGeometry args={[badgeWidth * 0.8, 1.2]} />
                         <meshBasicMaterial transparent={true}>
                             <primitive
@@ -155,7 +155,7 @@ const PlatePreview = ({
 
                 {/* Custom flag image */}
                 {countryBadge === 'custom-upload' && customFlagImage && (
-                    <mesh position={[position[0], position[1] + 0.5, position[2] + 0.02]}>
+                    <mesh position={[position[0], position[1] + 0.8, position[2] + 0.02]}>
                         <planeGeometry args={[badgeWidth * 0.8, 1.2]} />
                         <meshBasicMaterial transparent={true}>
                             <primitive
@@ -172,12 +172,13 @@ const PlatePreview = ({
 
                 {/* Country code text - bottom section */}
                 <Text3D
-                    font="https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"
+                    // font="https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"
+                     font={fontUrl}
                     size={0.18}
                     height={0.02}
                     position={[
                         position[0] - (flagText.length * 0.09),
-                        position[1] - 0.9,
+                        position[1] - 0.8,
                         position[2] + 0.02
                     ]}
                     bevelEnabled={false}
@@ -217,11 +218,11 @@ const PlatePreview = ({
             {renderBorder()}
             {renderCountryBadge()}
 
-            {/* Plate base - Simple clean design */}
+            {/* Plate base - UK standard dimensions */}
             <group>
-                {/* Main plate - single clean piece */}
+                {/* Main plate - wider and flatter like real UK plates */}
                 <mesh position={[0, 0, 0]}>
-                    <boxGeometry args={[6.2, 2.7, 0.25]} />
+                    <boxGeometry args={[8.5, 2.0, 0.25]} />
                     <meshStandardMaterial
                         color={plateColor}
                         metalness={0.1}
@@ -322,6 +323,7 @@ const PlatePreview = ({
                     emissive={shadowEffect === 'neon' || shadowEffect === 'led' ? finalFontColor : '#000000'}
                     emissiveIntensity={shadowEffect === 'neon' ? 0.2 : shadowEffect === 'led' ? 0.1 : 0}
                 />
+
             </Text3D>
         </Canvas>
     );
