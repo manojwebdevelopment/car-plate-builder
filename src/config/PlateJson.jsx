@@ -243,7 +243,7 @@ export const plateStyles = [
         description: 'Classic flat finish',
         font: 'Arial',
         fontUrl: 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
-        fontSize: 0.6
+        fontSize: 0.65
     },
     {
         key: '3d',
@@ -251,7 +251,8 @@ export const plateStyles = [
         price: 25.49,
         description: 'Raised 3D letters with gel finish',
         font: 'Arial Bold',
-        fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        // fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        fontUrl: 'fonts/Diplomata SC_Regular.json',
         fontSize: 0.65
     },
     {
@@ -260,8 +261,9 @@ export const plateStyles = [
         price: 28.49,
         description: 'Premium 4D raised letters',
         font: 'Impact',
-        fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
-        fontSize: 0.7
+        // fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        fontUrl: 'fonts/3D Isometric_Regular.json',
+        fontSize: 0.65
     },
     {
         key: '4d-neon-gel',
@@ -269,8 +271,9 @@ export const plateStyles = [
         price: 32.99,
         description: 'Neon effect with 4D letters',
         font: 'Impact Bold',
-        fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
-        fontSize: 0.7
+        // fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        fontUrl: 'fonts/Drift Blade Demo_Regular.json',
+        fontSize: 0.65
     },
     {
         key: '5d-gel',
@@ -278,8 +281,9 @@ export const plateStyles = [
         price: 35.99,
         description: 'Ultra premium 5D finish',
         font: 'Helvetica Bold',
-        fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
-        fontSize: 0.75
+        // fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        fontUrl: 'fonts/RiderwayDemo_Regular.json',
+        fontSize: 0.65
     },
     {
         key: 'laser',
@@ -287,8 +291,10 @@ export const plateStyles = [
         price: 22.99,
         description: 'Precision laser cut letters',
         font: 'Futura',
-        fontUrl: 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
-        fontSize: 0.6
+        // fontUrl: 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
+        // fontUrl: 'fonts/Novox Varsity_Regular.json',
+        fontUrl: 'fonts/JAGTECH_Regular.json',
+        fontSize: 0.65
     },
     {
         key: 'carbon-fiber',
@@ -296,7 +302,9 @@ export const plateStyles = [
         price: 45.99,
         description: 'Carbon fiber texture',
         font: 'Eurostile',
-        fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        // fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
+        // fontUrl: 'fonts/Deventer PERSONAL USE_Regular.json',
+        fontUrl: 'fonts/FinishPlayingDemo_Regular.json',
         fontSize: 0.65
     }
 ];

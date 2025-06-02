@@ -759,7 +759,8 @@
 // PlateBuilder.js - Clean Design Matching Reference Images
 // ===============================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import PlatePreview from './PlatePreview';
 import { ChevronLeft, ChevronRight, Car, ShoppingCart, Eye, Move, Camera, Palette, Flag, Star } from 'lucide-react';
 import { 
@@ -779,8 +780,21 @@ const PlateBuilder = () => {
     const [activeTab, setActiveTab] = useState('style');
     const [previewType, setPreviewType] = useState('front');
     
+    const location = useLocation();
+
+
     // State management - all plate configuration
-    const [plateText, setPlateText] = useState('GHELLO');
+    const [plateText, setPlateText] = useState('REG1234');
+
+      useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const reg = params.get('reg');
+    if (reg) {
+      setPlateText(reg);
+    }
+  }, [location.search]);
+
+
     const [spacing, setSpacing] = useState('own');
     const [selectedStyle, setSelectedStyle] = useState('4d-neon-gel');
     const [selectedThickness, setSelectedThickness] = useState('5mm');
@@ -1030,7 +1044,7 @@ const PlateBuilder = () => {
                         </div>
 
                         <div className="col-12" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                            {plateStyles.slice(0, 4).map((style) => (
+                            {plateStyles.slice(0, 8).map((style) => (
                                 <div key={style.key} className="mb-3">
                                     <div
                                         onClick={() => setSelectedStyle(style.key)}
@@ -1598,12 +1612,12 @@ const PlateBuilder = () => {
                             {/* Pricing Details */}
                             <div className="bg-warning bg-opacity-25 p-3 rounded mb-3">
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12">
                                         <h6 className="fw-bold mb-2">Front Plate</h6>
                                         <div className="small">
                                             <div className="d-flex justify-content-between">
                                                 <span>Style</span>
-                                                <span>£{selected?.price || 0}</span>
+                                                <span>{selected?.label || null }(${selected?.price || 0})</span>
                                             </div>
                                             <div className="d-flex justify-content-between">
                                                 <span>Size</span>
@@ -1623,7 +1637,7 @@ const PlateBuilder = () => {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    {/* <div className="col-6">
                                         <h6 className="fw-bold mb-2">Rear Plate</h6>
                                         <div className="small">
                                             <div className="d-flex justify-content-between">
@@ -1641,7 +1655,7 @@ const PlateBuilder = () => {
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 

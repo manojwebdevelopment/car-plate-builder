@@ -371,6 +371,7 @@ const PlatePreview = ({
     // Get plate style configuration
     const selectedPlateObj = plateStyles.find((s) => s.key === plateStyle);
     const fontUrl = selectedPlateObj?.fontUrl || 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json';
+    const badgefontUrl = 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json';
     let fontSize = selectedPlateObj?.fontSize || 0.6;
 
     // Plate dimensions based on vehicle type
@@ -392,12 +393,12 @@ const PlatePreview = ({
         
         if (hasBadge) {
             const badgeWidth = 1.2 * dimensions.scale;
-            const adjustment = (badgeWidth / 2 + 0.2) * (badgePosition === 'left' ? 1 : -1);
+            const adjustment = (badgeWidth / 2 + 0.1) * (badgePosition === 'left' ? 1 : -1);
             xOffset = adjustment;
         }
         
-        const textWidth = text.length * fontSize * 0.28;
-        return [-(textWidth / 2) + xOffset, -0.1, dimensions.depth / 2 + 0.01];
+        const textWidth = text.length * fontSize * 1.4;
+        return [-(textWidth / 1.5) + xOffset, -0.1, dimensions.depth / 2 + 0.3];
     };
 
     const textPosition = getTextPosition();
@@ -507,7 +508,7 @@ const PlatePreview = ({
                 {/* Flag image */}
                 {flagData.flagImage && (
                     <mesh position={[position[0], position[1] + badgeHeight * 0.1, position[2] + 0.025]}>
-                        <planeGeometry args={[badgeWidth * 0.85, badgeHeight * 0.55]} />
+                        <planeGeometry args={[badgeWidth * 0.9, badgeHeight * 0.6]} />
                         <meshBasicMaterial transparent={true}>
                             <primitive
                                 object={(() => {
@@ -540,13 +541,13 @@ const PlatePreview = ({
 
                 {/* Country code text */}
                 <Text3D
-                    font={fontUrl}
-                    size={0.15 * dimensions.scale}
+                    font={badgefontUrl}
+                    size={0.18 * dimensions.scale}
                     height={0.01}
                     position={[
-                        position[0] - (flagText.length * 0.075 * dimensions.scale),
-                        position[1] - badgeHeight * 0.25,
-                        position[2] + 0.02
+                        position[0] - (flagText.length * -0.09 * dimensions.scale),
+                        position[1] - badgeHeight * + 0.4,
+                        position[2] + 1
                     ]}
                     bevelEnabled={false}
                 >
