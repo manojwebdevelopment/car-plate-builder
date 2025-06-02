@@ -371,6 +371,7 @@ const PlatePreview = ({
     // Get plate style configuration
     const selectedPlateObj = plateStyles.find((s) => s.key === plateStyle);
     const fontUrl = selectedPlateObj?.fontUrl || 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json';
+    const badgefontUrl = 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json';
     let fontSize = selectedPlateObj?.fontSize || 0.6;
 
     // Plate dimensions based on vehicle type
@@ -383,50 +384,21 @@ const PlatePreview = ({
     };
     
     const dimensions = plateDimensions[selectedSize] || plateDimensions['18-oblong'];
+    fontSize = fontSize * dimensions.scale;
 
-    // Calculate optimal font size based on plate dimensions and text length
-    const calculateFontSize = () => {
-        const textLength = text.length;
-        const plateWidth = dimensions.width;
-        const plateHeight = dimensions.height;
-        
-        // Calculate font size to fit the plate width (with some padding)
-        const maxWidthForText = plateWidth * 0.8; // 80% of plate width
-        const estimatedCharWidth = maxWidthForText / textLength;
-        
-        // Base font size calculation
-        let fontSize = Math.min(estimatedCharWidth * 0.7, plateHeight * 0.4);
-        
-        // Minimum and maximum font size constraints
-        fontSize = Math.max(fontSize, 0.3); // Minimum size
-        fontSize = Math.min(fontSize, 1.2); // Maximum size
-        
-        // Adjust for different plate types
-        if (selectedSize === 'motorcycle') {
-            fontSize *= 0.8; // Smaller for motorcycle
-        } else if (selectedSize === 'square') {
-            fontSize *= 0.9; // Slightly smaller for square
-        }
-        
-        return fontSize;
-    };
-
-    const fontSize = calculateFontSize();
-
-    // Text positioning calculation - always centered
+    // Text positioning calculation
     const getTextPosition = () => {
         let xOffset = 0;
         const hasBadge = selectedCountry !== 'none' && countryBadge !== 'none';
         
         if (hasBadge) {
-            // When badge is present, center text in remaining space
             const badgeWidth = 1.2 * dimensions.scale;
-            const adjustment = (badgeWidth / 2 + 0.2) * (badgePosition === 'left' ? 1 : -1);
+            const adjustment = (badgeWidth / 2 + 0.1) * (badgePosition === 'left' ? 1 : -1);
             xOffset = adjustment;
         }
         
-        const textWidth = text.length * fontSize * 0.28;
-        return [-(textWidth / 2) + xOffset, -0.1, dimensions.depth / 2 + 0.01];
+        const textWidth = text.length * fontSize * 1.4;
+        return [-(textWidth / 1.5) + xOffset, -0.1, dimensions.depth / 2 + 0.3];
     };
 
     const textPosition = getTextPosition();
@@ -453,12 +425,7 @@ const PlatePreview = ({
         );
     };
 
-<<<<<<< HEAD
     // Border rendering
-    
-=======
-    // Simple 2D border rendering (like reference image)
->>>>>>> e4966c932be2461b1a339e95bdef1b7dcfeed718
     const renderBorder = () => {
         if (borderStyle === 'none') return null;
 
@@ -472,70 +439,42 @@ const PlatePreview = ({
             return null;
         }
 
-        // Simple flat border - no 3D effect, just a colored outline
-        const borderThickness = 0.02; // Very thin, flat border
+        const borderThickness = selectedBorderObj.key.includes('krystal') ? 0.15 : 0.08;
         const hasBadge = selectedCountry !== 'none' && countryBadge !== 'none';
 
         if (hasBadge) {
-            // Border around text area only - keep original plate color as background
-            const badgeWidth = 1.2 * dimensions.scale;
-            const textAreaWidth = dimensions.width - badgeWidth - 0.2;
-            const xOffset = badgePosition === 'left' ? (badgeWidth / 2 + 0.1) : -(badgeWidth / 2 + 0.1);
+            const textAreaWidth = dimensions.width - 1.5;
+            const xOffset = badgePosition === 'left' ? 0.75 : -0.75;
 
             return (
                 <group>
-                    {/* Top border for text area */}
-                    <mesh position={[xOffset, (dimensions.height - 0.1) / 2 - borderThickness / 2, dimensions.depth / 2 + borderThickness / 2]}>
-                        <boxGeometry args={[textAreaWidth, borderThickness, borderThickness]} />
-                        <meshBasicMaterial color={borderColor} />
+                    <mesh position={[xOffset, 0, dimensions.depth / 2 + borderThickness / 2]}>
+                        <boxGeometry args={[textAreaWidth, dimensions.height, borderThickness]} />
+                        <meshStandardMaterial color={borderColor} metalness={0.3} roughness={0.2} />
                     </mesh>
-                    {/* Bottom border for text area */}
-                    <mesh position={[xOffset, -(dimensions.height - 0.1) / 2 + borderThickness / 2, dimensions.depth / 2 + borderThickness / 2]}>
-                        <boxGeometry args={[textAreaWidth, borderThickness, borderThickness]} />
-                        <meshBasicMaterial color={borderColor} />
-                    </mesh>
-                    {/* Left border for text area */}
-                    <mesh position={[xOffset - textAreaWidth / 2 + borderThickness / 2, 0, dimensions.depth / 2 + borderThickness / 2]}>
-                        <boxGeometry args={[borderThickness, dimensions.height - 0.1, borderThickness]} />
-                        <meshBasicMaterial color={borderColor} />
-                    </mesh>
-                    {/* Right border for text area */}
-                    <mesh position={[xOffset + textAreaWidth / 2 - borderThickness / 2, 0, dimensions.depth / 2 + borderThickness / 2]}>
-                        <boxGeometry args={[borderThickness, dimensions.height - 0.1, borderThickness]} />
-                        <meshBasicMaterial color={borderColor} />
+                    <mesh position={[xOffset, 0, dimensions.depth / 2 + borderThickness / 2 + 0.001]}>
+                        <boxGeometry args={[textAreaWidth - 0.2, dimensions.height - 0.2, borderThickness + 0.002]} />
+                        <meshStandardMaterial color={plateColor} />
                     </mesh>
                 </group>
             );
         }
 
-        // Full plate simple border
         return (
             <group>
-                {/* Top border */}
-                <mesh position={[0, dimensions.height / 2 - borderThickness / 2, dimensions.depth / 2 + borderThickness / 2]}>
-                    <boxGeometry args={[dimensions.width, borderThickness, borderThickness]} />
-                    <meshBasicMaterial color={borderColor} />
+                <mesh position={[0, 0, dimensions.depth / 2 + borderThickness / 2]}>
+                    <boxGeometry args={[dimensions.width + borderThickness, dimensions.height + borderThickness, borderThickness]} />
+                    <meshStandardMaterial color={borderColor} metalness={0.3} roughness={0.2} />
                 </mesh>
-                {/* Bottom border */}
-                <mesh position={[0, -dimensions.height / 2 + borderThickness / 2, dimensions.depth / 2 + borderThickness / 2]}>
-                    <boxGeometry args={[dimensions.width, borderThickness, borderThickness]} />
-                    <meshBasicMaterial color={borderColor} />
-                </mesh>
-                {/* Left border */}
-                <mesh position={[-dimensions.width / 2 + borderThickness / 2, 0, dimensions.depth / 2 + borderThickness / 2]}>
-                    <boxGeometry args={[borderThickness, dimensions.height, borderThickness]} />
-                    <meshBasicMaterial color={borderColor} />
-                </mesh>
-                {/* Right border */}
-                <mesh position={[dimensions.width / 2 - borderThickness / 2, 0, dimensions.depth / 2 + borderThickness / 2]}>
-                    <boxGeometry args={[borderThickness, dimensions.height, borderThickness]} />
-                    <meshBasicMaterial color={borderColor} />
+                <mesh position={[0, 0, dimensions.depth / 2 + borderThickness / 2 + 0.001]}>
+                    <boxGeometry args={[dimensions.width - 0.1, dimensions.height - 0.1, borderThickness + 0.002]} />
+                    <meshStandardMaterial color={plateColor} />
                 </mesh>
             </group>
         );
     };
 
-    // Enhanced badge rendering with better flag visibility
+    // Badge rendering
     const renderCountryBadge = () => {
         if (!selectedCountry || selectedCountry === 'none' || !countryBadge || countryBadge === 'none') return null;
 
@@ -544,7 +483,7 @@ const PlatePreview = ({
 
         const flagText = countryBadge === 'custom-upload' ? customFlagText : flagData.text;
         const badgeWidth = 1.1 * dimensions.scale;
-        const badgeHeight = dimensions.height * 0.85;
+        const badgeHeight = dimensions.height * 0.8;
         
         const xPosition = badgePosition === 'right' 
             ? (dimensions.width / 2 - badgeWidth / 2 - 0.1) 
@@ -554,30 +493,27 @@ const PlatePreview = ({
 
         return (
             <group>
-                {/* Badge background with proper UK blue color */}
+                {/* Badge background */}
                 <mesh position={position}>
-                    <boxGeometry args={[badgeWidth, badgeHeight, 0.04]} />
-                    <meshStandardMaterial color={badgeBorderColor} metalness={0.1} roughness={0.4} />
+                    <boxGeometry args={[badgeWidth, badgeHeight, 0.03]} />
+                    <meshStandardMaterial color={badgeBorderColor} metalness={0.2} roughness={0.3} />
                 </mesh>
 
-                {/* White flag area background - larger and more visible */}
-                <mesh position={[position[0], position[1] + badgeHeight * 0.15, position[2] + 0.025]}>
-                    <boxGeometry args={[badgeWidth * 0.85, badgeHeight * 0.65, 0.02]} />
+                {/* Flag area */}
+                <mesh position={[position[0], position[1] + badgeHeight * 0.1, position[2] + 0.02]}>
+                    <boxGeometry args={[badgeWidth * 0.9, badgeHeight * 0.6, 0.01]} />
                     <meshBasicMaterial color="#FFFFFF" />
                 </mesh>
 
-                {/* Flag image with better contrast and sizing */}
+                {/* Flag image */}
                 {flagData.flagImage && (
                     <mesh position={[position[0], position[1] + badgeHeight * 0.1, position[2] + 0.025]}>
-                        <planeGeometry args={[badgeWidth * 0.85, badgeHeight * 0.55]} />
+                        <planeGeometry args={[badgeWidth * 0.9, badgeHeight * 0.6]} />
                         <meshBasicMaterial transparent={true}>
                             <primitive
                                 object={(() => {
                                     const texture = new THREE.TextureLoader().load(flagData.flagImage);
                                     texture.flipY = false;
-                                    texture.minFilter = THREE.LinearFilter;
-                                    texture.magFilter = THREE.LinearFilter;
-                                    texture.generateMipmaps = false;
                                     return texture;
                                 })()}
                                 attach="map"
@@ -586,21 +522,15 @@ const PlatePreview = ({
                     </mesh>
                 )}
 
-                {/* Custom flag image with enhanced visibility */}
+                {/* Custom flag image */}
                 {countryBadge === 'custom-upload' && customFlagImage && (
-                    <mesh position={[position[0], position[1] + badgeHeight * 0.15, position[2] + 0.035]}>
-                        <planeGeometry args={[badgeWidth * 0.8, badgeHeight * 0.6]} />
-                        <meshBasicMaterial 
-                            transparent={false}
-                            side={THREE.DoubleSide}
-                        >
+                    <mesh position={[position[0], position[1] + badgeHeight * 0.1, position[2] + 0.025]}>
+                        <planeGeometry args={[badgeWidth * 0.85, badgeHeight * 0.55]} />
+                        <meshBasicMaterial transparent={true}>
                             <primitive
                                 object={(() => {
                                     const texture = new THREE.TextureLoader().load(customFlagImage);
                                     texture.flipY = false;
-                                    texture.minFilter = THREE.LinearFilter;
-                                    texture.magFilter = THREE.LinearFilter;
-                                    texture.generateMipmaps = false;
                                     return texture;
                                 })()}
                                 attach="map"
@@ -609,26 +539,20 @@ const PlatePreview = ({
                     </mesh>
                 )}
 
-                {/* Country code text at bottom with better visibility */}
+                {/* Country code text */}
                 <Text3D
-                    font={fontUrl}
-                    size={0.15 * dimensions.scale}
+                    font={badgefontUrl}
+                    size={0.18 * dimensions.scale}
                     height={0.01}
                     position={[
-                        position[0] - (flagText.length * 0.075 * dimensions.scale),
-                        position[1] - badgeHeight * 0.25,
-                        position[2] + 0.02
+                        position[0] - (flagText.length * -0.09 * dimensions.scale),
+                        position[1] - badgeHeight * + 0.4,
+                        position[2] + 1
                     ]}
-                    bevelEnabled={true}
-                    bevelThickness={0.005}
-                    bevelSize={0.002}
+                    bevelEnabled={false}
                 >
                     {flagText}
-                    <meshStandardMaterial 
-                        color={customTextColor || "#FFFFFF"}
-                        metalness={0.1}
-                        roughness={0.3}
-                    />
+                    <meshBasicMaterial color={customTextColor || "#FFFFFF"} />
                 </Text3D>
             </group>
         );
@@ -737,7 +661,7 @@ const PlatePreview = ({
                 </>
             )}
 
-            {/* Main 3D text - properly sized and centered */}
+            {/* Main 3D text */}
             <Text3D
                 font={fontUrl}
                 size={fontSize}
