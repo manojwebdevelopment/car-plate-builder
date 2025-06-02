@@ -6,18 +6,29 @@ import Navbar from './components/Navbar/Navbar'
 import Home from './pages/Home'
 import PlateBuilder from './components/NumberPlate/PlateBuilder'
 import './App.css'
+import CartPage from './components/Cart/CartPage'
+import Footer from './components/Footer/Footer'
+import AboutPage from './pages/AboutPage'
+import ContactPage from './pages/ContactPage'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 
 function App() {
   return (
     <CartProvider>
       <Router>
         <Navbar />
-        <div>
+        <div style={{margin: -1 }}>
           <Routes>
             <Route path="/" element={<Home/>} />
             <Route path='/platebuilder' element={<PlateBuilder/>} />
+            <Route path='/basket' element={<CartPage/>} />
+
+            <Route path='/about' element={<AboutPage/>} />
+            <Route path='/contact' element={<ContactPage/>} />
+            <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
           </Routes>
         </div>
+        <Footer/>
       </Router>
     </CartProvider>
   )

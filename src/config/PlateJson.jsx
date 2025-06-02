@@ -304,7 +304,7 @@ export const plateStyles = [
         font: 'Eurostile',
         // fontUrl: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json',
         // fontUrl: 'fonts/Deventer PERSONAL USE_Regular.json',
-        fontUrl: 'fonts/FinishPlayingDemo_Regular.json',
+        fontUrl: 'fonts/Car-Go Plain 3.1 Demo_Regular.json',
         fontSize: 0.65
     }
 ];
@@ -329,15 +329,8 @@ export const colorOptions = [
 ];
 
 export const shadowOptions = [
-    { key: 'none', name: 'No Shadow', price: 0 },
-    { key: 'soft', name: 'Soft Shadow', price: 2.99 },
-    { key: 'hard', name: 'Hard Shadow', price: 2.99 },
-    { key: 'black-outline', name: 'Black Outline', price: 3.99 },
-    { key: 'gray-outline', name: 'Gray Outline', price: 3.99 },
-    { key: 'white-outline', name: 'White Outline', price: 3.99 },
-    { key: 'colored-outline', name: 'Colored Outline', price: 4.99 },
-    { key: 'neon', name: 'Neon Glow', price: 7.99 },
-    { key: 'led', name: 'LED Effect', price: 9.99 }
+    { key: 'none', name: 'No Effect', price: 0 },
+    { key: 'colored-outline', name: 'Colored Outline', price: 4.99 }
 ];
 
 export const borderOptions = [

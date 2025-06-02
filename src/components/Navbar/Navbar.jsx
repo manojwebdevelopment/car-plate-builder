@@ -1,22 +1,56 @@
 // components/Navbar/Navbar.js - Complete Navbar with Cart Integration
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
-// import CartModal from '../Cart/CartModal';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getCartItemCount } from '../Cart/cartUtils'; // Import our cart utilities
 
 const Navbar = () => {
   const [showCoupon, setShowCoupon] = useState(true);
-  const [showCartModal, setShowCartModal] = useState(false);
-  const { getTotalItems } = useCart();
+  const [cartItemCount, setCartItemCount] = useState(0);
+  const navigate = useNavigate();
 
-  const totalItems = getTotalItems();
+  // Load cart count on component mount and listen for updates
+  useEffect(() => {
+    // Initial load of cart count
+    updateCartCount();
+    
+    // Listen for cart updates from localStorage
+    const handleCartUpdate = () => {
+      updateCartCount();
+    };
+    
+    // Listen for custom cart update events
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    
+    // Listen for localStorage changes (for cross-tab updates)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'plateCart') {
+        updateCartCount();
+      }
+    });
+    
+    // Cleanup event listeners
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+      window.removeEventListener('storage', handleCartUpdate);
+    };
+  }, []);
 
-  const handleCartClick = () => {
-    setShowCartModal(true);
+  const updateCartCount = () => {
+    try {
+      const count = getCartItemCount();
+      setCartItemCount(count);
+    } catch (error) {
+      console.error('Error updating cart count:', error);
+      setCartItemCount(0);
+    }
   };
 
-  const handleCloseCart = () => {
-    setShowCartModal(false);
+  const handleCartClick = () => {
+    navigate('/basket');
+  };
+
+  const handleShopNowClick = () => {
+    navigate('/platebuilder');
   };
 
   return (
@@ -27,7 +61,12 @@ const Navbar = () => {
              style={{ backgroundColor: '#4285f4', color: 'white', border: 'none' }}>
           <div className="container">
             <strong>GET 15% OFF & FREE SHIPPING | USE CODE 'Save15'</strong>
-            <button className="btn btn-warning btn-sm ms-3 fw-bold">SHOP NOW</button>
+            <button 
+              className="btn btn-warning btn-sm ms-3 fw-bold"
+              onClick={handleShopNowClick}
+            >
+              SHOP NOW
+            </button>
             <button 
               type="button" 
               className="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y me-3" 
@@ -92,12 +131,12 @@ const Navbar = () => {
                 </a>
                 <ul className="dropdown-menu border-2 border-warning rounded-3 shadow-lg" 
                     style={{ backgroundColor: '#ffd43b' }}>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">4D Gel Plates</a></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">3D Plates</a></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Standard Plates</a></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Show Plates</a></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?style=4d-gel">4D Gel Plates</Link></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?style=3d">3D Plates</Link></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?style=standard">Standard Plates</Link></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?style=show">Show Plates</Link></li>
                   <li><hr className="dropdown-divider" /></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Custom Designs</a></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?style=custom">Custom Designs</Link></li>
                 </ul>
               </li>
 
@@ -114,12 +153,12 @@ const Navbar = () => {
                 </a>
                 <ul className="dropdown-menu border-2 border-warning rounded-3 shadow-lg" 
                     style={{ backgroundColor: '#ffd43b' }}>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Standard (520x111mm)</a></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Square (279x203mm)</a></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Motorcycle (229x164mm)</a></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Mini (285x201mm)</a></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?size=standard">Standard (520x111mm)</Link></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?size=square">Square (279x203mm)</Link></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?size=motorcycle">Motorcycle (229x164mm)</Link></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?size=mini">Mini (285x201mm)</Link></li>
                   <li><hr className="dropdown-divider" /></li>
-                  <li><a className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" href="#">Custom Size</a></li>
+                  <li><Link className="dropdown-item fw-semibold text-dark py-2 px-3 hover-bg-warning rounded" to="/plate-builder?size=custom">Custom Size</Link></li>
                 </ul>
               </li>
 
@@ -192,18 +231,48 @@ const Navbar = () => {
                 </ul>
               </li>
 
-              {/* Cart/Basket */}
+              {/* Cart/Basket with Live Count */}
               <li className="nav-item">
                 <button 
-                  className="nav-link fw-semibold text-dark position-relative px-3 py-2 rounded hover-bg-warning btn border-0 bg-transparent"
+                  className="nav-link fw-semibold text-dark position-relative px-3 py-2 rounded hover-bg-warning btn border-0 bg-transparent d-flex align-items-center"
                   onClick={handleCartClick}
                   style={{ cursor: 'pointer' }}
+                  title={`View basket (${cartItemCount} items)`}
                 >
-                  🛒 BASKET
-                  {totalItems > 0 && (
-                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-                      {totalItems}
+                  <span className="me-2">🛒</span>
+                  <span className="d-none d-md-inline">BASKET</span>
+                  <span className="d-inline d-md-none">CART</span>
+                  
+                  {/* Cart Count Badge */}
+                  {cartItemCount > 0 && (
+                    <span 
+                      className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger text-white fw-bold cart-badge"
+                      style={{
+                        fontSize: '0.7rem',
+                        minWidth: '1.2rem',
+                        height: '1.2rem',
+                        lineHeight: '1.2rem',
+                        zIndex: 1
+                      }}
+                    >
+                      {cartItemCount > 99 ? '99+' : cartItemCount}
                       <span className="visually-hidden">items in cart</span>
+                    </span>
+                  )}
+                  
+                  {/* Empty Cart Indicator */}
+                  {cartItemCount === 0 && (
+                    <span 
+                      className="position-absolute top-0 start-100 translate-middle"
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        backgroundColor: '#6c757d',
+                        borderRadius: '50%',
+                        fontSize: '0'
+                      }}
+                    >
+                      <span className="visually-hidden">cart is empty</span>
                     </span>
                   )}
                 </button>
@@ -213,40 +282,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Cart Modal */}
-      {showCartModal && (
-        <CartModal onClose={handleCloseCart} />
-      )}
-
-      {/* Custom CSS for hover effects */}
-      <style jsx>{`
-        .hover-bg-warning:hover {
-          background-color: rgba(255, 193, 7, 0.2) !important;
-        }
-        
-        .navbar-nav .nav-link {
-          transition: all 0.3s ease;
-        }
-        
-        .dropdown-menu {
-          animation: fadeIn 0.2s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .badge {
-          animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-          100% { transform: scale(1); }
-        }
-      `}</style>
     </>
   );
 };
