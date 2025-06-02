@@ -426,6 +426,7 @@ const PlatePreview = ({
     };
 
     // Border rendering
+    
     const renderBorder = () => {
         if (borderStyle === 'none') return null;
 
