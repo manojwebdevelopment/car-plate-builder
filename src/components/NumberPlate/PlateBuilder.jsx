@@ -368,16 +368,7 @@ const PlateBuilder = () => {
             case 'start':
                 return (
                     <div className="row g-4">
-                        <div className="col-12">
-                            <div className="row g-0 mb-3">
-                                <div className="col-6">
-                                    <button className="btn btn-warning w-100 fw-bold text-dark">FRONT BORDER</button>
-                                </div>
-                                <div className="col-6">
-                                    <button className="btn btn-outline-secondary w-100">REAR BORDER</button>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <div className="col-12">
                             <div className="card border-warning">
@@ -423,8 +414,8 @@ const PlateBuilder = () => {
                         <div className="col-6">
                             <label className="form-label fw-bold">Preview</label>
                             <div className="form-control text-center fw-bold border-warning" style={{ 
-                                fontSize: '1.2rem', 
-                                letterSpacing: spacing === 'legal' ? '0.3em' : '0.1em'
+                                fontSize: '1rem', 
+                                letterSpacing: spacing === 'legal' ? '0.2em' : '0.1em'
                             }}>
                                 {displayText}
                             </div>
@@ -437,7 +428,7 @@ const PlateBuilder = () => {
                                     className="btn btn-outline-warning"
                                     onClick={() => setFrontQuantity(Math.max(0, frontQuantity - 1))}
                                 >
-                                    <ChevronLeft size={16} />
+                                    <ChevronLeft size={10} />
                                 </button>
                                 <input
                                     type="number"
@@ -450,7 +441,7 @@ const PlateBuilder = () => {
                                     className="btn btn-outline-warning"
                                     onClick={() => setFrontQuantity(Math.min(10, frontQuantity + 1))}
                                 >
-                                    <ChevronRight size={16} />
+                                    <ChevronRight size={10} />
                                 </button>
                             </div>
                         </div>
@@ -462,7 +453,7 @@ const PlateBuilder = () => {
                                     className="btn btn-outline-warning"
                                     onClick={() => setRearQuantity(Math.max(0, rearQuantity - 1))}
                                 >
-                                    <ChevronLeft size={16} />
+                                    <ChevronLeft size={10} />
                                 </button>
                                 <input
                                     type="number"
@@ -475,7 +466,7 @@ const PlateBuilder = () => {
                                     className="btn btn-outline-warning"
                                     onClick={() => setRearQuantity(Math.min(10, rearQuantity + 1))}
                                 >
-                                    <ChevronRight size={16} />
+                                    <ChevronRight size={10} />
                                 </button>
                             </div>
                         </div>
@@ -485,17 +476,7 @@ const PlateBuilder = () => {
             case 'style':
                 return (
                     <div className="row g-4">
-                        <div className="col-12">
-                            <div className="row g-0 mb-3">
-                                <div className="col-6">
-                                    <button className="btn btn-warning w-100 fw-bold text-dark">FRONT STYLE</button>
-                                </div>
-                                <div className="col-6">
-                                    <button className="btn btn-outline-secondary w-100">REAR STYLE</button>
-                                </div>
-                            </div>
-                        </div>
-
+                       
                         <div className="col-12" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                             {plateStyles.slice(0, 8).map((style) => (
                                 <div key={style.key} className="mb-3">
@@ -942,7 +923,7 @@ const PlateBuilder = () => {
             {/* Main Content */}
             <div className="row g-3 p-3">
                 {/* Left Panel - Controls */}
-                <div className="col-lg-4">
+                <div className="col-lg-3">
                     <div className="card border-0 shadow-sm">
                         <div className="card-header bg-warning text-dark fw-bold">
                             <h5 className="mb-0">{activeTab.toUpperCase()}</h5>
@@ -974,7 +955,7 @@ const PlateBuilder = () => {
                 </div>
 
                 {/* Center Panel - Preview */}
-                <div className="col-lg-4">
+                <div className="col-lg-6">
                     <div className="card border-0 shadow-sm">
                         <div className="card-header bg-warning text-dark fw-bold">
                             <div className="d-flex align-items-center justify-content-between">
@@ -1038,7 +1019,7 @@ const PlateBuilder = () => {
                 </div>
 
                 {/* Right Panel - Order Summary */}
-                <div className="col-lg-4">
+                <div className="col-lg-3">
                     <div className="card border-0 shadow-sm">
                         <div className="card-header bg-warning text-dark fw-bold">
                             <div className="d-flex align-items-center">
