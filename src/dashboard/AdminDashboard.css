@@ -1,0 +1,6 @@
+/* dashboard/AdminDashboard.css */
+.admin-dashboard {
+  padding: 2rem;
+  min-height: calc(100vh - 120px); /* Leaves space for Navbar and Footer */
+  background-color: #f9f9f9;
+}
