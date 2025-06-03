@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css'
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('orders');
-  const [orders, setOrders] = useState([
-    { id: 1, customer: 'John Doe', product: 'Laptop', amount: 999, status: 'Pending', date: '2025-06-01' },
-    { id: 2, customer: 'Jane Smith', product: 'Phone', amount: 599, status: 'Completed', date: '2025-06-02' },
-    { id: 3, customer: 'Mike Johnson', product: 'Tablet', amount: 399, status: 'Shipped', date: '2025-06-03' }
-  ]);
-
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [viewingOrder, setViewingOrder] = useState(null);
+  const [loadingOrderDetails, setLoadingOrderDetails] = useState(false);
+  
   const [contacts, setContacts] = useState([
     { id: 1, name: 'Alice Brown', email: 'alice@example.com', phone: '+91-9876543210', message: 'Inquiry about products' },
     { id: 2, name: 'Bob Wilson', email: 'bob@example.com', phone: '+91-9876543211', message: 'Support request' }
@@ -23,8 +23,89 @@ const AdminDashboard = () => {
   const [editingOrder, setEditingOrder] = useState(null);
   const [editingContact, setEditingContact] = useState(null);
 
+  // Toast notification component
+  const Toast = ({ message, type, onClose }) => (
+    <div 
+      className={`position-fixed top-0 end-0 m-3 alert alert-${type} alert-dismissible`} 
+      style={{ zIndex: 9999 }}
+    >
+      {message}
+      <button type="button" className="btn-close" onClick={onClose}></button>
+    </div>
+  );
+
+  // Show toast message
+  const showToast = (message, type = 'danger') => {
+    setToastMessage({ message, type });
+    setTimeout(() => setToastMessage(null), 5000);
+  };
+
+  // Format date to "Jun 01, 2025" format
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit'
+    });
+  };
+
+  // Fetch orders from API
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/order-details');
+      const result = await response.json();
+      
+      if (result.success) {
+        setOrders(result.data);
+      } else {
+        showToast('Failed to fetch orders: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      showToast('Network error: Unable to fetch orders');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch single order details for modal
+  const fetchOrderDetails = async (orderId) => {
+    setLoadingOrderDetails(true);
+    try {
+      const response = await fetch(`http://localhost:5000/order-details/${orderId}`);
+      const result = await response.json();
+      
+      if (result.success) {
+        setViewingOrder(result.data);
+      } else {
+        showToast('Failed to fetch order details: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      showToast('Network error: Unable to fetch order details');
+    } finally {
+      setLoadingOrderDetails(false);
+    }
+  };
+
+  const handleViewOrder = (order) => {
+    fetchOrderDetails(order.orderId);
+  };
+
+  // Fetch orders when component mounts or when orders tab is selected
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      fetchOrders();
+    }
+  }, [activeTab]);
+
   const handleDeleteOrder = (id) => {
+    // For now, just remove from local state
+    // You can implement actual delete API call later
     setOrders(orders.filter(order => order.id !== id));
+    showToast('Order deleted successfully', 'success');
   };
 
   const handleDeleteContact = (id) => {
@@ -38,6 +119,7 @@ const AdminDashboard = () => {
   const handleSaveOrder = (updatedOrder) => {
     setOrders(orders.map(order => order.id === updatedOrder.id ? updatedOrder : order));
     setEditingOrder(null);
+    showToast('Order updated successfully', 'success');
   };
 
   const handleEditContact = (contact) => {
@@ -47,6 +129,97 @@ const AdminDashboard = () => {
   const handleSaveContact = (updatedContact) => {
     setContacts(contacts.map(contact => contact.id === updatedContact.id ? updatedContact : contact));
     setEditingContact(null);
+  };
+
+  const ViewOrderModal = ({ order, onClose, loading }) => {
+    if (!order && !loading) return null;
+
+    return (
+      <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Order Details</h5>
+              <button type="button" className="btn-close" onClick={onClose}></button>
+            </div>
+            <div className="modal-body">
+              {loading ? (
+                <div className="text-center p-4">
+                  <div className="spinner-border text-warning" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="mt-2">Loading order details...</p>
+                </div>
+              ) : order ? (
+                <div className="row">
+                  <div className="col-md-6">
+                    <h6 className="text-warning mb-3">Order Information</h6>
+                    <div className="mb-3">
+                      <strong>Order ID:</strong> {order.orderId}
+                    </div>
+                    <div className="mb-3">
+                      <strong>Customer Name:</strong> {order.customer}
+                    </div>
+                    <div className="mb-3">
+                      <strong>Product:</strong> {order.product}
+                    </div>
+                    <div className="mb-3">
+                      <strong>Amount:</strong> ₹{order.amount}
+                    </div>
+                    <div className="mb-3">
+                      <strong>Payment Status:</strong> 
+                      <span className={`badge ms-2 ${
+                        order.status === 'Completed' ? 'bg-success' :
+                        order.status === 'Pending' ? 'bg-warning text-dark' :
+                        order.status === 'Shipped' ? 'bg-info' : 'bg-secondary'
+                      }`}>
+                        {order.status}
+                      </span>
+                    </div>
+                    <div className="mb-3">
+                      <strong>Order Date:</strong> {formatDate(order.date)}
+                    </div>
+                  </div>
+                  
+                  <div className="col-md-6">
+                    <h6 className="text-warning mb-3">Shipping Address</h6>
+                    {order.shippingAddress ? (
+                      <div>
+                        <div className="mb-2">
+                          <strong>Street:</strong> {order.shippingAddress.street}
+                        </div>
+                        <div className="mb-2">
+                          <strong>City:</strong> {order.shippingAddress.city}
+                        </div>
+                        <div className="mb-2">
+                          <strong>State:</strong> {order.shippingAddress.state}
+                        </div>
+                        <div className="mb-2">
+                          <strong>Pincode:</strong> {order.shippingAddress.pincode}
+                        </div>
+                        <div className="mb-2">
+                          <strong>Country:</strong> {order.shippingAddress.country}
+                        </div>
+                        <div className="mb-2">
+                          <strong>Phone:</strong> {order.shippingAddress.phone}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-muted">No shipping address available</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-muted">No order details available</p>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const OrderModal = ({ order, onSave, onClose }) => {
@@ -66,6 +239,15 @@ const AdminDashboard = () => {
             </div>
             <div>
               <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Order ID</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formData.orderId}
+                    onChange={(e) => setFormData({...formData, orderId: e.target.value})}
+                  />
+                </div>
                 <div className="mb-3">
                   <label className="form-label">Customer</label>
                   <input
@@ -185,6 +367,15 @@ const AdminDashboard = () => {
 
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
+      {/* Toast Notification */}
+      {toastMessage && (
+        <Toast 
+          message={toastMessage.message} 
+          type={toastMessage.type} 
+          onClose={() => setToastMessage(null)} 
+        />
+      )}
+
       {/* Sidebar */}
       <div className="sidebar" style={{ 
         width: '250px', 
@@ -226,60 +417,76 @@ const AdminDashboard = () => {
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Order Management</h2>
-                <span className="badge bg-warning text-dark fs-6">Total Orders: {orders.length}</span>
+                <div className="d-flex align-items-center gap-3">
+                  <button 
+                    className="btn btn-outline-warning"
+                    onClick={fetchOrders}
+                    disabled={loading}
+                  >
+                    {loading ? 'Refreshing...' : 'Refresh'}
+                  </button>
+                  <span className="badge bg-warning text-dark fs-6">Total Orders: {orders.length}</span>
+                </div>
               </div>
               
               <div className="card">
                 <div className="card-body">
-                  <div className="table-responsive">
-                    <table className="table table-hover">
-                      <thead className="table-warning">
-                        <tr>
-                          <th>Order ID</th>
-                          <th>Customer</th>
-                          <th>Product</th>
-                          <th>Amount</th>
-                          <th>Status</th>
-                          <th>Date</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {orders.map(order => (
-                          <tr key={order.id}>
-                            <td>#{order.id}</td>
-                            <td>{order.customer}</td>
-                            <td>{order.product}</td>
-                            <td>₹{order.amount}</td>
-                            <td>
-                              <span className={`badge ${
-                                order.status === 'Completed' ? 'bg-success' :
-                                order.status === 'Pending' ? 'bg-warning text-dark' :
-                                order.status === 'Shipped' ? 'bg-info' : 'bg-secondary'
-                              }`}>
-                                {order.status}
-                              </span>
-                            </td>
-                            <td>{order.date}</td>
-                            <td>
-                              <button
-                                className="btn btn-sm btn-outline-primary me-2"
-                                onClick={() => handleEditOrder(order)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                className="btn btn-sm btn-outline-danger"
-                                onClick={() => handleDeleteOrder(order.id)}
-                              >
-                                Delete
-                              </button>
-                            </td>
+                  {loading ? (
+                    <div className="text-center p-4">
+                      <div className="spinner-border text-warning" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                      <p className="mt-2">Loading orders...</p>
+                    </div>
+                  ) : orders.length === 0 ? (
+                    <div className="text-center p-4">
+                      <p className="text-muted">No orders found</p>
+                    </div>
+                  ) : (
+                    <div className="table-responsive">
+                      <table className="table table-hover">
+                        <thead className="table-warning">
+                          <tr>
+                            <th>Order ID</th>
+                            <th>Customer Name</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Payment Status</th>
+                            <th>Date of Order</th>
+                            <th>View</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {orders.map(order => (
+                            <tr key={order.id}>
+                              <td>{order.orderId}</td>
+                              <td>{order.customer}</td>
+                              <td>{order.product}</td>
+                              <td>₹{order.amount}</td>
+                              <td>
+                                <span className={`badge ${
+                                  order.status === 'Completed' ? 'bg-success' :
+                                  order.status === 'Pending' ? 'bg-warning text-dark' :
+                                  order.status === 'Shipped' ? 'bg-info' : 'bg-secondary'
+                                }`}>
+                                  {order.status}
+                                </span>
+                              </td>
+                              <td>{formatDate(order.date)}</td>
+                              <td>
+                                <button
+                                  className="btn btn-sm btn-outline-info"
+                                  onClick={() => handleViewOrder(order)}
+                                >
+                                  👁️ View
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -434,6 +641,17 @@ const AdminDashboard = () => {
           contact={editingContact}
           onSave={handleSaveContact}
           onClose={() => setEditingContact(null)}
+        />
+      )}
+
+      {(viewingOrder || loadingOrderDetails) && (
+        <ViewOrderModal
+          order={viewingOrder}
+          loading={loadingOrderDetails}
+          onClose={() => {
+            setViewingOrder(null);
+            setLoadingOrderDetails(false);
+          }}
         />
       )}
     </div>
