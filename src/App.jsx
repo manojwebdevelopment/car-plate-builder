@@ -1,27 +1,36 @@
+// App.js - Complete App with Cart Integration
 import { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { CartProvider } from './context/CartContext'
 import Navbar from './components/Navbar/Navbar'
-import Home from './pages/Home';
+import Home from './pages/Home'
+import PlateBuilder from './components/NumberPlate/PlateBuilder'
 import './App.css'
-import NumberPlateBuilder from './pages/NumberPlateBuilder';
-import PlateBuilder from './components/NumberPlate/PlateBuilder';
+import CartPage from './components/Cart/CartPage'
+import Footer from './components/Footer/Footer'
+import AboutPage from './pages/AboutPage'
+import ContactPage from './pages/ContactPage'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 
 function App() {
-  const [count, setCount] = useState(0) 
-
   return (
-    <>
+    <CartProvider>
       <Router>
         <Navbar />
-        <div>
+        <div style={{margin: -1 }}>
           <Routes>
             <Route path="/" element={<Home/>} />
             <Route path='/platebuilder' element={<PlateBuilder/>} />
+            <Route path='/basket' element={<CartPage/>} />
+
+            <Route path='/about' element={<AboutPage/>} />
+            <Route path='/contact' element={<ContactPage/>} />
+            <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
           </Routes>
         </div>
+        <Footer/>
       </Router>
-
-    </>
+    </CartProvider>
   )
 }
 
