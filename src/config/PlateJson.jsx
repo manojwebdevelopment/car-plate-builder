@@ -351,8 +351,8 @@ export const borderOptions = [
 export const sizeOptions = [
     { key: '18-oblong', label: '18" Oblong', price: 1.99, dimensions: '533mm x 152mm', description: 'Standard UK size' },
     { key: '21-oblong', label: '21" Oblong', price: 2.99, dimensions: '533mm x 152mm', description: 'Extended length' },
-    { key: 'square', label: 'Square Plate', price: 2.49, dimensions: '279mm x 203mm', description: 'Classic square format' },
-    { key: 'motorcycle', label: 'Motorcycle', price: 1.49, dimensions: '229mm x 164mm', description: 'Bike specific size' },
+    // { key: 'square', label: 'Square Plate', price: 2.49, dimensions: '279mm x 203mm', description: 'Classic square format' },
+    // { key: 'motorcycle', label: 'Motorcycle', price: 1.49, dimensions: '229mm x 164mm', description: 'Bike specific size' },
     { key: '4x4', label: '4x4 Badge', price: 3.99, dimensions: '533mm x 152mm', description: 'Off-road vehicle badge' }
 ];
 

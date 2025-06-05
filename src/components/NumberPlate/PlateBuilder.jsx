@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PlatePreview from './PlatePreview';
-import { ChevronLeft, ChevronRight, Car, ShoppingCart, Eye, Move, Camera, Palette, Flag, Star, CheckCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Car, ShoppingCart, Eye, Move, Camera, Palette, Flag, CheckCircle } from 'lucide-react';
 import { 
     plateStyles, 
     thicknessOptions, 
@@ -10,8 +10,7 @@ import {
     borderOptions, 
     countryOptions, 
     flagOptions,
-    sizeOptions,
-    finishOptions
+    sizeOptions
 } from '../../config/PlateJson';
 import { addToCart, getCartItemCount } from '../Cart/cartUtils';
 
@@ -68,17 +67,15 @@ const PlateBuilder = () => {
     const [rearQuantity, setRearQuantity] = useState(1);
     const [outlineColor, setOutlineColor] = useState('#000000');
     const [selectedSize, setSelectedSize] = useState('18-oblong');
-    const [selectedFinish, setSelectedFinish] = useState('standard');
     const [isLegalCheckboxChecked, setIsLegalCheckboxChecked] = useState(false);
 
-    // Tab configuration
+    // Tab configuration - removed finish tab
     const tabs = [
         { id: 'start', label: 'START', icon: Car },
         { id: 'style', label: 'STYLE', icon: Palette },
         { id: 'size', label: 'SIZE', icon: Move },
         { id: 'border', label: 'BORDER', icon: Eye },
-        { id: 'badge', label: 'BADGE', icon: Flag },
-        { id: 'finish', label: 'FINISH', icon: Star }
+        { id: 'badge', label: 'BADGE', icon: Flag }
     ];
 
     // Helper functions for data retrieval
@@ -92,16 +89,31 @@ const PlateBuilder = () => {
     const selectedBorderObj = getSelectedOption(borderOptions, selectedBorder);
     const selectedFlagObj = flagOptions[selectedCountry]?.find((f) => f.key === selectedFlag);
     const selectedSizeObj = getSelectedOption(sizeOptions, selectedSize);
-    const selectedFinishObj = getSelectedOption(finishOptions, selectedFinish);
 
     const finalFontColor = selectedFontColor === 'custom' ? customColor : selectedFontColor;
     const basePrice = (selected?.price || 0) + (selectedThicknessObj?.price || 0) +
         (selectedColorObj?.price || 0) + (selectedShadowObj?.price || 0) +
         (selectedBorderObj?.price || 0) + (selectedFlagObj?.price || 0) +
-        (selectedSizeObj?.price || 0) + (selectedFinishObj?.price || 0);
+        (selectedSizeObj?.price || 0);
     const totalQuantity = frontQuantity + rearQuantity;
     const totalPrice = basePrice * totalQuantity;
     const displayText = spacing === 'legal' ? plateText.split('').join(' ') : plateText;
+
+    // Function to get plate style image - using local file path
+    const getPlateStyleImage = (styleKey) => {
+        // Map style keys to local image paths
+        const styleImages = {
+            'standard': '/images/4D-3mm-Main-Image-Pair-Web-v2-white-640x360.jpg',
+            '3d': '/images/4D-3mm-Main-Image-Pair-Web-v2-white-640x360.jpg',
+            '4d': '/images/4D-3mm-Main-Image-Pair-Web-v2-white-640x360.jpg',
+            '4d-neon-gel': '/images/4D-3mm-Main-Image-Pair-Web-v2-white-640x360.jpg',
+            '5d-gel': '/images/4D-3mm-Main-Image-Pair-Web-v2-white-640x360.jpg',
+            'laser': '/images/4D-3mm-Main-Image-Pair-Web-v2-white-640x360.jpg',
+            'carbon-fiber': '/images/4D-3mm-Main-Image-Pair-Web-v2-white-640x360.jpg'
+        };
+        
+        return styleImages[styleKey] || '/images/plates/default-plate.jpg';
+    };
 
     // Dynamic order summary function
     const getSelectedFeatures = () => {
@@ -168,15 +180,6 @@ const PlateBuilder = () => {
             });
         }
 
-        // Show finish if not default
-        if (selectedFinish !== 'standard' && selectedFinishObj?.price > 0) {
-            features.push({
-                name: `Finish: ${selectedFinishObj?.label}`,
-                price: selectedFinishObj.price,
-                type: 'addon'
-            });
-        }
-
         return features;
     };
 
@@ -201,7 +204,6 @@ const PlateBuilder = () => {
             // Add Front Plates if quantity > 0
             if (frontQuantity > 0) {
                 const frontPlateData = {
-                    // Basic info
                     text: plateText,
                     plateType: 'front',
                     styleLabel: selected?.label || 'Standard Plate',
@@ -209,23 +211,17 @@ const PlateBuilder = () => {
                     thickness: selectedThickness,
                     price: basePrice,
                     quantity: frontQuantity,
-                    
-                    // Style details
                     fontColor: finalFontColor,
                     shadowEffect: selectedShadow,
                     borderStyle: selectedBorder,
                     selectedSize: selectedSize,
                     sizeLabel: selectedSizeObj?.label || 'Standard Oblong',
-                    
-                    // Badge details
                     countryBadge: selectedFlag,
                     selectedCountry: selectedCountry,
                     badgePosition: badgePosition,
                     customTextColor: customTextColor,
                     outlineColor: outlineColor,
-                    
-                    // Additional info
-                    roadLegal: 'No', // Since most customizations make plates non-road legal
+                    roadLegal: 'No',
                     spacing: spacing === 'legal' ? 'Legal spacing' : "As I've typed"
                 };
 
@@ -240,7 +236,6 @@ const PlateBuilder = () => {
             // Add Rear Plates if quantity > 0
             if (rearQuantity > 0) {
                 const rearPlateData = {
-                    // Basic info
                     text: plateText,
                     plateType: 'rear',
                     styleLabel: selected?.label || 'Standard Plate',
@@ -248,23 +243,17 @@ const PlateBuilder = () => {
                     thickness: selectedThickness,
                     price: basePrice,
                     quantity: rearQuantity,
-                    
-                    // Style details
                     fontColor: finalFontColor,
                     shadowEffect: selectedShadow,
                     borderStyle: selectedBorder,
                     selectedSize: selectedSize,
                     sizeLabel: selectedSizeObj?.label || 'Standard Oblong',
-                    
-                    // Badge details
                     countryBadge: selectedFlag,
                     selectedCountry: selectedCountry,
                     badgePosition: badgePosition,
                     customTextColor: customTextColor,
                     outlineColor: outlineColor,
-                    
-                    // Additional info
-                    roadLegal: 'No', // Since most customizations make plates non-road legal
+                    roadLegal: 'No',
                     spacing: spacing === 'legal' ? 'Legal spacing' : "As I've typed"
                 };
 
@@ -343,7 +332,6 @@ const PlateBuilder = () => {
         setRearQuantity(1);
         setOutlineColor('#000000');
         setSelectedSize('18-oblong');
-        setSelectedFinish('standard');
         setIsLegalCheckboxChecked(false);
     };
 
@@ -368,8 +356,6 @@ const PlateBuilder = () => {
             case 'start':
                 return (
                     <div className="row g-4">
-
-
                         <div className="col-12">
                             <div className="card border-warning">
                                 <div className="card-header bg-warning text-dark fw-bold">
@@ -476,7 +462,6 @@ const PlateBuilder = () => {
             case 'style':
                 return (
                     <div className="row g-4">
-                       
                         <div className="col-12" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                             {plateStyles.slice(0, 8).map((style) => (
                                 <div key={style.key} className="mb-3">
@@ -489,21 +474,39 @@ const PlateBuilder = () => {
                                     >
                                         <div className="card-body p-3">
                                             <div className="d-flex align-items-center">
-                                                <div 
-                                                    className="me-3 d-flex align-items-center justify-content-center text-white fw-bold position-relative"
-                                                    style={{
-                                                        width: '80px',
-                                                        height: '40px',
-                                                        background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
-                                                        borderRadius: '4px',
-                                                        fontSize: '10px'
-                                                    }}
-                                                >
+                                                {/* Plate Style Image */}
+                                                <div className="me-3 position-relative">
+                                                    <img
+                                                        src={getPlateStyleImage(style.key)}
+                                                        alt={style.label}
+                                                        className="rounded border"
+                                                        style={{
+                                                            width: '80px',
+                                                            height: '40px',
+                                                            objectFit: 'cover'
+                                                        }}
+                                                        onError={(e) => {
+                                                            // Fallback to gradient if image not found
+                                                            e.target.style.display = 'none';
+                                                            e.target.nextSibling.style.display = 'flex';
+                                                        }}
+                                                    />
+                                                    <div 
+                                                        className="d-none align-items-center justify-content-center text-white fw-bold position-relative"
+                                                        style={{
+                                                            width: '80px',
+                                                            height: '40px',
+                                                            background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
+                                                            borderRadius: '4px',
+                                                            fontSize: '10px'
+                                                        }}
+                                                    >
+                                                        {style.key.toUpperCase()}
+                                                    </div>
                                                     <span className="position-absolute top-0 start-0 bg-warning text-dark px-1" 
                                                           style={{ fontSize: '6px', borderRadius: '0 0 4px 0' }}>
                                                         NOT ROAD LEGAL
                                                     </span>
-                                                    NEON GEL
                                                 </div>
                                                 
                                                 <div className="flex-grow-1">
@@ -852,38 +855,6 @@ const PlateBuilder = () => {
                     </div>
                 );
 
-            case 'finish':
-                return (
-                    <div className="row g-3">
-                        <div className="col-12">
-                            <h6 className="fw-bold mb-3">Plate Finish</h6>
-                            {finishOptions.map((finish) => (
-                                <div key={finish.key} className="mb-2">
-                                    <div
-                                        onClick={() => setSelectedFinish(finish.key)}
-                                        className={`card border-2 cursor-pointer ${
-                                            selectedFinish === finish.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
-                                        }`}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        <div className="card-body p-3">
-                                            <div className="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h6 className="fw-bold mb-1">{finish.label}</h6>
-                                                    <p className="small text-muted mb-0">{finish.description}</p>
-                                                </div>
-                                                <span className="fw-bold fs-5">
-                                                    {finish.price === 0 ? 'Free' : `£${finish.price}`}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-
             default:
                 return (
                     <div className="text-center py-5">
@@ -945,7 +916,7 @@ const PlateBuilder = () => {
                         </button>
                         <button
                             onClick={nextTab}
-                            disabled={activeTab === 'finish'}
+                            disabled={activeTab === 'badge'} 
                             className="btn btn-warning text-dark flex-fill fw-bold"
                         >
                             NEXT
@@ -1084,7 +1055,62 @@ const PlateBuilder = () => {
                                 </div>
                             </div>
 
-                                        {/* Legal Checkbox */}
+                            {/* Complete Order Summary - Shows all details when on last tab */}
+                            {activeTab === 'badge' && (
+                                <div className="bg-light p-3 rounded mb-3">
+                                    <h6 className="fw-bold mb-3 text-dark">Complete Order Summary</h6>
+                                    <div className="small">
+                                        <div className="row mb-1">
+                                            <div className="col-6"><strong>Text:</strong></div>
+                                            <div className="col-6">{plateText}</div>
+                                        </div>
+                                        <div className="row mb-1">
+                                            <div className="col-6"><strong>Style:</strong></div>
+                                            <div className="col-6">{selected?.label}</div>
+                                        </div>
+                                        <div className="row mb-1">
+                                            <div className="col-6"><strong>Size:</strong></div>
+                                            <div className="col-6">{selectedSizeObj?.label}</div>
+                                        </div>
+                                        <div className="row mb-1">
+                                            <div className="col-6"><strong>Thickness:</strong></div>
+                                            <div className="col-6">{selectedThicknessObj?.label}</div>
+                                        </div>
+                                        <div className="row mb-1">
+                                            <div className="col-6"><strong>Font Color:</strong></div>
+                                            <div className="col-6">{selectedColorObj?.name}</div>
+                                        </div>
+                                        {selectedShadow !== 'none' && (
+                                            <div className="row mb-1">
+                                                <div className="col-6"><strong>Effect:</strong></div>
+                                                <div className="col-6">{selectedShadowObj?.name}</div>
+                                            </div>
+                                        )}
+                                        {selectedBorder !== 'none' && (
+                                            <div className="row mb-1">
+                                                <div className="col-6"><strong>Border:</strong></div>
+                                                <div className="col-6">{selectedBorderObj?.name}</div>
+                                            </div>
+                                        )}
+                                        {selectedFlag !== 'none' && (
+                                            <div className="row mb-1">
+                                                <div className="col-6"><strong>Badge:</strong></div>
+                                                <div className="col-6">{selectedFlagObj?.name} ({badgePosition})</div>
+                                            </div>
+                                        )}
+                                        <div className="row mb-1">
+                                            <div className="col-6"><strong>Spacing:</strong></div>
+                                            <div className="col-6">{spacing === 'own' ? "As typed" : 'Legal'}</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-6"><strong>Quantity:</strong></div>
+                                            <div className="col-6">{frontQuantity}F + {rearQuantity}R</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Legal Checkbox */}
                             <div className="form-check mb-3">
                                 <input 
                                     type="checkbox" 
@@ -1127,7 +1153,7 @@ const PlateBuilder = () => {
                                 )}
                             </button>
 
-                            {/* Cart Link, abhishek was here */}
+                            {/* Cart Link */}
                             {cartItemCount > 0 && (
                                 <div className="text-center mb-3">
                                     <button 
