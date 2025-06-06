@@ -1181,6 +1181,7 @@ import {
     finishOptions
 } from '../../config/PlateJson';
 import { addToCart, getCartItemCount } from '../Cart/cartUtils';
+import { useConfigurations } from '../../components/hooks/useConfigurations';
 
 const PlateBuilder = () => {
     // Load configurations from API
