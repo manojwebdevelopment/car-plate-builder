@@ -645,9 +645,9 @@ const PlatePreview = ({
 
   // Plate dimensions based on vehicle type - INCREASE width when badge is present
   const plateDimensions = {
-    "18-oblong": { width: 6.5, height: 1.7, depth: 0.03, scale: 1.1 },
-    "21-oblong": { width: 8.0, height: 1.7, depth: 0.03, scale: 1.1 },
-    "4x4": { width: 8.5, height: 1.7, depth: 0.03, scale: 1.1 },
+    "18-oblong": { width: 6.5, height: 1.5, depth: 0.03, scale: 1 },
+    "21-oblong": { width: 8.0, height: 1.5, depth: 0.03, scale: 1 },
+    "4x4": { width: 8.5, height: 1.5, depth: 0.03, scale: 1 },
   };
 
   const baseDimensions =
@@ -722,7 +722,7 @@ const PlatePreview = ({
     if (hasBadge) {
       // Text should be positioned in the usable area (inside the border frame)
       // Since border frame is offset, position text within that area
-      const frameOffsetX = badgePosition === "left" ? -0.4 : -1.5; // Offset text away from badge side plate text center 
+      const frameOffsetX = badgePosition === "left" ? -0.6 : -1.7; // Offset text away from badge side plate text center 
       xPosition = frameOffsetX - totalTextWidth / 2;
     } else {
       // No badge: center text perfectly on plate
@@ -844,12 +844,12 @@ const getLighting = () => {
 return (
 <>
 {/* Enhanced ambient light for overall brightness */}
-<ambientLight intensity={1} color="#ffffff" />
+<ambientLight intensity={4} color="#ffffff" />
 
 {/* PRIMARY FRONT LIGHT - Direct bright illumination */}
 <directionalLight
-position={[-12, -1, 20]} // Positioned directly in front
-intensity={0.8} // High intensity for bright effect
+position={[-7, -4, 60]} // Positioned directly in front
+intensity={0.15} // High intensity for bright effect
 castShadow
 color="#ffffff"
 shadow-mapSize-width={2048}
@@ -863,8 +863,8 @@ shadow-camera-bottom={-10}
 
 {/* SECONDARY FRONT LIGHT - Slightly angled for depth */}
 <directionalLight
-position={[1, 3, 20]}
-intensity={0.5}
+position={[6, 2, 30]}
+intensity={0.08}
 color="#ffffff"
 />
 
@@ -1193,8 +1193,8 @@ distance={12}
                 object={createRoundedBoxGeometry(
                   frameWidth + actualBorderWidth * 2.5,
                   frameHeight + actualBorderWidth * 2.5,
-                  0.012,
-                  0.065
+                  0.008,
+                  0.60
                 )}
               />
               <meshStandardMaterial
@@ -1218,7 +1218,7 @@ distance={12}
                   frameWidth + actualBorderWidth * 1.8,
                   frameHeight + actualBorderWidth * 1.8,
                   0.008,
-                  0.055
+                  0.55
                 )}
               />
               <meshStandardMaterial
@@ -1271,7 +1271,7 @@ distance={12}
     // Badge Z position - HIGHEST to show above everything including borders
     const badgeZ = is4dBorder
       ? dimensions.depth / 2 + 0.1
-      : dimensions.depth / 2 + 0.04;
+      : dimensions.depth / 2 + 0.01;
     const position = [xPosition, 0, badgeZ];
 
     return (
@@ -1320,7 +1320,7 @@ distance={12}
     position={[
       position[0], // X
       position[1] + badgeHeight * 0.18, // Y
-      position[2] + 0.06, // Z (on top of badge background)
+      position[2] + 0.04, // Z (on top of badge background)
     ]}
   >
     <planeGeometry args={[badgeWidth * 0.82, badgeHeight * 0.48]} />
@@ -1442,15 +1442,17 @@ distance={12}
   };
 
   const cameraDistance =
-    Math.max(dimensions.width, dimensions.height) * 0.8 + 4;
+    Math.max(dimensions.width, dimensions.height) * 0.8 + 2;
 
   return (
     <Canvas
       style={{
-        height: "450px",
-        background:
-          "linear-gradient(135deg, rgb(249, 237, 77) 0%, #e9ecef 100%)",
-        borderRadius: "10px",
+        height: "300px",
+        // background:
+        //   "linear-gradient(135deg, rgb(238, 237, 232) 0%, #e9ecef 100%)",
+        // borderRadius: "10px",
+        backgroundColor: "#ffffff", // Light background for contrast
+        border: "2px solid #FFD320",
       }}
       camera={{ position: [0, 0, cameraDistance], fov: 35 }}
       shadows

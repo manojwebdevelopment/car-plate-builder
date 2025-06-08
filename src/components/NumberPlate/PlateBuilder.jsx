@@ -26,7 +26,7 @@ const PlateBuilder = () => {
     const navigate = useNavigate();
 
     // State management - all plate configuration
-    const [plateText, setPlateText] = useState('REG1234');
+    const [plateText, setPlateText] = useState('YOUR REG');
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -295,7 +295,7 @@ const PlateBuilder = () => {
     };
 
     const resetAll = () => {
-        setPlateText('GHELLO');
+        setPlateText('YOUR REG');
         setSpacing('own');
         setSelectedStyle('standard');
         setSelectedFontColor('#000000');
@@ -345,7 +345,7 @@ const PlateBuilder = () => {
             '4d-neon-gel-orange': 'NEON GEL',
             '4d-neon-gel-white': 'NEON GEL'
         };
-        return styleImages[styleKey] || 'STYLE';
+        return styleImages[styleKey] || 'images/';
     };
 
     const getStyleColor = (styleKey) => {
@@ -998,7 +998,7 @@ const PlateBuilder = () => {
     };
 
     return (
-        <div className="container-fluid bg-light min-vh-100">
+        <div className="container bg-light min-vh-100">
             {/* Top Tab Navigation */}
             <div className="row g-0 bg-white shadow-sm">
                 {tabs.map((tab) => {
@@ -1060,7 +1060,7 @@ const PlateBuilder = () => {
 
                 {/* Center Panel - Preview */}
                 <div className="col-lg-6">
-                    <div className="card border-0 shadow-sm">
+                    <div className="card border-1 shadow-sm">
                         <div className="card-header bg-warning text-dark fw-bold">
                             <div className="d-flex align-items-center justify-content-between">
                                 <div className="d-flex align-items-center">
@@ -1221,7 +1221,7 @@ const PlateBuilder = () => {
                                     transition: 'all 0.3s ease'
                                 }}
                             >
-                                <ShoppingCart className="me-2" size={20} />
+                                <ShoppingCart className="me-2" size={10} />
                                 {isLegalCheckboxChecked ? (
                                     <>ADD TO BASKET - £{totalPrice.toFixed(2)}</>
                                 ) : (
