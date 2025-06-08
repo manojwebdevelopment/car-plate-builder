@@ -594,9 +594,8 @@
 
 // export default PlatePreview;
 
-
 import React from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls, Text3D } from "@react-three/drei";
 import * as THREE from "three";
 import {
@@ -639,7 +638,7 @@ const PlatePreview = ({
 
   // Get border configuration for Z-index calculations
   const selectedBorderObj = borderOptions.find((b) => b.key === borderStyle);
-  const is4dBorder = selectedBorderObj?.type === '4d';
+  const is4dBorder = selectedBorderObj?.type === "4d";
 
   // Check if badge is present
   const hasBadge = selectedCountry !== "none" && countryBadge !== "none";
@@ -651,12 +650,13 @@ const PlatePreview = ({
     "4x4": { width: 8.5, height: 1.7, depth: 0.03, scale: 1.1 },
   };
 
-  const baseDimensions = plateDimensions[selectedSize] || plateDimensions["18-oblong"];
-  
+  const baseDimensions =
+    plateDimensions[selectedSize] || plateDimensions["18-oblong"];
+
   // INCREASE plate width when badge is present - to accommodate badge outside border
   const dimensions = {
     ...baseDimensions,
-    width: hasBadge ? baseDimensions.width : baseDimensions.width // Add extra width for badge
+    width: hasBadge ? baseDimensions.width : baseDimensions.width, // Add extra width for badge
   };
 
   // Custom rounded box geometry function
@@ -691,7 +691,7 @@ const PlatePreview = ({
   const calculateFontSize = () => {
     const baseSize = selectedPlateObj?.fontSize || 0.85;
     const textLength = text.length;
-    
+
     // Calculate available width for text (badge is outside so doesn't affect text space)
     let availableWidth = dimensions.width - 0.4; // Base margins only
 
@@ -718,20 +718,20 @@ const PlatePreview = ({
     const totalTextWidth = text.length * estimatedCharWidth;
 
     let xPosition = 0;
-    
+
     if (hasBadge) {
       // Text should be positioned in the usable area (inside the border frame)
       // Since border frame is offset, position text within that area
-      const frameOffsetX = badgePosition === "left" ? -0.4 : -0.3; // Offset text away from badge side
-      xPosition = frameOffsetX - (totalTextWidth / 2);
+      const frameOffsetX = badgePosition === "left" ? -0.4 : -1.5; // Offset text away from badge side plate text center 
+      xPosition = frameOffsetX - totalTextWidth / 2;
     } else {
       // No badge: center text perfectly on plate
-      xPosition = -(totalTextWidth / 1);
+      xPosition = -(totalTextWidth / 1.1);
     }
 
     // CRITICAL FIX: Elevate text Z-position for 4D borders to appear above the raised frame
     const baseZ = dimensions.depth / 2 + 0.015;
-    const textZ = is4dBorder ? baseZ + 0.080 : baseZ; // Much higher Z for 4D borders
+    const textZ = is4dBorder ? baseZ + 0.08 : baseZ; // Much higher Z for 4D borders
 
     return [xPosition, -0.28, textZ];
   };
@@ -739,105 +739,177 @@ const PlatePreview = ({
   const textPosition = getTextPosition();
 
   // Enhanced lighting function - FIXED for all border types
-  const getLighting = () => {
-    const selectedBorderObj = borderOptions.find((b) => b.key === borderStyle);
-    const isCrystalBorder = selectedBorderObj?.type === 'crystal';
-    
-    return (
-      <>
-        {/* Base ambient light - REDUCED to prevent unwanted shadows */}
-        <ambientLight intensity={0.6} color="#ffffff" />
-        
-        {/* Primary directional light - OPTIMIZED positioning */}
-        <directionalLight
-          position={[0, 8, 12]}
-          intensity={1.0}
-          castShadow={false} // DISABLED shadows to fix back plate issue
-          color="#ffffff"
-        />
-        
-        {/* Secondary light for depth - NO shadows */}
-        <directionalLight 
-          position={[-3, 4, 8]} 
-          intensity={0.5} 
-          color="#ffffff" 
-          castShadow={false}
-        />
-        
-        {/* Top light for text definition - NO shadows */}
-        <directionalLight 
-          position={[0, 10, 6]} 
-          intensity={0.7} 
-          color="#ffffff" 
-          castShadow={false}
-        />
-        
-        {/* Side fill lights - NO shadows */}
-        <directionalLight 
-          position={[8, 0, 4]} 
-          intensity={0.3} 
-          color="#ffffff" 
-          castShadow={false}
-        />
-        <directionalLight 
-          position={[-8, 0, 4]} 
-          intensity={0.3} 
-          color="#ffffff" 
-          castShadow={false}
-        />
-        
-        {/* Crystal-specific lighting effects - ONLY for crystal borders */}
-        {isCrystalBorder && (
-          <>
-            <pointLight
-              position={[0, 0, 2]}
-              intensity={0.6}
-              color={selectedBorderObj.color}
-              distance={4}
-              decay={1.5}
-            />
-            <pointLight
-              position={[0.5, 0.3, 1.5]}
-              intensity={0.4}
-              color={selectedBorderObj.color}
-              distance={3}
-              decay={1.5}
-            />
-            <pointLight
-              position={[-0.5, -0.3, 1.5]}
-              intensity={0.4}
-              color={selectedBorderObj.color}
-              distance={3}
-              decay={1.5}
-            />
-          </>
-        )}
-        
-        {/* Standard point lights for general illumination - NO shadows */}
-        <pointLight 
-          position={[0, 0, 6]} 
-          intensity={0.5} 
-          color="#ffffff" 
-          distance={15}
-          castShadow={false}
-        />
-        <pointLight 
-          position={[2, 2, 4]} 
-          intensity={0.3} 
-          color="#ffffff" 
-          distance={12}
-          castShadow={false}
-        />
-        <pointLight 
-          position={[-2, 2, 4]} 
-          intensity={0.3} 
-          color="#ffffff" 
-          distance={12}
-          castShadow={false}
-        />
-      </>
-    );
-  };
+  // const getLighting = () => {
+  //   const selectedBorderObj = borderOptions.find((b) => b.key === borderStyle);
+  //   const isCrystalBorder = selectedBorderObj?.type === "crystal";
+
+  //   return (
+  //     <>
+  //       {/* Base ambient light - REDUCED to prevent unwanted shadows */}
+  //       <ambientLight intensity={0.6} color="#ffffff" />
+
+  //       {/* Primary directional light - OPTIMIZED positioning */}
+  //       <directionalLight
+  //         position={[0, 8, 12]}
+  //         intensity={1.0}
+  //         castShadow={false} // DISABLED shadows to fix back plate issue
+  //         color="#ffffff"
+  //       />
+
+  //       {/* Secondary light for depth - NO shadows */}
+  //       <directionalLight
+  //         position={[-3, 4, 8]}
+  //         intensity={0.5}
+  //         color="#ffffff"
+  //         castShadow={false}
+  //       />
+
+  //       {/* Top light for text definition - NO shadows */}
+  //       <directionalLight
+  //         position={[0, 10, 6]}
+  //         intensity={0.7}
+  //         color="#ffffff"
+  //         castShadow={false}
+  //       />
+
+  //       {/* Side fill lights - NO shadows */}
+  //       <directionalLight
+  //         position={[8, 0, 4]}
+  //         intensity={0.3}
+  //         color="#ffffff"
+  //         castShadow={false}
+  //       />
+  //       <directionalLight
+  //         position={[-8, 0, 4]}
+  //         intensity={0.3}
+  //         color="#ffffff"
+  //         castShadow={false}
+  //       />
+
+  //       {/* Crystal-specific lighting effects - ONLY for crystal borders */}
+  //       {isCrystalBorder && (
+  //         <>
+  //           <pointLight
+  //             position={[0, 0, 2]}
+  //             intensity={0.6}
+  //             color={selectedBorderObj.color}
+  //             distance={4}
+  //             decay={1.5}
+  //           />
+  //           <pointLight
+  //             position={[0.5, 0.3, 1.5]}
+  //             intensity={0.4}
+  //             color={selectedBorderObj.color}
+  //             distance={3}
+  //             decay={1.5}
+  //           />
+  //           <pointLight
+  //             position={[-0.5, -0.3, 1.5]}
+  //             intensity={0.4}
+  //             color={selectedBorderObj.color}
+  //             distance={3}
+  //             decay={1.5}
+  //           />
+  //         </>
+  //       )}
+
+  //       {/* Standard point lights for general illumination - NO shadows */}
+  //       <pointLight
+  //         position={[0, 0, 6]}
+  //         intensity={0.5}
+  //         color="#ffffff"
+  //         distance={15}
+  //         castShadow={false}
+  //       />
+  //       <pointLight
+  //         position={[2, 2, 4]}
+  //         intensity={0.3}
+  //         color="#ffffff"
+  //         distance={12}
+  //         castShadow={false}
+  //       />
+  //       <pointLight
+  //         position={[-2, 2, 4]}
+  //         intensity={0.3}
+  //         color="#ffffff"
+  //         distance={12}
+  //         castShadow={false}
+  //       />
+  //     </>
+  //   );
+  // };
+  
+// Enhanced lighting function for bright front illumination
+const getLighting = () => {
+return (
+<>
+{/* Enhanced ambient light for overall brightness */}
+<ambientLight intensity={1} color="#ffffff" />
+
+{/* PRIMARY FRONT LIGHT - Direct bright illumination */}
+<directionalLight
+position={[-12, -1, 20]} // Positioned directly in front
+intensity={0.8} // High intensity for bright effect
+castShadow
+color="#ffffff"
+shadow-mapSize-width={2048}
+shadow-mapSize-height={2048}
+shadow-camera-far={50}
+shadow-camera-left={-10}
+shadow-camera-right={10}
+shadow-camera-top={10}
+shadow-camera-bottom={-10}
+/>
+
+{/* SECONDARY FRONT LIGHT - Slightly angled for depth */}
+<directionalLight
+position={[1, 3, 20]}
+intensity={0.5}
+color="#ffffff"
+/>
+
+{/* TOP LIGHT - For text definition */}
+<directionalLight
+position={[0, 80, 4]} // Positioned above for top-down lighting
+intensity={1.2}
+color="#ffffff"
+/>
+
+{/* SIDE LIGHTS - For even illumination */}
+<directionalLight
+position={[-20, -5, -80]}
+intensity={2}
+color="#ffffff"
+
+/>
+<directionalLight
+position={[-4, 2, 5]} // Positioned to the side for additional lighting
+intensity={0.8}
+color="#ffffff"
+/>
+
+{/* POINT LIGHTS - For additional brightness */}
+<pointLight
+position={[0, 0, 6]}
+intensity={1.0}
+color="#ffffff"
+distance={15}
+/>
+<pointLight
+position={[2, 2, 4]} // Positioned to the side for additional lighting
+intensity={0.8}
+color="#ffffff"
+distance={12}
+/>
+<pointLight
+position={[-2, 2, 4]} // Positioned to the side for additional lighting
+intensity={0.8}
+color="#ffffff"
+distance={12}
+/>
+</>
+);
+};
 
   // PLATE FRAME BORDER RENDERING - Frame style around entire plate, adjusted for badge
   const renderPlateFrameBorder = () => {
@@ -849,7 +921,7 @@ const PlatePreview = ({
     const borderColor = selectedBorderObj.color;
     const borderType = selectedBorderObj.type;
     const borderWidth = (selectedBorderObj.borderWidth || 2) * 0.02; // Border thickness
-    
+
     if (borderColor === "transparent") return null;
 
     // FRAME MARGINS - adjust margins to leave space for badge outside
@@ -857,7 +929,7 @@ const PlatePreview = ({
     const marginBottom = 0.15;
     let marginLeft = 0.2;
     let marginRight = 0.2;
-    
+
     if (hasBadge) {
       // Reduce margin on badge side to accommodate badge outside border
       if (badgePosition === "right") {
@@ -870,14 +942,17 @@ const PlatePreview = ({
     // FRAME DIMENSIONS - plate size minus margins
     const frameWidth = dimensions.width - marginLeft - marginRight;
     const frameHeight = dimensions.height - marginTop - marginBottom;
-    
+
     // FRAME POSITION - offset frame to center the usable area
-    const frameOffsetX = hasBadge ? 
-      (badgePosition === "left" ? (marginLeft - marginRight) / 2 : (marginRight - marginLeft) / 2) : 0;
+    const frameOffsetX = hasBadge
+      ? badgePosition === "left"
+        ? (marginLeft - marginRight) / 2
+        : (marginRight - marginLeft) / 2
+      : 0;
 
     // ENHANCED material properties for frame borders
     const getBorderMaterial = () => {
-      if (borderType === 'crystal') {
+      if (borderType === "crystal") {
         return {
           color: borderColor,
           metalness: 0.8,
@@ -888,9 +963,9 @@ const PlatePreview = ({
           emissive: borderColor,
           emissiveIntensity: 0.2,
           transparent: false,
-          opacity: 1.0
+          opacity: 1.0,
         };
-      } else if (borderType === '4d') {
+      } else if (borderType === "4d") {
         return {
           color: borderColor,
           metalness: 0.2,
@@ -899,9 +974,9 @@ const PlatePreview = ({
           clearcoatRoughness: 0.1,
           envMapIntensity: 0.8,
           emissive: borderColor,
-          emissiveIntensity: 0.1
+          emissiveIntensity: 0.1,
         };
-      } else if (borderType === 'printed') {
+      } else if (borderType === "printed") {
         return {
           color: borderColor,
           metalness: 0.05,
@@ -910,7 +985,7 @@ const PlatePreview = ({
           clearcoatRoughness: 0.5,
           envMapIntensity: 0.4,
           emissive: borderColor,
-          emissiveIntensity: 0.08
+          emissiveIntensity: 0.08,
         };
       } else {
         // Standard borders
@@ -921,7 +996,7 @@ const PlatePreview = ({
           clearcoat: 0.5,
           envMapIntensity: 0.6,
           emissive: borderColor,
-          emissiveIntensity: 0.1
+          emissiveIntensity: 0.1,
         };
       }
     };
@@ -937,13 +1012,13 @@ const PlatePreview = ({
           receiveShadow={false}
           castShadow={false}
         >
-          <primitive 
+          <primitive
             object={createRoundedBoxGeometry(
-              frameWidth + (actualBorderWidth * 2),
-              frameHeight + (actualBorderWidth * 2),
+              frameWidth + actualBorderWidth * 2,
+              frameHeight + actualBorderWidth * 2,
               0.025, // Frame thickness
-              0.06
-            )} 
+              0.08
+            )}
           />
           <meshStandardMaterial {...borderMaterial} />
         </mesh>
@@ -954,13 +1029,13 @@ const PlatePreview = ({
           receiveShadow={false}
           castShadow={false}
         >
-          <primitive 
+          <primitive
             object={createRoundedBoxGeometry(
               frameWidth,
               frameHeight,
-              0.030, // Thick cutout
+              0.03, // Thick cutout
               0.05
-            )} 
+            )}
           />
           <meshStandardMaterial
             color={plateColor}
@@ -975,7 +1050,7 @@ const PlatePreview = ({
         </mesh>
 
         {/* CRYSTAL FRAME EFFECTS with offset */}
-        {borderType === 'crystal' && (
+        {borderType === "crystal" && (
           <>
             {/* Primary glow around frame */}
             <mesh
@@ -983,13 +1058,13 @@ const PlatePreview = ({
               receiveShadow={false}
               castShadow={false}
             >
-              <primitive 
+              <primitive
                 object={createRoundedBoxGeometry(
-                  frameWidth + (actualBorderWidth * 6),
-                  frameHeight + (actualBorderWidth * 6),
+                  frameWidth + actualBorderWidth * 6,
+                  frameHeight + actualBorderWidth * 6,
                   0.008,
-                  0.08
-                )} 
+                  0.3
+                )}
               />
               <meshStandardMaterial
                 color={borderColor}
@@ -999,20 +1074,20 @@ const PlatePreview = ({
                 emissiveIntensity={0.5}
               />
             </mesh>
-            
+
             {/* Secondary inner glow */}
             <mesh
               position={[frameOffsetX, 0, dimensions.depth / 2 + 0.006]}
               receiveShadow={false}
               castShadow={false}
             >
-              <primitive 
+              <primitive
                 object={createRoundedBoxGeometry(
-                  frameWidth + (actualBorderWidth * 3),
-                  frameHeight + (actualBorderWidth * 3),
-                  0.010,
-                  0.07
-                )} 
+                  frameWidth + actualBorderWidth * 3,
+                  frameHeight + actualBorderWidth * 3,
+                  0.01,
+                  0.10
+                )}
               />
               <meshStandardMaterial
                 color={borderColor}
@@ -1026,7 +1101,7 @@ const PlatePreview = ({
         )}
 
         {/* 4D RAISED FRAME EFFECT with offset */}
-        {borderType === '4d' && (
+        {borderType === "4d" && (
           <>
             {/* 4D Raised border frame */}
             <mesh
@@ -1034,13 +1109,13 @@ const PlatePreview = ({
               receiveShadow={false}
               castShadow={false}
             >
-              <primitive 
+              <primitive
                 object={createRoundedBoxGeometry(
-                  frameWidth + (actualBorderWidth * 2),
-                  frameHeight + (actualBorderWidth * 2),
+                  frameWidth + actualBorderWidth * 2,
+                  frameHeight + actualBorderWidth * 2,
                   actualBorderWidth * 0.8, // REDUCED from 1.5 to 0.8 - less thick
                   0.06
-                )} 
+                )}
               />
               <meshStandardMaterial
                 color={borderColor}
@@ -1056,17 +1131,17 @@ const PlatePreview = ({
 
             {/* 4D Inner cutout */}
             <mesh
-              position={[frameOffsetX, 0, dimensions.depth / 2 + 0.020]}
+              position={[frameOffsetX, 0, dimensions.depth / 2 + 0.02]}
               receiveShadow={false}
               castShadow={false}
             >
-              <primitive 
+              <primitive
                 object={createRoundedBoxGeometry(
                   frameWidth,
                   frameHeight,
                   actualBorderWidth * 1.0, // REDUCED from 2.0 to 1.0
                   0.05
-                )} 
+                )}
               />
               <meshStandardMaterial
                 color={plateColor}
@@ -1083,7 +1158,7 @@ const PlatePreview = ({
         )}
 
         {/* ENHANCED FRAME for printed/standard borders with offset */}
-        {(borderType === 'printed' || borderType === 'standard') && (
+        {(borderType === "printed" || borderType === "standard") && (
           <>
             {/* Primary glow effect like crystal */}
             <mesh
@@ -1091,13 +1166,13 @@ const PlatePreview = ({
               receiveShadow={false}
               castShadow={false}
             >
-              <primitive 
+              <primitive
                 object={createRoundedBoxGeometry(
-                  frameWidth + (actualBorderWidth * 4),
-                  frameHeight + (actualBorderWidth * 4),
+                  frameWidth + actualBorderWidth * 4,
+                  frameHeight + actualBorderWidth * 4,
                   0.008,
-                  0.08
-                )} 
+                  0.10
+                )}
               />
               <meshStandardMaterial
                 color={borderColor}
@@ -1114,13 +1189,13 @@ const PlatePreview = ({
               receiveShadow={false}
               castShadow={false}
             >
-              <primitive 
+              <primitive
                 object={createRoundedBoxGeometry(
-                  frameWidth + (actualBorderWidth * 2.5),
-                  frameHeight + (actualBorderWidth * 2.5),
+                  frameWidth + actualBorderWidth * 2.5,
+                  frameHeight + actualBorderWidth * 2.5,
                   0.012,
                   0.065
-                )} 
+                )}
               />
               <meshStandardMaterial
                 color={borderColor}
@@ -1131,20 +1206,20 @@ const PlatePreview = ({
                 emissiveIntensity={0.15}
               />
             </mesh>
-            
+
             {/* Inner definition line */}
             <mesh
-              position={[frameOffsetX, 0, dimensions.depth / 2 + 0.020]}
+              position={[frameOffsetX, 0, dimensions.depth / 2 + 0.02]}
               receiveShadow={false}
               castShadow={false}
             >
-              <primitive 
+              <primitive
                 object={createRoundedBoxGeometry(
-                  frameWidth + (actualBorderWidth * 1.8),
-                  frameHeight + (actualBorderWidth * 1.8),
+                  frameWidth + actualBorderWidth * 1.8,
+                  frameHeight + actualBorderWidth * 1.8,
                   0.008,
                   0.055
-                )} 
+                )}
               />
               <meshStandardMaterial
                 color={borderColor}
@@ -1174,10 +1249,12 @@ const PlatePreview = ({
     const flagData = flagOptions[selectedCountry]?.find(
       (f) => f.key === countryBadge
     );
+
     if (!flagData) return null;
 
-    const flagText = countryBadge === "custom-upload" ? customFlagText : flagData.text;
-    
+    const flagText =
+      countryBadge === "custom-upload" ? customFlagText : flagData.text;
+
     // Badge dimensions like reference images
     const badgeWidth = 1.0 * dimensions.scale;
     const badgeHeight = dimensions.height * 0.85; // Slightly smaller than plate height
@@ -1185,14 +1262,16 @@ const PlatePreview = ({
     // POSITION OUTSIDE the border frame, in the margin area we created
     const plateEdgeDistance = dimensions.width / 2;
     const badgeDistance = plateEdgeDistance - 0.7; // Position in the margin area
-    
+
     const xPosition =
       badgePosition === "right"
         ? badgeDistance // Right side, in the right margin
         : -badgeDistance; // Left side, in the left margin
 
     // Badge Z position - HIGHEST to show above everything including borders
-    const badgeZ = is4dBorder ? dimensions.depth / 2 + 0.100 : dimensions.depth / 2 + 0.040;
+    const badgeZ = is4dBorder
+      ? dimensions.depth / 2 + 0.1
+      : dimensions.depth / 2 + 0.04;
     const position = [xPosition, 0, badgeZ];
 
     return (
@@ -1200,7 +1279,12 @@ const PlatePreview = ({
         {/* Badge background - OUTSIDE border frame, in margin area */}
         <mesh position={position}>
           <primitive
-            object={createRoundedBoxGeometry(badgeWidth, badgeHeight, 0.025, 0.04)} 
+            object={createRoundedBoxGeometry(
+              badgeWidth,
+              badgeHeight,
+              0.025,
+              0.04
+            )}
           />
           <meshStandardMaterial
             color={badgeBorderColor}
@@ -1231,48 +1315,101 @@ const PlatePreview = ({
         </mesh>
 
         {/* Flag image - CENTERED in flag area */}
-        {flagData.flagImage && (
+{flagData.flagImage && (
+  <mesh
+    position={[
+      position[0], // X
+      position[1] + badgeHeight * 0.18, // Y
+      position[2] + 0.06, // Z (on top of badge background)
+    ]}
+  >
+    <planeGeometry args={[badgeWidth * 0.82, badgeHeight * 0.48]} />
+    <meshBasicMaterial
+      attach="material"
+      transparent={true}
+      toneMapped={false} // ✅ Fix white blur
+      side={THREE.DoubleSide} // ✅ Show on both sides
+      map={(() => {
+        const texture = new THREE.TextureLoader().load(flagData.flagImage);
+        // texture.flipY = false; // ✅ Correct orientation
+        texture.encoding = THREE.sRGBEncoding; // ✅ Preserve original color
+        return texture;
+      })()}
+    />
+  </mesh>
+)}
+
+
+
+        {/* {flagData.flagImage && (
           <mesh
             position={[
-              position[0], // Centered horizontally
-              position[1] + badgeHeight * 0.18, // Same as flag area
-              position[2] + 0.020, // Above flag area
+              position[0], // X
+              position[1] + badgeHeight * 0.18, // Y
+              position[2] + 0.05, // ✅ Z (above background & border)
             ]}
           >
             <planeGeometry args={[badgeWidth * 0.82, badgeHeight * 0.48]} />
             <meshBasicMaterial transparent={true}>
               <primitive
                 object={(() => {
-                  const texture = new THREE.TextureLoader().load(flagData.flagImage);
-                  texture.flipY = false;
+                  const texture = new THREE.TextureLoader().load(
+                    flagData.flagImage
+                  );
+                  // texture.flipY = false;
+                  // texture.encoding = THREE.sRGBEncoding;
                   return texture;
                 })()}
                 attach="map"
               />
             </meshBasicMaterial>
           </mesh>
-        )}
+        )} */}
 
         {/* Custom flag image - CENTERED */}
-        {countryBadge === "custom-upload" && customFlagImage && (
+        {/* {countryBadge === "custom-upload" && customFlagImage && (
           <mesh
-            position={[
-              position[0], // Centered horizontally
-              position[1] + badgeHeight * 0.18,
-              position[2] + 0.020, // Above flag area
-            ]}
+           position={[
+    position[0],                             // X
+    position[1] + badgeHeight * 0.18,        // Y
+    position[2] + 0.05,                      // ✅ Z (above background & border)
+  ]}
           >
             <planeGeometry args={[badgeWidth * 0.78, badgeHeight * 0.44]} />
             <meshBasicMaterial transparent={true}>
               <primitive
                 object={(() => {
                   const texture = new THREE.TextureLoader().load(customFlagImage);
-                  texture.flipY = false;
+                  // texture.flipY = false;
+                  texture.encoding = THREE.sRGBEncoding;
                   return texture;
                 })()}
                 attach="map"
               />
             </meshBasicMaterial>
+          </mesh>
+        )} */}
+        {countryBadge === "custom-upload" && customFlagImage && (
+          <mesh
+            position={[
+              position[0], // X
+              position[1] + badgeHeight * 0.18, // Y
+              position[2] + 0.06, // ✅ Z (above everything)
+            ]}
+          >
+            <planeGeometry args={[badgeWidth * 0.78, badgeHeight * 0.44]} />
+            <meshBasicMaterial
+              attach="material"
+              transparent={true}
+              toneMapped={false} // ✅ Prevents white blur
+              side={THREE.DoubleSide} // ✅ Ensures it renders from both sides
+              map={(() => {
+                const texture = new THREE.TextureLoader().load(customFlagImage);
+                // texture.flipY = false;              // ✅ Keep orientation correct
+                texture.encoding = THREE.sRGBEncoding; // ✅ Keeps original image color
+                return texture;
+              })()}
+            />
           </mesh>
         )}
 
@@ -1282,16 +1419,16 @@ const PlatePreview = ({
           size={0.15 * dimensions.scale} // Appropriate text size for badge
           height={0.015} // Good thickness
           position={[
-            position[0] - (flagText.length * 0.075 * dimensions.scale) / 2, // PERFECT CENTER
+            position[0] - (flagText.length * 0.075 * dimensions.scale) / 1.1, // PERFECT CENTER
             position[1] - badgeHeight * 0.26, // Bottom portion of badge
-            position[2] + 0.020, // Above badge background
+            position[2] + 0.02, // Above badge background
           ]}
           bevelEnabled={true}
           bevelThickness={0.003}
           bevelSize={0.002}
         >
           {flagText}
-          <meshStandardMaterial 
+          <meshStandardMaterial
             color={customTextColor || "#FFFFFF"} // White text like reference
             metalness={0.1}
             roughness={0.3}
@@ -1304,13 +1441,15 @@ const PlatePreview = ({
     );
   };
 
-  const cameraDistance = Math.max(dimensions.width, dimensions.height) * 0.8 + 4;
+  const cameraDistance =
+    Math.max(dimensions.width, dimensions.height) * 0.8 + 4;
 
   return (
     <Canvas
       style={{
         height: "450px",
-        background: "linear-gradient(135deg, rgb(249, 237, 77) 0%, #e9ecef 100%)",
+        background:
+          "linear-gradient(135deg, rgb(249, 237, 77) 0%, #e9ecef 100%)",
         borderRadius: "10px",
       }}
       camera={{ position: [0, 0, cameraDistance], fov: 35 }}
