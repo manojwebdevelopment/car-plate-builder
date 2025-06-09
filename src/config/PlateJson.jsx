@@ -429,7 +429,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.05 // 3mm default
+        thickness: 0.01, // 3mm default
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     // 3D Gel variants with different thicknesses
     {
@@ -441,7 +442,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.05
+        thickness: 0.05,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '3d-gel-5mm',
@@ -452,7 +454,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     // 4D Gel variants with different thicknesses
     {
@@ -464,7 +467,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.05
+        thickness: 0.03,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-gel-5mm',
@@ -475,7 +479,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     // 4D Crystal variants with different thicknesses and colors
     {
@@ -487,7 +492,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#00FF00',
-        thickness: 0.05
+        thickness: 0.05,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-crystal-green-5mm',
@@ -498,7 +504,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#00FF00',
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-crystal-red-3mm',
@@ -509,7 +516,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#FF0000',
-        thickness: 0.05
+        thickness: 0.05,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-crystal-red-5mm',
@@ -520,7 +528,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#FF0000',
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-crystal-blue-3mm',
@@ -531,7 +540,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#0066CC',
-        thickness: 0.05
+        thickness: 0.05,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-crystal-blue-5mm',
@@ -542,7 +552,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#0066CC',
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     // 4D Neon Gel variants with different thicknesses and colors
     {
@@ -554,7 +565,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#00FF00',
-        thickness: 0.05
+        thickness: 0.05,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-neon-gel-green-5mm',
@@ -565,7 +577,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#00FF00',
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-neon-gel-red-3mm',
@@ -576,7 +589,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#FF0000',
-        thickness: 0.05
+        thickness: 0.05,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '4d-neon-gel-red-5mm',
@@ -587,7 +601,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: '#FF0000',
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: '5d-gel-5mm',
@@ -598,7 +613,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: 'laser-cut-3mm',
@@ -609,7 +625,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.05
+        thickness: 0.05,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     },
     {
         key: 'carbon-fiber-5mm',
@@ -620,7 +637,8 @@ export const plateStyles = [
         fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontSize: 0.65,
         outlineColor: null,
-        thickness: 0.10
+        thickness: 0.10,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
     }
 ];
 
@@ -646,54 +664,315 @@ export const shadowOptions = [
 
 // Updated border options - proper text area borders with margins
 export const borderOptions = [
-    { key: 'none', name: 'No Border', price: 0, color: 'transparent', type: 'none', borderWidth: 0 },
+    { 
+        key: 'none', 
+        name: 'No Border', 
+        price: 0, 
+        color: 'transparent', 
+        type: 'none', 
+        borderWidth: 0,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
     
     // 4D Functional Borders (only 3mm and 5mm border width, not thickness)
-    { key: '4d-black-3mm', name: '4D Black 3mm Border', price: 3.99, color: '#000000', type: '4d', borderWidth: 3 },
-    { key: '4d-black-5mm', name: '4D Black 5mm Border', price: 5.99, color: '#000000', type: '4d', borderWidth: 5 },
+    { 
+        key: '4d-black-3mm', 
+        name: '4D Black 3mm Border', 
+        price: 3.99, 
+        color: '#000000', 
+        type: '4d', 
+        borderWidth: 3,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: '4d-black-5mm', 
+        name: '4D Black 5mm Border', 
+        price: 5.99, 
+        color: '#000000', 
+        type: '4d', 
+        borderWidth: 5,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
     
     // Printed Borders - various colors
-    { key: 'printed-black', name: 'Printed Black Border', price: 3.99, color: '#000000', type: 'printed', borderWidth: 2 },
-    { key: 'printed-blue', name: 'Printed Blue Border', price: 4.99, color: '#0000FF', type: 'printed', borderWidth: 2 },
-    { key: 'printed-red', name: 'Printed Red Border', price: 4.99, color: '#FF0000', type: 'printed', borderWidth: 2 },
-    { key: 'printed-green', name: 'Printed Green Border', price: 4.99, color: '#00FF00', type: 'printed', borderWidth: 2 },
-    { key: 'printed-orange', name: 'Printed Orange Border', price: 4.99, color: '#FF8C00', type: 'printed', borderWidth: 2 },
-    { key: 'printed-white', name: 'Printed White Border', price: 3.99, color: '#FFFFFF', type: 'printed', borderWidth: 2 },
-    { key: 'printed-gold', name: 'Printed Gold Border', price: 6.99, color: '#FFD700', type: 'printed', borderWidth: 2 },
-    { key: 'printed-silver', name: 'Printed Silver Border', price: 5.99, color: '#C0C0C0', type: 'printed', borderWidth: 2 },
+    { 
+        key: 'printed-black', 
+        name: 'Printed Black Border', 
+        price: 3.99, 
+        color: '#000000', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'printed-blue', 
+        name: 'Printed Blue Border', 
+        price: 4.99, 
+        color: '#0000FF', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'printed-red', 
+        name: 'Printed Red Border', 
+        price: 4.99, 
+        color: '#FF0000', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'printed-green', 
+        name: 'Printed Green Border', 
+        price: 4.99, 
+        color: '#00FF00', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'printed-orange', 
+        name: 'Printed Orange Border', 
+        price: 4.99, 
+        color: '#FF8C00', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'printed-white', 
+        name: 'Printed White Border', 
+        price: 3.99, 
+        color: '#FFFFFF', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'printed-gold', 
+        name: 'Printed Gold Border', 
+        price: 6.99, 
+        color: '#FFD700', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'printed-silver', 
+        name: 'Printed Silver Border', 
+        price: 5.99, 
+        color: '#C0C0C0', 
+        type: 'printed', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
     
     // Crystal Borders - with glow effects
-    { key: 'crystal-blue', name: 'Crystal Blue Border', price: 7.99, color: '#0066CC', type: 'crystal', borderWidth: 3 },
-    { key: 'crystal-green', name: 'Crystal Green Border', price: 7.99, color: '#00FF00', type: 'crystal', borderWidth: 3 },
-    { key: 'crystal-red', name: 'Crystal Red Border', price: 7.99, color: '#FF0000', type: 'crystal', borderWidth: 3 },
-    { key: 'crystal-orange', name: 'Crystal Orange Border', price: 7.99, color: '#FF8C00', type: 'crystal', borderWidth: 3 },
-    { key: 'crystal-purple', name: 'Crystal Purple Border', price: 7.99, color: '#800080', type: 'crystal', borderWidth: 3 },
-    { key: 'crystal-white', name: 'Crystal White Border', price: 7.99, color: '#FFFFFF', type: 'crystal', borderWidth: 3 },
+    { 
+        key: 'crystal-blue', 
+        name: 'Crystal Blue Border', 
+        price: 7.99, 
+        color: '#0066CC', 
+        type: 'crystal', 
+        borderWidth: 3,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'crystal-green', 
+        name: 'Crystal Green Border', 
+        price: 7.99, 
+        color: '#00FF00', 
+        type: 'crystal', 
+        borderWidth: 3,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'crystal-red', 
+        name: 'Crystal Red Border', 
+        price: 7.99, 
+        color: '#FF0000', 
+        type: 'crystal', 
+        borderWidth: 3,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'crystal-orange', 
+        name: 'Crystal Orange Border', 
+        price: 7.99, 
+        color: '#FF8C00', 
+        type: 'crystal', 
+        borderWidth: 3,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'crystal-purple', 
+        name: 'Crystal Purple Border', 
+        price: 7.99, 
+        color: '#800080', 
+        type: 'crystal', 
+        borderWidth: 3,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'crystal-white', 
+        name: 'Crystal White Border', 
+        price: 7.99, 
+        color: '#FFFFFF', 
+        type: 'crystal', 
+        borderWidth: 3,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
     
     // Standard Color Borders
-    { key: 'standard-black', name: 'Black Border', price: 2.99, color: '#000000', type: 'standard', borderWidth: 2 },
-    { key: 'standard-white', name: 'White Border', price: 2.99, color: '#FFFFFF', type: 'standard', borderWidth: 2 },
-    { key: 'standard-blue', name: 'Blue Border', price: 3.99, color: '#0000FF', type: 'standard', borderWidth: 2 },
-    { key: 'standard-red', name: 'Red Border', price: 3.99, color: '#FF0000', type: 'standard', borderWidth: 2 },
-    { key: 'standard-green', name: 'Green Border', price: 3.99, color: '#00FF00', type: 'standard', borderWidth: 2 },
-    { key: 'standard-yellow', name: 'Yellow Border', price: 3.99, color: '#FFFF00', type: 'standard', borderWidth: 2 },
-    { key: 'standard-purple', name: 'Purple Border', price: 3.99, color: '#800080', type: 'standard', borderWidth: 2 },
-    { key: 'standard-orange', name: 'Orange Border', price: 3.99, color: '#FF8C00', type: 'standard', borderWidth: 2 },
-    { key: 'standard-gold', name: 'Gold Border', price: 5.99, color: '#FFD700', type: 'standard', borderWidth: 2 },
-    { key: 'standard-silver', name: 'Silver Border', price: 4.99, color: '#C0C0C0', type: 'standard', borderWidth: 2 }
+    { 
+        key: 'standard-black', 
+        name: 'Black Border', 
+        price: 2.99, 
+        color: '#000000', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-white', 
+        name: 'White Border', 
+        price: 2.99, 
+        color: '#FFFFFF', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-blue', 
+        name: 'Blue Border', 
+        price: 3.99, 
+        color: '#0000FF', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-red', 
+        name: 'Red Border', 
+        price: 3.99, 
+        color: '#FF0000', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-green', 
+        name: 'Green Border', 
+        price: 3.99, 
+        color: '#00FF00', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-yellow', 
+        name: 'Yellow Border', 
+        price: 3.99, 
+        color: '#FFFF00', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-purple', 
+        name: 'Purple Border', 
+        price: 3.99, 
+        color: '#800080', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-orange', 
+        name: 'Orange Border', 
+        price: 3.99, 
+        color: '#FF8C00', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-gold', 
+        name: 'Gold Border', 
+        price: 5.99, 
+        color: '#FFD700', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'standard-silver', 
+        name: 'Silver Border', 
+        price: 4.99, 
+        color: '#C0C0C0', 
+        type: 'standard', 
+        borderWidth: 2,
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    }
 ];
 
 export const sizeOptions = [
-    { key: '18-oblong', label: '18" Oblong', price: 1.99, dimensions: '533mm x 152mm', description: 'Standard UK size' },
-    { key: '21-oblong', label: '21" Oblong', price: 2.99, dimensions: '533mm x 152mm', description: 'Extended length' },
-    { key: '4x4', label: '4x4 Badge', price: 3.99, dimensions: '533mm x 152mm', description: 'Off-road vehicle badge' }
+    { 
+        key: '18-oblong', 
+        label: '18" Oblong', 
+        price: 1.99, 
+        dimensions: '533mm x 152mm', 
+        description: 'Standard UK size',
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: '21-oblong', 
+        label: '21" Oblong', 
+        price: 2.99, 
+        dimensions: '533mm x 152mm', 
+        description: 'Extended length',
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: '4x4', 
+        label: '4x4 Badge', 
+        price: 3.99, 
+        dimensions: '533mm x 152mm', 
+        description: 'Off-road vehicle badge',
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    }
 ];
 
 export const finishOptions = [
-    { key: 'standard', label: 'Standard Finish', price: 0, description: 'Matte protective coating' },
-    { key: 'gloss', label: 'High Gloss', price: 2.99, description: 'Glossy protective coating' },
-    { key: 'anti-tamper', label: 'Anti-Tamper', price: 4.99, description: 'Security screws included' },
-    { key: 'weatherproof', label: 'Weatherproof', price: 3.99, description: 'Enhanced weather protection' }
+    { 
+        key: 'standard', 
+        label: 'Standard Finish', 
+        price: 0, 
+        description: 'Matte protective coating',
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'gloss', 
+        label: 'High Gloss', 
+        price: 2.99, 
+        description: 'Glossy protective coating',
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'anti-tamper', 
+        label: 'Anti-Tamper', 
+        price: 4.99, 
+        description: 'Security screws included',
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    },
+    { 
+        key: 'weatherproof', 
+        label: 'Weatherproof', 
+        price: 3.99, 
+        description: 'Enhanced weather protection',
+        image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'
+    }
 ];
 
 export const countryOptions = [

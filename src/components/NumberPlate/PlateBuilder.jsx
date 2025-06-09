@@ -17,7 +17,7 @@ import { addToCart, getCartItemCount } from '../Cart/cartUtils';
 
 const PlateBuilder = () => {
     // Current active tab and preview type
-    const [activeTab, setActiveTab] = useState('style');
+    const [activeTab, setActiveTab] = useState('start');
     const [previewType, setPreviewType] = useState('front');
     const [cartItemCount, setCartItemCount] = useState(0);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -267,7 +267,7 @@ const PlateBuilder = () => {
 
     // Navigate to cart page
     const goToCart = () => {
-        navigate('/cart');
+        navigate('/basket');
     };
 
     // Event handlers
@@ -331,39 +331,6 @@ const PlateBuilder = () => {
         }
     };
 
-    // Get preview images for plate styles
-    const getStylePreviewImage = (styleKey) => {
-        const styleImages = {
-            '4d-crystal-green': 'KRYSTAL',
-            '4d-crystal-red': 'KRYSTAL', 
-            '4d-crystal-blue': 'KRYSTAL',
-            '4d-crystal-orange': 'KRYSTAL',
-            '4d-crystal-white': 'KRYSTAL',
-            '4d-neon-gel-green': 'NEON GEL',
-            '4d-neon-gel-red': 'NEON GEL',
-            '4d-neon-gel-blue': 'NEON GEL',
-            '4d-neon-gel-orange': 'NEON GEL',
-            '4d-neon-gel-white': 'NEON GEL'
-        };
-        return styleImages[styleKey] || 'images/';
-    };
-
-    const getStyleColor = (styleKey) => {
-        const colorMap = {
-            '4d-crystal-green': '#00FF00',
-            '4d-crystal-red': '#FF0000',
-            '4d-crystal-blue': '#0066CC',
-            '4d-crystal-orange': '#FF8C00',
-            '4d-crystal-white': '#FFFFFF',
-            '4d-neon-gel-green': '#00FF00',
-            '4d-neon-gel-red': '#FF0000',
-            '4d-neon-gel-blue': '#0066CC',
-            '4d-neon-gel-orange': '#FF8C00',
-            '4d-neon-gel-white': '#FFFFFF'
-        };
-        return colorMap[styleKey] || '#000000';
-    };
-
     // Tab content rendering
     const renderTabContent = () => {
         switch (activeTab) {
@@ -384,13 +351,13 @@ const PlateBuilder = () => {
                                         className="form-control form-control-lg text-center fw-bold border-warning"
                                         placeholder="GHELLO"
                                         maxLength="8"
-                                        style={{ fontSize: '2rem', letterSpacing: '0.3em' }}
+                                        style={{ fontSize: '1.5rem', letterSpacing: '0.3em' }}
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="col-6">
+                        {/* <div className="col-6">
                             <label className="form-label fw-bold">
                                 <Move className="me-2" size={16} />
                                 Spacing
@@ -409,17 +376,17 @@ const PlateBuilder = () => {
                                     LEGAL
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
 
-                        <div className="col-6">
+                        {/* <div className="col-6">
                             <label className="form-label fw-bold">Preview</label>
                             <div className="form-control text-center fw-bold border-warning" style={{ 
                                 fontSize: '1rem', 
-                                letterSpacing: spacing === 'legal' ? '0.2em' : '0.1em'
+                                letterSpacing: spacing === 'legal' ? '0.1em' : '0.1em'
                             }}>
                                 {displayText}
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="col-6">
                             <label className="form-label fw-bold">Front Plates</label>
@@ -473,324 +440,619 @@ const PlateBuilder = () => {
                     </div>
                 );
 
-            case 'style':
-                return (
-                    <div className="row g-4">
-                        <div className="col-12" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                            {plateStyles.map((style) => (
-                                <div key={style.key} className="mb-3">
-                                    <div
-                                        onClick={() => setSelectedStyle(style.key)}
-                                        className={`card border-2 cursor-pointer ${
-                                            selectedStyle === style.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
-                                        }`}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        <div className="card-body p-3">
-                                            <div className="d-flex align-items-center">
-                                                <div 
-                                                    className="me-3 d-flex align-items-center justify-content-center text-white fw-bold position-relative"
-                                                    style={{
-                                                        width: '80px',
-                                                        height: '40px',
-                                                        background: style.outlineColor 
-                                                            ? `linear-gradient(45deg, ${style.outlineColor}, ${style.outlineColor}aa)` 
-                                                            : 'linear-gradient(45deg, #666, #999)',
-                                                        borderRadius: '4px',
-                                                        fontSize: '8px',
-                                                        color: style.outlineColor === '#FFFFFF' || style.outlineColor === '#FFD700' ? '#000' : '#fff'
-                                                    }}
-                                                >
-                                                    <span className="position-absolute top-0 start-0 bg-warning text-dark px-1" 
-                                                          style={{ fontSize: '6px', borderRadius: '0 0 4px 0' }}>
-                                                        NOT ROAD LEGAL
-                                                    </span>
-                                                    {getStylePreviewImage(style.key)}
-                                                </div>
+            // case 'style':
+            //     return (
+            //         <div className="row g-4">
+            //             <div className="col-12" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            //                 {plateStyles.map((style) => (
+            //                     <div key={style.key} className="mb-3">
+            //                         <div
+            //                             onClick={() => setSelectedStyle(style.key)}
+            //                             className={`card border-2 cursor-pointer ${
+            //                                 selectedStyle === style.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
+            //                             }`}
+            //                             style={{ cursor: 'pointer' }}
+            //                         >
+            //                             <div className="card-body p-3">
+            //                                 <div className="d-flex align-items-center">
+            //                                     {/* PLATE IMAGE - like reference design */}
+            //                                     <div className="me-3 position-relative">
+            //                                         <img
+            //                                             src={style.image}
+            //                                             alt={style.label}
+            //                                             className="rounded"
+            //                                             style={{
+            //                                                 width: '80px',
+            //                                                 height: '40px',
+            //                                                 objectFit: 'cover',
+            //                                                 border: selectedStyle === style.key ? '2px solid #ffc107' : '1px solid #dee2e6'
+            //                                             }}
+            //                                             onError={(e) => {
+            //                                                 // Fallback to colored div if image fails to load
+            //                                                 e.target.style.display = 'none';
+            //                                                 e.target.nextSibling.style.display = 'flex';
+            //                                             }}
+            //                                         />
+            //                                         {/* Fallback colored div */}
+            //                                         <div 
+            //                                             className="d-none align-items-center justify-content-center text-white fw-bold position-relative"
+            //                                             style={{
+            //                                                 width: '80px',
+            //                                                 height: '40px',
+            //                                                 background: style.outlineColor 
+            //                                                     ? `linear-gradient(45deg, ${style.outlineColor}, ${style.outlineColor}aa)` 
+            //                                                     : 'linear-gradient(45deg, #666, #999)',
+            //                                                 borderRadius: '4px',
+            //                                                 fontSize: '8px',
+            //                                                 color: style.outlineColor === '#FFFFFF' || style.outlineColor === '#FFD700' ? '#000' : '#fff'
+            //                                             }}
+            //                                         >
+            //                                             <span className="position-absolute top-0 start-0 bg-warning text-dark px-1" 
+            //                                                   style={{ fontSize: '6px', borderRadius: '0 0 4px 0' }}>
+            //                                                 NOT ROAD LEGAL
+            //                                             </span>
+            //                                             {style.label.split(' ')[0]}
+            //                                         </div>
+            //                                     </div>
                                                 
-                                                <div className="flex-grow-1">
-                                                    <h6 className="fw-bold mb-1">{style.label}</h6>
-                                                    <p className="small text-muted mb-0">
-                                                        Pair: £{(style.price * 2).toFixed(2)} / Single: £{style.price}
-                                                    </p>
-                                                    <p className="small text-primary mb-0">Thickness: {style.thickness === 0.15 ? '3mm' : '5mm'}</p>
-                                                    {style.outlineColor && (
-                                                        <p className="small text-success mb-0">
-                                                            Includes {style.outlineColor} outline
-                                                        </p>
-                                                    )}
-                                                </div>
+            //                                     <div className="flex-grow-1">
+            //                                         <h6 className="fw-bold mb-1">{style.label}</h6>
+            //                                         <p className="small text-muted mb-0">
+            //                                             Pair: £{(style.price * 2).toFixed(2)} / Single: £{style.price}
+            //                                         </p>
+            //                                         <p className="small text-primary mb-0">Thickness: {style.thickness === 0.01 ? '3mm' : '5mm'}</p>
+            //                                         {style.outlineColor && (
+            //                                             <p className="small text-success mb-0">
+            //                                                 Includes {style.outlineColor} outline
+            //                                             </p>
+            //                                         )}
+            //                                     </div>
                                                 
-                                                {selectedStyle === style.key && (
-                                                    <div className="bg-success text-white px-2 py-1 rounded me-2">
-                                                        <span className="small fw-bold">SELECTED ✓</span>
-                                                    </div>
-                                                )}
+            //                                     {selectedStyle === style.key && (
+            //                                         <div className="bg-success text-white px-2 py-1 rounded me-2">
+            //                                             <span className="small fw-bold">SELECTED ✓</span>
+            //                                         </div>
+            //                                     )}
                                                 
-                                                <button className="btn btn-sm btn-outline-secondary">?</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+            //                                     <button className="btn btn-sm btn-outline-secondary">?</button>
+            //                                 </div>
+            //                             </div>
+            //                         </div>
+            //                     </div>
+            //                 ))}
+            //             </div>
 
-                        <div className="col-12">
-                            <label className="form-label fw-bold">Font Color</label>
-                            <select
-                                className="form-select form-select-lg border-warning"
-                                value={selectedFontColor}
-                                onChange={(e) => setSelectedFontColor(e.target.value)}
-                            >
-                                {colorOptions.map((color) => (
-                                    <option key={color.color} value={color.color}>
-                                        {color.name} - £{color.price}
-                                    </option>
-                                ))}
-                            </select>
-                            {selectedFontColor === 'custom' && (
-                                <input
-                                    type="color"
-                                    value={customColor}
-                                    onChange={(e) => setCustomColor(e.target.value)}
-                                    className="form-control form-control-color mt-2 w-100"
-                                    style={{ height: '50px' }}
+            //             <div className="col-12">
+            //                 <label className="form-label fw-bold">Font Color</label>
+            //                 <select
+            //                     className="form-select form-select-lg border-warning"
+            //                     value={selectedFontColor}
+            //                     onChange={(e) => setSelectedFontColor(e.target.value)}
+            //                 >
+            //                     {colorOptions.map((color) => (
+            //                         <option key={color.color} value={color.color}>
+            //                             {color.name} - £{color.price}
+            //                         </option>
+            //                     ))}
+            //                 </select>
+            //                 {selectedFontColor === 'custom' && (
+            //                     <input
+            //                         type="color"
+            //                         value={customColor}
+            //                         onChange={(e) => setCustomColor(e.target.value)}
+            //                         className="form-control form-control-color mt-2 w-100"
+            //                         style={{ height: '50px' }}
+            //                     />
+            //                 )}
+            //             </div>
+            //         </div>
+            //     );
+case 'style':
+    return (
+        <div className="row g-4">
+            <div className="col-12" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {plateStyles.map((style) => (
+                    <div key={style.key} className="mb-3">
+                        <div
+                            onClick={() => setSelectedStyle(style.key)}
+                            className={`card border-2 cursor-pointer ${
+                                selectedStyle === style.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
+                            }`}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            {/* FULL SIZE IMAGE - like reference design */}
+                            <div className="position-relative">
+                                <img
+                                    src={style.image}
+                                    alt={style.label}
+                                    className="card-img-top"
+                                    style={{
+                                        width: '100%',
+                                        height: '120px',
+                                        objectFit: 'cover',
+                                        border: selectedStyle === style.key ? '2px solid #ffc107' : '1px solid #dee2e6'
+                                    }}
+                                    onError={(e) => {
+                                        // Fallback to colored div if image fails to load
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                    }}
                                 />
-                            )}
-                        </div>
-                    </div>
-                );
-
-            case 'size':
-                return (
-                    <div className="row g-3">
-                        <div className="col-12">
-                            <h6 className="fw-bold mb-3">Select Plate Size</h6>
-                            {sizeOptions.map((size) => (
-                                <div key={size.key} className="mb-2">
-                                    <div
-                                        onClick={() => setSelectedSize(size.key)}
-                                        className={`card border-2 cursor-pointer ${
-                                            selectedSize === size.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
-                                        }`}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        <div className="card-body p-3">
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 className="fw-bold mb-1">{size.label}</h6>
-                                                    <p className="small text-muted mb-0">{size.dimensions}</p>
-                                                    <p className="small text-info mb-0">{size.description}</p>
-                                                </div>
-                                                <span className="fw-bold fs-5">£{size.price}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                {/* Fallback colored div */}
+                                <div 
+                                    className="d-none align-items-center justify-content-center text-white fw-bold position-absolute top-0 start-0 w-100"
+                                    style={{
+                                        height: '120px',
+                                        background: style.outlineColor 
+                                            ? `linear-gradient(45deg, ${style.outlineColor}, ${style.outlineColor}aa)` 
+                                            : 'linear-gradient(45deg, #666, #999)',
+                                        fontSize: '16px',
+                                        color: style.outlineColor === '#FFFFFF' || style.outlineColor === '#FFD700' ? '#000' : '#fff'
+                                    }}
+                                >
+                                    <span className="position-absolute top-0 start-0 bg-warning text-dark px-2 py-1" 
+                                          style={{ fontSize: '10px', borderRadius: '0 0 8px 0' }}>
+                                        NOT ROAD LEGAL
+                                    </span>
+                                    {style.label.split(' ')[0]}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                );
 
-            case 'border':
-                return (
-                    <div className="row g-3">
-                        <div className="col-12">
-                            <h6 className="fw-bold mb-3">Select Plate Frame Border</h6>
-                            <p className="small text-muted mb-3">
-                                <i className="fas fa-info-circle me-1"></i>
-                                Frame borders surround the entire plate with margins, like a picture frame
-                            </p>
-                            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                                {borderOptions.map((border) => (
-                                    <div key={border.key} className="mb-2">
-                                        <div
-                                            onClick={() => setSelectedBorder(border.key)}
-                                            className={`card border-2 cursor-pointer ${
-                                                selectedBorder === border.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
-                                            }`}
-                                            style={{ cursor: 'pointer' }}
-                                        >
-                                            <div className="card-body p-3">
-                                                <div className="d-flex align-items-center">
-                                                    {/* Frame Border Preview */}
-                                                    <div 
-                                                        className="me-3 position-relative d-flex align-items-center justify-content-center"
-                                                        style={{ 
-                                                            width: '80px',
-                                                            height: '40px',
-                                                            backgroundColor: border.key === 'none' ? '#FFD700' : border.color,
-                                                            borderRadius: '4px',
-                                                            border: border.key === 'none' ? 'none' : `3px solid ${border.color}`
-                                                        }}
-                                                    >
-                                                        {/* Inner plate area */}
-                                                        <div
-                                                            className="position-relative d-flex align-items-center justify-content-center fw-bold"
-                                                            style={{
-                                                                width: border.key === 'none' ? '80px' : '64px',
-                                                                height: border.key === 'none' ? '40px' : '28px',
-                                                                backgroundColor: '#FFD700',
-                                                                borderRadius: '2px',
-                                                                fontSize: '8px',
-                                                                color: '#000',
-                                                                boxShadow: border.type === 'crystal' ? 
-                                                                          `0 0 8px ${border.color}66` : 
-                                                                          border.type === '4d' ? 
-                                                                          `2px 2px 4px ${border.color}88` : 'none'
-                                                            }}
-                                                        >
-                                                            ABC
-                                                        </div>
-                                                        
-                                                        {/* Crystal glow effect */}
-                                                        {border.type === 'crystal' && border.key !== 'none' && (
-                                                            <div 
-                                                                className="position-absolute"
-                                                                style={{
-                                                                    width: '90px',
-                                                                    height: '50px',
-                                                                    borderRadius: '6px',
-                                                                    background: `radial-gradient(ellipse, ${border.color}20, transparent)`,
-                                                                    filter: 'blur(3px)',
-                                                                    zIndex: -1
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                    
-                                                    <div className="flex-grow-1">
-                                                        <h6 className="fw-bold mb-1">{border.name}</h6>
-                                                        <p className="small text-muted mb-0">
-                                                            {border.price === 0 ? 'Free' : `+£${border.price}`}
-                                                        </p>
-                                                        <div className="d-flex gap-1 mt-1 flex-wrap">
-                                                            {border.borderWidth && border.key !== 'none' && (
-                                                                <span className="badge bg-primary">{border.borderWidth}mm Frame</span>
-                                                            )}
-                                                            {border.type === 'crystal' && (
-                                                                <span className="badge bg-info text-dark">CRYSTAL FRAME</span>
-                                                            )}
-                                                            {border.type === '4d' && (
-                                                                <span className="badge bg-success">4D RAISED FRAME</span>
-                                                            )}
-                                                            {border.type === 'printed' && (
-                                                                <span className="badge bg-secondary">PRINTED FRAME</span>
-                                                            )}
-                                                            {border.type === 'standard' && (
-                                                                <span className="badge bg-light text-dark">STANDARD FRAME</span>
-                                                            )}
-                                                            {border.key !== 'none' && (
-                                                                <span className="badge bg-warning text-dark">NOT ROAD LEGAL</span>
-                                                            )}
-                                                        </div>
-                                                        
-                                                        {/* Color indicator for non-transparent borders */}
-                                                        {border.key !== 'none' && border.color !== 'transparent' && (
-                                                            <div className="d-flex align-items-center mt-1">
-                                                                <div 
-                                                                    className="me-2 border rounded"
-                                                                    style={{
-                                                                        width: '12px',
-                                                                        height: '12px',
-                                                                        backgroundColor: border.color,
-                                                                        border: border.color === '#FFFFFF' ? '1px solid #ccc' : 'none'
-                                                                    }}
-                                                                />
-                                                                <span className="small text-muted">
-                                                                    Frame Color: {border.color}
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                        
-                                                        {/* Special descriptions for different border types */}
-                                                        {border.type === '4d' && (
-                                                            <p className="small text-info mb-0 mt-1">
-                                                                <i className="fas fa-info-circle me-1"></i>
-                                                                Physical raised frame around entire plate with {border.borderWidth}mm thickness
-                                                            </p>
-                                                        )}
-                                                        {border.type === 'crystal' && (
-                                                            <p className="small text-info mb-0 mt-1">
-                                                                <i className="fas fa-gem me-1"></i>
-                                                                Luminous crystal frame with glow effects around plate edges
-                                                            </p>
-                                                        )}
-                                                        {border.type === 'printed' && (
-                                                            <p className="small text-info mb-0 mt-1">
-                                                                <i className="fas fa-print me-1"></i>
-                                                                High-quality printed frame border around plate
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    
-                                                    {/* Selection indicator */}
-                                                    {selectedBorder === border.key && (
-                                                        <div className="bg-success text-white px-2 py-1 rounded">
-                                                            <span className="small fw-bold">SELECTED ✓</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
+                                {/* SELECTED indicator on image */}
+                                {selectedStyle === style.key && (
+                                    <div className="position-absolute top-2 end-2">
+                                        <div className="bg-success text-white px-2 py-1 rounded">
+                                            <span className="small fw-bold">SELECTED ✓</span>
                                         </div>
                                     </div>
-                                ))}
+                                )}
                             </div>
                             
-                            {/* Frame Border Information Panel */}
-                            {selectedBorder !== 'none' && (
-                                <div className="mt-4 p-3 bg-light rounded">
-                                    <h6 className="fw-bold text-primary mb-2">
-                                        <i className="fas fa-info-circle me-2"></i>
-                                        Frame Border Information
-                                    </h6>
-                                    <div className="row g-3">
-                                        <div className="col-6">
-                                            <div className="small">
-                                                <strong>Frame Type:</strong> {selectedBorderObj?.type?.toUpperCase() || 'Standard'}
-                                            </div>
-                                        </div>
-                                        <div className="col-6">
-                                            <div className="small">
-                                                <strong>Frame Width:</strong> {selectedBorderObj?.borderWidth || 2}mm
-                                            </div>
-                                        </div>
-                                        <div className="col-6">
-                                            <div className="small">
-                                                <strong>Frame Color:</strong> {selectedBorderObj?.color || 'None'}
-                                            </div>
-                                        </div>
-                                        <div className="col-6">
-                                            <div className="small">
-                                                <strong>Price:</strong> {selectedBorderObj?.price === 0 ? 'Free' : `£${selectedBorderObj?.price}`}
-                                            </div>
-                                        </div>
+                            {/* BOTTOM INFO - plate name and price only */}
+                            <div className="card-body p-3 ">
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 className="fw-bold mb-1">{style.label}</h6>
+                                        <p className="small text-muted mb-0">
+                                            Pair: £{(style.price * 2).toFixed(2)} / Single: £{style.price.toFixed(2)}
+                                        </p>
                                     </div>
-                                    
-                                    {/* Special features description */}
-                                    <div className="mt-2">
-                                        {selectedBorderObj?.type === '4d' && (
-                                            <div className="alert alert-info py-2 mb-0 small">
-                                                <strong>4D Frame Feature:</strong> This creates a physical raised frame around the entire plate edges with actual {selectedBorderObj.borderWidth}mm thickness. The frame surrounds the whole plate like a picture frame with margins.
-                                            </div>
-                                        )}
-                                        {selectedBorderObj?.type === 'crystal' && (
-                                            <div className="alert alert-info py-2 mb-0 small">
-                                                <strong>Crystal Frame Effect:</strong> Features luminous glow effects around the plate edges with crystal-like reflection properties for premium frame appearance.
-                                            </div>
-                                        )}
-                                        {selectedBorderObj?.type === 'printed' && (
-                                            <div className="alert alert-info py-2 mb-0 small">
-                                                <strong>Printed Frame Border:</strong> High-resolution printed frame design applied around the plate edges with margins.
-                                            </div>
-                                        )}
-                                    </div>
+                                    <button className="btn btn-sm btn-outline-secondary">?</button>
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
-                );
+                ))}
+            </div>
 
+            <div className="col-12">
+                <label className="form-label fw-bold">Font Color</label>
+                <select
+                    className="form-select form-select-lg border-warning"
+                    value={selectedFontColor}
+                    onChange={(e) => setSelectedFontColor(e.target.value)}
+                >
+                    {colorOptions.map((color) => (
+                        <option key={color.color} value={color.color}>
+                            {color.name} - £{color.price}
+                        </option>
+                    ))}
+                </select>
+                {selectedFontColor === 'custom' && (
+                    <input
+                        type="color"
+                        value={customColor}
+                        onChange={(e) => setCustomColor(e.target.value)}
+                        className="form-control form-control-color mt-2 w-100"
+                        style={{ height: '50px' }}
+                    />
+                )}
+            </div>
+        </div>
+    );
+
+
+          case 'size':
+    return (
+        <div className="row g-3">
+            <div className="col-12" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {sizeOptions.map((size) => (
+                    <div key={size.key} className="mb-3">
+                        <div
+                            onClick={() => setSelectedSize(size.key)}
+                            className={`card border-2 cursor-pointer ${
+                                selectedSize === size.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
+                            }`}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            {/* FULL SIZE IMAGE */}
+                            <div className="position-relative">
+                                <img
+                                    src={size.image}
+                                    alt={size.label}
+                                    className="card-img-top"
+                                    style={{
+                                        width: '100%',
+                                        height: '120px',
+                                        objectFit: 'cover',
+                                        border: selectedSize === size.key ? '2px solid #ffc107' : '1px solid #dee2e6'
+                                    }}
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                />
+                                {/* Fallback colored div */}
+                                <div 
+                                    className="d-none align-items-center justify-content-center text-dark fw-bold position-absolute top-0 start-0 w-100"
+                                    style={{
+                                        height: '120px',
+                                        background: '#FFD700',
+                                        fontSize: '16px'
+                                    }}
+                                >
+                                    <span className="position-absolute top-0 start-0 bg-warning text-dark px-2 py-1" 
+                                          style={{ fontSize: '10px', borderRadius: '0 0 8px 0' }}>
+                                        NOT ROAD LEGAL
+                                    </span>
+                                    SIZE
+                                </div>
+
+                                {/* SELECTED indicator on image */}
+                                {selectedSize === size.key && (
+                                    <div className="position-absolute top-2 end-2">
+                                        <div className="bg-success text-white px-2 py-1 rounded">
+                                            <span className="small fw-bold">SELECTED ✓</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* BOTTOM INFO - exactly like style tab */}
+                            <div className="card-body p-3">
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 className="fw-bold mb-1">{size.label}</h6>
+                                        <p className="small text-muted mb-0">
+                                            {size.price === 0 ? 'Included' : `+£${size.price.toFixed(2)}`}
+                                        </p>
+                                    </div>
+                                    <button className="btn btn-sm btn-outline-secondary">?</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+            // case 'border':
+            //     return (
+            //         <div className="row g-3">
+            //             <div className="col-12">
+            //                 <h6 className="fw-bold mb-3">Select Plate Frame Border</h6>
+            //                 <p className="small text-muted mb-3">
+            //                     <i className="fas fa-info-circle me-1"></i>
+            //                     Frame borders surround the entire plate with margins, like a picture frame
+            //                 </p>
+            //                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            //                     {borderOptions.map((border) => (
+            //                         <div key={border.key} className="mb-2">
+            //                             <div
+            //                                 onClick={() => setSelectedBorder(border.key)}
+            //                                 className={`card border-2 cursor-pointer ${
+            //                                     selectedBorder === border.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
+            //                                 }`}
+            //                                 style={{ cursor: 'pointer' }}
+            //                             >
+            //                                 <div className="card-body p-3">
+            //                                     <div className="d-flex align-items-center">
+            //                                         {/* BORDER IMAGE */}
+            //                                         <div className="me-3">
+            //                                             <img
+            //                                                 src={border.image}
+            //                                                 alt={border.name}
+            //                                                 className="rounded"
+            //                                                 style={{
+            //                                                     width: '80px',
+            //                                                     height: '40px',
+            //                                                     objectFit: 'cover',
+            //                                                     border: selectedBorder === border.key ? '2px solid #ffc107' : '1px solid #dee2e6'
+            //                                                 }}
+            //                                                 onError={(e) => {
+            //                                                     // Fallback to colored div if image fails to load
+            //                                                     e.target.style.display = 'none';
+            //                                                     e.target.nextSibling.style.display = 'flex';
+            //                                                 }}
+            //                                             />
+            //                                             {/* Fallback Frame Border Preview */}
+            //                                             <div 
+            //                                                 className="d-none position-relative align-items-center justify-content-center"
+            //                                                 style={{ 
+            //                                                     width: '80px',
+            //                                                     height: '40px',
+            //                                                     backgroundColor: border.key === 'none' ? '#FFD700' : border.color,
+            //                                                     borderRadius: '4px',
+            //                                                     border: border.key === 'none' ? 'none' : `3px solid ${border.color}`
+            //                                                 }}
+            //                                             >
+            //                                                 {/* Inner plate area */}
+            //                                                 <div
+            //                                                     className="position-relative d-flex align-items-center justify-content-center fw-bold"
+            //                                                     style={{
+            //                                                         width: border.key === 'none' ? '80px' : '64px',
+            //                                                         height: border.key === 'none' ? '40px' : '28px',
+            //                                                         backgroundColor: '#FFD700',
+            //                                                         borderRadius: '2px',
+            //                                                         fontSize: '8px',
+            //                                                         color: '#000',
+            //                                                         boxShadow: border.type === 'crystal' ? 
+            //                                                                   `0 0 8px ${border.color}66` : 
+            //                                                                   border.type === '4d' ? 
+            //                                                                   `2px 2px 4px ${border.color}88` : 'none'
+            //                                                     }}
+            //                                                 >
+            //                                                     ABC
+            //                                                 </div>
+                                                            
+            //                                                 {/* Crystal glow effect */}
+            //                                                 {border.type === 'crystal' && border.key !== 'none' && (
+            //                                                     <div 
+            //                                                         className="position-absolute"
+            //                                                         style={{
+            //                                                             width: '90px',
+            //                                                             height: '50px',
+            //                                                             borderRadius: '6px',
+            //                                                             background: `radial-gradient(ellipse, ${border.color}20, transparent)`,
+            //                                                             filter: 'blur(3px)',
+            //                                                             zIndex: -1
+            //                                                         }}
+            //                                                     />
+            //                                                 )}
+            //                                             </div>
+            //                                         </div>
+                                                    
+            //                                         <div className="flex-grow-1">
+            //                                             <h6 className="fw-bold mb-1">{border.name}</h6>
+            //                                             <p className="small text-muted mb-0">
+            //                                                 {border.price === 0 ? 'Free' : `+£${border.price}`}
+            //                                             </p>
+            //                                             <div className="d-flex gap-1 mt-1 flex-wrap">
+            //                                                 {border.borderWidth && border.key !== 'none' && (
+            //                                                     <span className="badge bg-primary">{border.borderWidth}mm Frame</span>
+            //                                                 )}
+            //                                                 {border.type === 'crystal' && (
+            //                                                     <span className="badge bg-info text-dark">CRYSTAL FRAME</span>
+            //                                                 )}
+            //                                                 {border.type === '4d' && (
+            //                                                     <span className="badge bg-success">4D RAISED FRAME</span>
+            //                                                 )}
+            //                                                 {border.type === 'printed' && (
+            //                                                     <span className="badge bg-secondary">PRINTED FRAME</span>
+            //                                                 )}
+            //                                                 {border.type === 'standard' && (
+            //                                                     <span className="badge bg-light text-dark">STANDARD FRAME</span>
+            //                                                 )}
+            //                                                 {border.key !== 'none' && (
+            //                                                     <span className="badge bg-warning text-dark">NOT ROAD LEGAL</span>
+            //                                                 )}
+            //                                             </div>
+                                                        
+            //                                             {/* Color indicator for non-transparent borders */}
+            //                                             {border.key !== 'none' && border.color !== 'transparent' && (
+            //                                                 <div className="d-flex align-items-center mt-1">
+            //                                                     <div 
+            //                                                         className="me-2 border rounded"
+            //                                                         style={{
+            //                                                             width: '12px',
+            //                                                             height: '12px',
+            //                                                             backgroundColor: border.color,
+            //                                                             border: border.color === '#FFFFFF' ? '1px solid #ccc' : 'none'
+            //                                                         }}
+            //                                                     />
+            //                                                     <span className="small text-muted">
+            //                                                         Frame Color: {border.color}
+            //                                                     </span>
+            //                                                 </div>
+            //                                             )}
+                                                        
+            //                                             {/* Special descriptions for different border types */}
+            //                                             {border.type === '4d' && (
+            //                                                 <p className="small text-info mb-0 mt-1">
+            //                                                     <i className="fas fa-info-circle me-1"></i>
+            //                                                     Physical raised frame around entire plate with {border.borderWidth}mm thickness
+            //                                                 </p>
+            //                                             )}
+            //                                             {border.type === 'crystal' && (
+            //                                                 <p className="small text-info mb-0 mt-1">
+            //                                                     <i className="fas fa-gem me-1"></i>
+            //                                                     Luminous crystal frame with glow effects around plate edges
+            //                                                 </p>
+            //                                             )}
+            //                                             {border.type === 'printed' && (
+            //                                                 <p className="small text-info mb-0 mt-1">
+            //                                                     <i className="fas fa-print me-1"></i>
+            //                                                     High-quality printed frame border around plate
+            //                                                 </p>
+            //                                             )}
+            //                                         </div>
+                                                    
+            //                                         {/* Selection indicator */}
+            //                                         {selectedBorder === border.key && (
+            //                                             <div className="bg-success text-white px-2 py-1 rounded">
+            //                                                 <span className="small fw-bold">SELECTED ✓</span>
+            //                                             </div>
+            //                                         )}
+            //                                     </div>
+            //                                 </div>
+            //                             </div>
+            //                         </div>
+            //                     ))}
+            //                 </div>
+                            
+            //                 {/* Frame Border Information Panel */}
+            //                 {selectedBorder !== 'none' && (
+            //                     <div className="mt-4 p-3 bg-light rounded">
+            //                         <h6 className="fw-bold text-primary mb-2">
+            //                             <i className="fas fa-info-circle me-2"></i>
+            //                             Frame Border Information
+            //                         </h6>
+            //                         <div className="row g-3">
+            //                             <div className="col-6">
+            //                                 <div className="small">
+            //                                     <strong>Frame Type:</strong> {selectedBorderObj?.type?.toUpperCase() || 'Standard'}
+            //                                 </div>
+            //                             </div>
+            //                             <div className="col-6">
+            //                                 <div className="small">
+            //                                     <strong>Frame Width:</strong> {selectedBorderObj?.borderWidth || 2}mm
+            //                                 </div>
+            //                             </div>
+            //                             <div className="col-6">
+            //                                 <div className="small">
+            //                                     <strong>Frame Color:</strong> {selectedBorderObj?.color || 'None'}
+            //                                 </div>
+            //                             </div>
+            //                             <div className="col-6">
+            //                                 <div className="small">
+            //                                     <strong>Price:</strong> {selectedBorderObj?.price === 0 ? 'Free' : `£${selectedBorderObj?.price}`}
+            //                                 </div>
+            //                             </div>
+            //                         </div>
+                                    
+            //                         {/* Special features description */}
+            //                         <div className="mt-2">
+            //                             {selectedBorderObj?.type === '4d' && (
+            //                                 <div className="alert alert-info py-2 mb-0 small">
+            //                                     <strong>4D Frame Feature:</strong> This creates a physical raised frame around the entire plate edges with actual {selectedBorderObj.borderWidth}mm thickness. The frame surrounds the whole plate like a picture frame with margins.
+            //                                 </div>
+            //                             )}
+            //                             {selectedBorderObj?.type === 'crystal' && (
+            //                                 <div className="alert alert-info py-2 mb-0 small">
+            //                                     <strong>Crystal Frame Effect:</strong> Features luminous glow effects around the plate edges with crystal-like reflection properties for premium frame appearance.
+            //                                 </div>
+            //                             )}
+            //                             {selectedBorderObj?.type === 'printed' && (
+            //                                 <div className="alert alert-info py-2 mb-0 small">
+            //                                     <strong>Printed Frame Border:</strong> High-resolution printed frame design applied around the plate edges with margins.
+            //                                 </div>
+            //                             )}
+            //                         </div>
+            //                     </div>
+            //                 )}
+            //             </div>
+            //         </div>
+            //     );
+case 'border':
+    return (
+        <div className="row g-3">
+            <div className="col-12">
+                {/* <h6 className="fw-bold mb-3">Select Plate Frame Border</h6>
+                <p className="small text-muted mb-3">
+                    <i className="fas fa-info-circle me-1"></i>
+                    Frame borders surround the entire plate with margins, like a picture frame
+                </p> */}
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    {borderOptions.map((border) => (
+                        <div key={border.key} className="mb-2">
+                            <div
+                                onClick={() => setSelectedBorder(border.key)}
+                                className={`card border-2 cursor-pointer ${
+                                    selectedBorder === border.key ? 'border-warning bg-warning bg-opacity-25' : 'border-light'
+                                }`}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                {/* FULL SIZE IMAGE */}
+                                <div className="position-relative">
+                                    <img
+                                        src={border.image}
+                                        alt={border.name}
+                                        className="card-img-top"
+                                        style={{
+                                            width: '100%',
+                                            height: '120px',
+                                            objectFit: 'cover',
+                                            border: selectedBorder === border.key ? '2px solid #ffc107' : '1px solid #dee2e6'
+                                        }}
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                    {/* Fallback Frame Border Preview */}
+                                    <div 
+                                        className="d-none position-absolute top-0 start-0 w-100 align-items-center justify-content-center"
+                                        style={{ 
+                                            height: '100px',
+                                            backgroundColor: border.key === 'none' ? '#FFD700' : border.color,
+                                            borderRadius: '4px',
+                                            border: border.key === 'none' ? 'none' : `3px solid ${border.color}`
+                                        }}
+                                    >
+                                        {/* Inner plate area */}
+                                        <div
+                                            className="position-relative d-flex align-items-center justify-content-center fw-bold"
+                                            style={{
+                                                width: border.key === 'none' ? '200px' : '160px',
+                                                height: border.key === 'none' ? '80px' : '60px',
+                                                backgroundColor: '#FFD700',
+                                                borderRadius: '2px',
+                                                fontSize: '16px',
+                                                color: '#000',
+                                                boxShadow: border.type === 'crystal' ? 
+                                                          `0 0 8px ${border.color}66` : 
+                                                          border.type === '4d' ? 
+                                                          `2px 2px 4px ${border.color}88` : 'none'
+                                            }}
+                                        >
+                                            ABC
+                                        </div>
+                                    </div>
+
+                                    {/* SELECTED indicator on image */}
+                                    {selectedBorder === border.key && (
+                                        <div className="position-absolute top-2 end-2">
+                                            <div className="bg-success text-white px-2 py-1 rounded">
+                                                <span className="small fw-bold">SELECTED ✓</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* BOTTOM INFO */}
+                                <div className="card-body p-3">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 className="fw-bold mb-1">{border.name}</h6>
+                                            <p className="small text-muted mb-0">
+                                                {border.price === 0 ? 'Free' : `+£${border.price}`}
+                                            </p>
+                                            <div className="d-flex gap-1 mt-1 flex-wrap">
+                                                {border.borderWidth && border.key !== 'none' && (
+                                                    <span className="badge bg-primary">{border.borderWidth}mm Frame</span>
+                                                )}
+                                                {border.type === 'crystal' && (
+                                                    <span className="badge bg-info text-dark">CRYSTAL</span>
+                                                )}
+                                                {border.type === '4d' && (
+                                                    <span className="badge bg-success">4D RAISED</span>
+                                                )}
+                                                {border.type === 'printed' && (
+                                                    <span className="badge bg-secondary">PRINTED</span>
+                                                )}
+                                                {border.key !== 'none' && (
+                                                    <span className="badge bg-warning text-dark">NOT ROAD LEGAL</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
             case 'badge':
                 return (
                     <div className="row g-4">
@@ -972,9 +1234,44 @@ const PlateBuilder = () => {
                                     >
                                         <div className="card-body p-3">
                                             <div className="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h6 className="fw-bold mb-1">{finish.label}</h6>
-                                                    <p className="small text-muted mb-0">{finish.description}</p>
+                                                <div className="d-flex align-items-center">
+                                                    {/* FINISH IMAGE */}
+                                                    <div className="me-3">
+                                                        <img
+                                                            src={finish.image}
+                                                            alt={finish.label}
+                                                            className="rounded"
+                                                            style={{
+                                                                width: '60px',
+                                                                height: '30px',
+                                                                objectFit: 'cover',
+                                                                border: selectedFinish === finish.key ? '2px solid #ffc107' : '1px solid #dee2e6'
+                                                            }}
+                                                            onError={(e) => {
+                                                                // Fallback to colored div if image fails to load
+                                                                e.target.style.display = 'none';
+                                                                e.target.nextSibling.style.display = 'flex';
+                                                            }}
+                                                        />
+                                                        {/* Fallback colored div */}
+                                                        <div 
+                                                            className="d-none align-items-center justify-content-center text-dark fw-bold"
+                                                            style={{
+                                                                width: '60px',
+                                                                height: '30px',
+                                                                background: '#FFD700',
+                                                                borderRadius: '4px',
+                                                                fontSize: '8px',
+                                                                border: selectedFinish === finish.key ? '2px solid #ffc107' : '1px solid #dee2e6'
+                                                            }}
+                                                        >
+                                                            FINISH
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h6 className="fw-bold mb-1">{finish.label}</h6>
+                                                        <p className="small text-muted mb-0">{finish.description}</p>
+                                                    </div>
                                                 </div>
                                                 <span className="fw-bold fs-5">
                                                     {finish.price === 0 ? 'Free' : `£${finish.price}`}
