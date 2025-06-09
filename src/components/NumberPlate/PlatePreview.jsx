@@ -539,7 +539,6 @@
 //         />
 //       </mesh>
 
-//       {/* Minimal shadow effects - only outline option */}
 //       {shadowEffect === "colored-outline" && (
 //         <Text3D
 //           font={fontUrl}
@@ -730,8 +729,11 @@ const PlatePreview = ({
     }
 
     // CRITICAL FIX: Elevate text Z-position for 4D borders to appear above the raised frame
-    const baseZ = dimensions.depth / 2 + 0.015;
-    const textZ = is4dBorder ? baseZ + 0.08 : baseZ; // Much higher Z for 4D borders
+    // const baseZ = dimensions.depth / 2 + 0.015;
+    // const textZ = is4dBorder ? baseZ + 0.08 : baseZ; // Much higher Z for 4D borders
+    // ✅ FIXED: Move text MUCH higher than front face
+    const baseZ = dimensions.depth / 2 + 0.020; // Was 0.015, now 0.025
+    const textZ = is4dBorder ? baseZ + 0.08 : baseZ;
 
     return [xPosition, -0.28, textZ];
   };
@@ -786,7 +788,6 @@ const PlatePreview = ({
   //         castShadow={false}
   //       />
 
-  //       {/* Crystal-specific lighting effects - ONLY for crystal borders */}
   //       {isCrystalBorder && (
   //         <>
   //           <pointLight
@@ -1476,7 +1477,7 @@ distance={12}
       {renderCountryBadge()}
 
       {/* MAIN PLATE - NO shadows to prevent back plate shadow */}
-      <mesh position={[0, 0, 0]} receiveShadow={false} castShadow={false}>
+      {/* <mesh position={[0, 0, 0]} receiveShadow={false} castShadow={false}>
         <primitive
           object={createRoundedBoxGeometry(
             dimensions.width,
@@ -1495,9 +1496,300 @@ distance={12}
           emissive={plateColor}
           emissiveIntensity={0.05}
         />
-      </mesh>
+      </mesh> */}
+      {/* MAIN PLATE - Front face only */}
+{/* <mesh position={[0, 0, dimensions.depth/2 + 0.005]} receiveShadow={false} castShadow={false}>
+  <primitive
+    object={(() => {
+      const shape = new THREE.Shape();
+      const x = dimensions.width / 2 - 0.09;
+      const y = dimensions.height / 2 - 0.09;
 
-      {/* Built-in outline effects from plate style - ELEVATED for 4D borders */}
+      shape.moveTo(-x, -y + 0.09);
+      shape.lineTo(-x, y - 0.09);
+      shape.quadraticCurveTo(-x, y, -x + 0.09, y);
+      shape.lineTo(x - 0.09, y);
+      shape.quadraticCurveTo(x, y, x, y - 0.09);
+      shape.lineTo(x, -y + 0.09);
+      shape.quadraticCurveTo(x, -y, x - 0.09, -y);
+      shape.lineTo(-x + 0.09, -y);
+      shape.quadraticCurveTo(-x, -y, -x, -y + 0.09);
+
+      return new THREE.ShapeGeometry(shape);
+    })()}
+  />
+  <meshStandardMaterial
+    color={plateColor}
+    metalness={0.02}
+    roughness={0.1}
+    clearcoat={0.6}
+    clearcoatRoughness={0.02}
+    envMapIntensity={0.5}
+    emissive={plateColor}
+    emissiveIntensity={0.05}
+  />
+</mesh>
+
+<mesh position={[0, 0, -dimensions.depth/2 - 0.005]} receiveShadow={false} castShadow={false}>
+  <primitive
+    object={(() => {
+      const shape = new THREE.Shape();
+      const x = dimensions.width / 2 - 0.09;
+      const y = dimensions.height / 2 - 0.09;
+
+      shape.moveTo(-x, -y + 0.09);
+      shape.lineTo(-x, y - 0.09);
+      shape.quadraticCurveTo(-x, y, -x + 0.09, y);
+      shape.lineTo(x - 0.09, y);
+      shape.quadraticCurveTo(x, y, x, y - 0.09);
+      shape.lineTo(x, -y + 0.09);
+      shape.quadraticCurveTo(x, -y, x - 0.09, -y);
+      shape.lineTo(-x + 0.09, -y);
+      shape.quadraticCurveTo(-x, -y, -x, -y + 0.09);
+
+      return new THREE.ShapeGeometry(shape);
+    })()}
+  />
+  <meshStandardMaterial
+    color={plateColor}
+    metalness={0.02}
+    roughness={0.1}
+    clearcoat={0.6}
+    clearcoatRoughness={0.02}
+    envMapIntensity={0.5}
+    emissive={plateColor}
+    emissiveIntensity={0.05}
+    side={THREE.BackSide}
+  />
+</mesh>
+
+<mesh position={[0, 0, 0]} receiveShadow={false} castShadow={false}>
+  <primitive
+    object={createRoundedBoxGeometry(
+      dimensions.width,
+      dimensions.height,
+      dimensions.depth,
+      0.09
+    )}
+  />
+  <meshStandardMaterial
+    color="#404040"
+    metalness={0.1}
+    roughness={0.3}
+  />
+</mesh> */}
+
+{/* FRONT FACE - FIXED */}
+{/* FRONT FACE - FIXED WITH RENDER ORDER */}
+{/* front
+<mesh
+  position={[0, 0, dimensions.depth / 2 + 0.012]}
+  renderOrder={999}                              
+>
+  <primitive
+    object={(() => {
+      const shape = new THREE.Shape();
+      const x = dimensions.width / 2 - 0.09;
+      const y = dimensions.height / 2 - 0.09;
+
+      shape.moveTo(-x, -y + 0.09);
+      shape.lineTo(-x, y - 0.09);
+      shape.quadraticCurveTo(-x, y, -x + 0.09, y);
+      shape.lineTo(x - 0.09, y);
+      shape.quadraticCurveTo(x, y, x, y - 0.09);
+      shape.lineTo(x, -y + 0.09);
+      shape.quadraticCurveTo(x, -y, x - 0.09, -y);
+      shape.lineTo(-x + 0.09, -y);
+      shape.quadraticCurveTo(-x, -y, -x, -y + 0.09);
+
+      return new THREE.ShapeGeometry(shape);
+    })()}
+  />
+  <meshStandardMaterial
+    attach="material"
+    color={plateColor}
+    metalness={0.02}
+    roughness={0.1}
+    clearcoat={0.6}
+    clearcoatRoughness={0.02}
+    envMapIntensity={0.5}
+    emissive={plateColor}
+    emissiveIntensity={0.05}
+    depthWrite={false}            
+    polygonOffset={true}
+    polygonOffsetFactor={-4}
+    polygonOffsetUnits={-2}
+    side={THREE.FrontSide}
+    transparent={true}           
+    opacity={1.0}              
+  />
+</mesh>
+
+
+
+back
+<mesh position={[0, 0, -dimensions.depth / 2 - 0.005]}>
+  <primitive
+    object={(() => {
+      const shape = new THREE.Shape();
+      const x = dimensions.width / 2 - 0.09;
+      const y = dimensions.height / 2 - 0.09;
+
+      shape.moveTo(-x, -y + 0.09);
+      shape.lineTo(-x, y - 0.09);
+      shape.quadraticCurveTo(-x, y, -x + 0.09, y);
+      shape.lineTo(x - 0.09, y);
+      shape.quadraticCurveTo(x, y, x, y - 0.09);
+      shape.lineTo(x, -y + 0.09);
+      shape.quadraticCurveTo(x, -y, x - 0.09, -y);
+      shape.lineTo(-x + 0.09, -y);
+      shape.quadraticCurveTo(-x, -y, -x, -y + 0.09);
+
+      return new THREE.ShapeGeometry(shape);
+    })()}
+  />
+  <meshStandardMaterial
+    color={plateColor}
+    metalness={0.02}
+    roughness={0.1}
+    clearcoat={0.6}
+    clearcoatRoughness={0.02}
+    envMapIntensity={0.5}
+    emissive={plateColor}
+    emissiveIntensity={0.05}
+    side={THREE.BackSide}
+  />
+</mesh>
+
+SIDE EDGES
+<mesh position={[0, 0, 0]}>
+  <primitive
+    object={createRoundedBoxGeometry(
+      dimensions.width,
+      dimensions.height,
+      dimensions.depth,
+      0.09
+    )}
+  />
+  <meshStandardMaterial
+    color="#404040"
+    metalness={0.1}
+    roughness={0.3}
+  />
+</mesh> */}
+
+
+
+
+{/* FRONT FACE - FIXED WITH PROPER DEPTH */}
+<mesh
+  position={[0, 0, dimensions.depth / 2 + 0.015]} // Even higher Z position
+  renderOrder={1000}                              // Higher render order
+  receiveShadow={false} 
+  castShadow={false}
+>
+  <primitive
+    object={(() => {
+      const shape = new THREE.Shape();
+      const x = dimensions.width / 2 - 0.09;
+      const y = dimensions.height / 2 - 0.09;
+
+      shape.moveTo(-x, -y + 0.09);
+      shape.lineTo(-x, y - 0.09);
+      shape.quadraticCurveTo(-x, y, -x + 0.09, y);
+      shape.lineTo(x - 0.09, y);
+      shape.quadraticCurveTo(x, y, x, y - 0.09);
+      shape.lineTo(x, -y + 0.09);
+      shape.quadraticCurveTo(x, -y, x - 0.09, -y);
+      shape.lineTo(-x + 0.09, -y);
+      shape.quadraticCurveTo(-x, -y, -x, -y + 0.09);
+
+      return new THREE.ShapeGeometry(shape);
+    })()}
+  />
+  <meshStandardMaterial
+    attach="material"
+    color={plateColor}
+    metalness={0.02}
+    roughness={0.1}
+    clearcoat={0.6}
+    clearcoatRoughness={0.02}
+    envMapIntensity={0.5}
+    emissive={plateColor}
+    emissiveIntensity={0.05}
+    depthTest={false}              // ✅ Disable depth testing - always render on top
+    depthWrite={false}             // ✅ Don't write to depth buffer
+    side={THREE.FrontSide}
+  />
+</mesh>
+
+
+{/* SIDE EDGES - with lower render order */}
+<mesh 
+  position={[0, 0, 0]}
+  renderOrder={0}                  // Lower render order than front face
+  receiveShadow={false} 
+  castShadow={false}
+>
+  <primitive
+    object={createRoundedBoxGeometry(
+      dimensions.width,
+      dimensions.height,
+      dimensions.depth,
+      0.09
+    )}
+  />
+  <meshStandardMaterial
+    color="#404040"
+    metalness={0.1}
+    roughness={0.3}
+    depthTest={true}               // Keep depth testing for sides
+    depthWrite={true}              // Keep depth writing for sides
+  />
+</mesh>
+
+
+
+<mesh position={[0, 0, -dimensions.depth / 2 - 0.005]} renderOrder={1003}>
+  <primitive
+    object={(() => {
+      const shape = new THREE.Shape();
+      const x = dimensions.width / 2 - 0.09;
+      const y = dimensions.height / 2 - 0.09;
+
+      shape.moveTo(-x, -y + 0.09);
+      shape.lineTo(-x, y - 0.09);
+      shape.quadraticCurveTo(-x, y, -x + 0.09, y);
+      shape.lineTo(x - 0.09, y);
+      shape.quadraticCurveTo(x, y, x, y - 0.09);
+      shape.lineTo(x, -y + 0.09);
+      shape.quadraticCurveTo(x, -y, x - 0.09, -y);
+      shape.lineTo(-x + 0.09, -y);
+      shape.quadraticCurveTo(-x, -y, -x, -y + 0.09);
+
+      return new THREE.ShapeGeometry(shape);
+    })()}
+  />
+  <meshStandardMaterial
+    color={plateColor}
+    metalness={0.02}
+    roughness={0.1}
+    clearcoat={0.6}
+    clearcoatRoughness={0.02}
+    envMapIntensity={0.5}
+    emissive={plateColor}
+    emissiveIntensity={0.05}
+    side={THREE.BackSide}
+    depthTest={false}        
+    depthWrite={false}       
+  />
+</mesh>
+
+
+      {/* MAIN TEXT - with depth testing enabled */}
+      {/* Conditional text rendering based on camera view */}
+      {/* working correctly */}
+      {/*
       {builtInOutlineColor && (
         <Text3D
           font={fontUrl}
@@ -1506,7 +1798,7 @@ distance={12}
           position={[
             textPosition[0] - 0.04,
             textPosition[1] - 0.008,
-            textPosition[2] - 0.01, // Slightly behind main text
+            textPosition[2] - 0.01,
           ]}
           bevelEnabled={true}
           bevelThickness={plateThickness * 0.05}
@@ -1518,33 +1810,88 @@ distance={12}
             color={builtInOutlineColor}
             metalness={0.1}
             roughness={0.4}
+             depthTest={false}        
+  depthWrite={false}       
+  renderOrder={1001}       
+  side={THREE.FrontSide} 
           />
         </Text3D>
       )}
 
-      {/* Main text - NOW PROPERLY ELEVATED for 4D borders */}
-      <Text3D
-        font={fontUrl}
-        size={fontSize * 1.05}
-        height={plateThickness * 1.6}
-        position={textPosition} // Uses the elevated Z-position for 4D borders
-        bevelEnabled={true}
-        bevelThickness={plateThickness * 0.05}
-        bevelSize={plateThickness * 0.02}
-        curveSegments={16}
-      >
-        {text}
-        <meshStandardMaterial
-          color={finalFontColor}
-          metalness={0.1}
-          roughness={0.2}
-          clearcoat={0.7}
-          clearcoatRoughness={0.05}
-          envMapIntensity={0.6}
-          emissive={finalFontColor}
-          emissiveIntensity={0.03}
-        />
-      </Text3D>
+ <group>
+  <Text3D
+    font={fontUrl}
+    size={fontSize * 1.05}
+    height={plateThickness * 1.6}
+    position={[textPosition[0], textPosition[1], dimensions.depth / 2 + 0.020]}
+    bevelEnabled={true}
+    bevelThickness={plateThickness * 0.05}
+    bevelSize={plateThickness * 0.02}
+    curveSegments={16}
+  >
+    {text}
+    <meshStandardMaterial
+      color={finalFontColor}
+      metalness={0.1}
+      roughness={0.2}
+      clearcoat={0.7}
+      clearcoatRoughness={0.05}
+      envMapIntensity={0.6}
+      emissive={finalFontColor}
+      emissiveIntensity={0.03}
+      depthTest={false}
+      depthWrite={false}
+      renderOrder={1002}
+      side={THREE.FrontSide}  // ← CHANGE THIS LINE
+      transparent={true}
+      opacity={1.0}
+    />
+  </Text3D>
+  
+  <mesh 
+    position={[0, 0, -dimensions.depth / 2 - 0.010]}
+    renderOrder={1001}
+  >
+    <planeGeometry args={[dimensions.width, dimensions.height]} />
+    <meshBasicMaterial 
+      color={plateColor}
+      transparent={true}
+      opacity={0}
+      depthTest={false}
+      depthWrite={false}
+      side={THREE.FrontSide}
+    />
+  </mesh>
+</group> */}
+
+<Text3D
+  font={fontUrl}
+  size={fontSize * 1.05}
+  height={plateThickness * 1.6}
+  position={[textPosition[0], textPosition[1], dimensions.depth / 2 + 0.020]}
+  bevelEnabled={true}
+  bevelThickness={plateThickness * 0.05}
+  bevelSize={plateThickness * 0.02}
+  curveSegments={16}
+>
+  {text}
+  <meshStandardMaterial
+    color={finalFontColor}
+    metalness={0.1}
+    roughness={0.2}
+    clearcoat={0.7}
+    clearcoatRoughness={0.05}
+    envMapIntensity={0.6}
+    emissive={finalFontColor}
+    emissiveIntensity={0.03}
+    depthTest={false}        // ← Back to original working settings
+    depthWrite={false}       
+    renderOrder={1002}
+    transparent={true}
+    opacity={1.0}
+  />
+</Text3D>
+
     </Canvas>
   );
 };
