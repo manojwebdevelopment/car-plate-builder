@@ -1,42 +1,466 @@
-/* Navbar css  */
+/* theme.css - PlateForge Theme Colors and Fonts */
 
- .hover-bg-warning:hover {
-          background-color: #f0ad4e !important;
-          transition: background-color 0.3s ease;
-        }
-        
-        .dropdown-menu {
-          margin-top: 0.5rem;
-          border: none;
-          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-        
-        .dropdown-item:hover {
-          background-color: #f0ad4e;
-          color: #000;
-        }
-        
-        .navbar-toggler:focus {
-          box-shadow: none;
-        }
-        
-        .nav-link {
-          transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover {
-          color: #000 !important;
-        }
-        
-        @media (max-width: 991.98px) {
-          .navbar-nav .nav-link {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-          }
-          
-          .dropdown-menu {
-            background-color: #fff3cd !important;
-            border: 1px solid #ffc107;
-            margin-left: 1rem;
-          }
-        }
+/* ========== CSS CUSTOM PROPERTIES (VARIABLES) ========== */
+:root {
+  /* Primary Theme Colors */
+  --primary-yellow: #FFEB00;
+  --primary-yellow: #FFEB00;
+  --secondary-yellow: #ECE852;
+  --primary-text: #000000;
+  --secondary-text: #666666;
+  --white: #ffffff;
+  --dark: #1a1a1a;
+  --light-bg: #f9f9f2;
+  --section-bg: #f2f2f2;
+
+  /* Gradient Colors */
+  --primary-gradient: linear-gradient(135deg, #FFEB00, #ECE852);
+  --light-gradient: linear-gradient(135deg, #ECE852, #f5f5dc);
+  --section-gradient: linear-gradient(90deg, #FFEB00, #ECE852, #FFEB00);
+
+  /* Shadow Colors */
+  --shadow-primary: rgba(255, 235, 0, 0.3);
+  --shadow-light: rgba(255, 235, 0, 0.2);
+  --shadow-hover: rgba(255, 235, 0, 0.5);
+
+  /* Font Settings */
+  --primary-font: 'Arial', 'Helvetica', sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+  --font-weight-extra-bold: 800;
+}
+
+/* ========== BACKGROUND CLASSES ========== */
+.bg-yellow-primary {
+  background-color: var(--primary-yellow) !important;
+}
+
+.bg-yellow-secondary {
+  background-color: var(--secondary-yellow) !important;
+}
+
+.bg-yellow-light {
+  background-color: var(--light-bg) !important;
+}
+
+.bg-yellow-gradient {
+  background: var(--primary-gradient) !important;
+}
+
+.bg-yellow-gradient-light {
+  background: var(--light-gradient) !important;
+}
+
+.bg-orange-gradient {
+  background: var(--primary-gradient) !important;
+}
+
+.bg-section {
+  background-color: var(--section-bg) !important;
+}
+
+.bg-dark-custom {
+  background-color: var(--dark) !important;
+}
+
+/* ========== TEXT COLOR CLASSES ========== */
+.text-yellow-primary {
+  color: var(--primary-yellow) !important;
+}
+
+.text-orange-primary {
+  color: var(--primary-text) !important;
+}
+
+.text-primary-custom {
+  color: var(--primary-text) !important;
+}
+
+.text-secondary-custom {
+  color: var(--secondary-text) !important;
+}
+
+.text-white-custom {
+  color: var(--white) !important;
+}
+
+/* ========== BORDER CLASSES ========== */
+.border-yellow-primary {
+  border-color: var(--primary-yellow) !important;
+}
+
+.border-primary-custom {
+  border-color: var(--primary-yellow) !important;
+}
+
+.border-2-custom {
+  border-width: 2px !important;
+  border-style: solid !important;
+}
+
+.border-3-custom {
+  border-width: 3px !important;
+  border-style: solid !important;
+}
+
+/* ========== BUTTON STYLES ========== */
+.btn-primary-custom {
+  background-color: var(--primary-yellow) !important;
+  border-color: var(--primary-yellow) !important;
+  color: var(--primary-text) !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.btn-primary-custom:hover {
+  background-color: var(--secondary-yellow) !important;
+  border-color: var(--secondary-yellow) !important;
+  color: var(--primary-text) !important;
+}
+
+.btn-gradient-custom {
+  background: var(--primary-gradient) !important;
+  border: none !important;
+  color: var(--primary-text) !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.btn-outline-custom {
+  background: transparent !important;
+  border: 2px solid var(--primary-yellow) !important;
+  color: var(--primary-yellow) !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.btn-outline-custom:hover {
+  background: var(--primary-yellow) !important;
+  color: var(--primary-text) !important;
+}
+
+/* ========== SHADOW CLASSES ========== */
+.shadow-yellow {
+  box-shadow: 0 10px 30px var(--shadow-light) !important;
+}
+
+.shadow-yellow-hover {
+  box-shadow: 0 20px 40px var(--shadow-primary) !important;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px var(--shadow-hover) !important;
+}
+
+/* ========== ANIMATION AND HOVER EFFECTS ========== */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px var(--shadow-primary);
+}
+
+.btn-glow {
+  transition: all 0.3s ease;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 20px var(--shadow-hover);
+  transform: scale(1.05);
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ========== banner section ========== */
+.bg-section {
+  position: relative;
+  background-image: url('images/banner-image.jpeg'); /* 🔁 Change this path */
+  background-size: cover;
+  background-position: center;
+  padding: 60px 20px;
+   height: 100vh;
+  overflow: hidden;
+}
+
+/* Black blur overlay */
+.bg-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+   background-color: rgba(10, 10, 10, 0.001);  /* 👈 too dark */
+  backdrop-filter: blur(3px);
+  z-index: 1;
+}
+
+/* Ensure content stays above overlay */
+.bg-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.plate-input-container{
+  margin-top: 50px;
+  background: var(--dark);
+  max-width: 800px;
+}
+
+.text-white-custom {
+  color: #ffffff;
+}
+
+.plate-info-text {
+  font-family: var(--primary-font);
+  text-align: center;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.6;
+}
+.plate-info-text span {
+  color: var(--primary-yellow);
+}
+
+.content-section {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.content-section h1,
+.content-section h2,
+.content-section h3 {
+  color: #000000;
+}
+
+.content-section p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #000000;
+}
+
+
+.section-separator {
+  height: 4px;
+  background: var(--section-gradient);
+}
+
+/* ========== TYPOGRAPHY ========== */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.font-primary {
+  font-family: var(--primary-font);
+}
+
+.font-weight-custom {
+  font-weight: var(--font-weight-bold);
+}
+
+.font-weight-extra {
+  font-weight: var(--font-weight-extra-bold);
+}
+
+/* ========== FORM ELEMENTS ========== */
+.form-control-custom {
+  border: 2px solid var(--primary-yellow);
+  border-radius: 5px;
+}
+
+.form-control-custom:focus {
+  border-color: var(--secondary-yellow);
+  box-shadow: 0 0 10px var(--shadow-light);
+}
+
+/* ========== CARDS AND CONTAINERS ========== */
+.card-custom {
+  border: 3px solid var(--primary-yellow);
+  border-radius: 1rem;
+  background: var(--white);
+}
+
+.container-custom {
+  background: var(--light-bg);
+  min-height: 100vh;
+}
+
+/* ========== FEATURE ICONS ========== */
+.feature-icon {
+  background: var(--primary-gradient);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 1rem;
+  box-shadow: 0 10px 30px var(--shadow-light);
+}
+
+/* ========== RESPONSIVE UTILITIES ========== */
+@media (max-width: 768px) {
+  .hero-bg {
+    padding: 2rem 1rem;
+  }
+  
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+}
+
+/* ========== NAVBAR SPECIFIC STYLES ========== */
+.navbar-custom {
+  background: var(--primary-gradient) !important;
+  box-shadow: 0 4px 15px var(--shadow-light);
+  z-index: 1050;
+}
+
+.navbar-brand-custom {
+  border: 3px solid var(--primary-text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: var(--font-weight-extra-bold);
+  background-color: var(--primary-yellow);
+  color: var(--primary-text) !important;
+  font-size: 1.5rem;
+}
+
+.nav-link-custom {
+  color: var(--primary-text) !important;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.nav-link-custom:hover {
+  background-color: var(--secondary-yellow) !important;
+  color: var(--primary-text) !important;
+}
+
+.dropdown-menu-custom {
+  background: var(--primary-gradient) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px var(--shadow-light) !important;
+  padding: 8px !important;
+}
+
+.dropdown-item-custom {
+  color: var(--primary-text) !important;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px !important;
+  margin: 2px 0;
+  transition: all 0.3s ease;
+  border: none !important;
+}
+
+.dropdown-item-custom:hover {
+  background-color: var(--secondary-yellow) !important;
+  color: var(--primary-text) !important;
+}
+
+.dropdown-divider-custom {
+  border-color: var(--primary-text) !important;
+  opacity: 0.3;
+  margin: 8px 0;
+}
+
+.promotional-banner {
+  background: var(--primary-gradient) !important;
+  color: var(--primary-text) !important;
+  border: none !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.btn-shop-now {
+  background-color: var(--primary-text) !important;
+  color: var(--primary-yellow) !important;
+  border: 2px solid var(--primary-text) !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.btn-shop-now:hover {
+  background-color: var(--secondary-text) !important;
+  color: var(--primary-yellow) !important;
+}
+
+.cart-badge-custom {
+  background: linear-gradient(135deg, var(--primary-text), var(--secondary-text)) !important;
+  border: 2px solid var(--primary-yellow) !important;
+  color: var(--primary-yellow) !important;
+  font-size: 0.7rem;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  line-height: 1.2rem;
+}
+
+.cart-empty-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-text);
+  border-radius: 50%;
+}
+
+.navbar-toggler-custom {
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--primary-text);
+}
+
+.navbar-toggler-icon-custom {
+  filter: invert(1);
+}
+
+.close-btn-custom {
+  filter: invert(1);
+}
+
+/* ========== UTILITY CLASSES ========== */
+.min-vh-100-custom {
+  min-height: 100vh;
+  background-color: var(--light-bg);
+}
+
+.rounded-custom {
+  border-radius: 1rem !important;
+}
+
+.rounded-lg-custom {
+  border-radius: 1.5rem !important;
+}
+
+.p-custom {
+  padding: 2rem !important;
+}
+
+.py-custom {
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+.mb-custom {
+  margin-bottom: 2rem !important;
+}
+
+.mt-custom {
+  margin-top: 2rem !important;
+}

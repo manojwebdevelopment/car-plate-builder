@@ -1,0 +1,95 @@
+:root {
+  --primary: #0D6EFD;
+  --secondary: #6C757D;
+  --bg-light: #f8f9fa;
+  --bg-white: #ffffff;
+  --text-dark: #212529;
+  --text-muted: #6c757d;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 1s ease-in-out both;
+}
+
+.zoom-in {
+  animation: zoomIn 0.6s ease-in-out both;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary);
+  border: none;
+}
+
+.btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+/* Cards */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Section padding */
+section {
+  scroll-margin-top: 80px;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid #333;
+}
+
+footer i {
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+footer i:hover {
+  color: var(--primary);
+}
+
+/* Swiper arrows */
+.swiper-button-prev,
+.swiper-button-next {
+  color: var(--primary);
+}
+
+/* Responsive fixes */
+@media (max-width: 767px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .card-img-top {
+    height: 180px !important;
+  }
+}
