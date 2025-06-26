@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus, ShoppingCart, Calculator, ArrowLeft } from 'lucide-react';
+import { X, Plus, Minus, ShoppingCart, Calculator, ArrowLeft, CreditCard, Check, Shield, Clock, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { 
     getCartItems, 
@@ -10,16 +10,174 @@ import {
     getCartItemCount 
 } from './cartUtils';
 
+const PaymentMethodSelector = ({ 
+    total, 
+    onPayPalCheckout, 
+    onWorldpayCheckout, 
+    checkoutLoading, 
+    cartItems 
+}) => {
+    const [selectedMethod, setSelectedMethod] = useState('paypal');
+
+    const handleCheckout = () => {
+        if (selectedMethod === 'paypal') {
+            onPayPalCheckout();
+        } else {
+            onWorldpayCheckout();
+        }
+    };
+
+    return (
+        <div className="payment-methods">
+            {/* Payment Method Selection */}
+            <div className="mb-4">
+                <h6 className="fw-bold mb-3 text-dark">Choose Payment Method</h6>
+                
+                {/* PayPal Option */}
+                <div 
+                    className={`payment-option ${selectedMethod === 'paypal' ? 'selected' : ''}`}
+                    onClick={() => setSelectedMethod('paypal')}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <div className={`d-flex align-items-center justify-content-between p-3 border rounded mb-2 ${
+                        selectedMethod === 'paypal' ? 'border-warning border-2' : ''
+                    }`}>
+                        <div className="d-flex align-items-center">
+                            <div className="me-3">
+                                <div className={`rounded-circle d-flex align-items-center justify-content-center ${
+                                    selectedMethod === 'paypal' ? 'bg-warning text-dark' : 'border'
+                                }`} style={{ width: '20px', height: '20px' }}>
+                                    {selectedMethod === 'paypal' && <Check size={12} />}
+                                </div>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <div className="me-3">
+                                    <span className="fw-bold text-primary" style={{ fontSize: '18px' }}>PayPal</span>
+                                </div>
+                                <div>
+                                    <div className="fw-semibold text-dark">PayPal</div>
+                                    <small className="text-muted">Pay with your PayPal account</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span className="badge bg-primary me-1">Instant</span>
+                            <span className="badge bg-success">Trusted</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Worldpay Option */}
+                <div 
+                    className={`payment-option ${selectedMethod === 'worldpay' ? 'selected' : ''}`}
+                    onClick={() => setSelectedMethod('worldpay')}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <div className={`d-flex align-items-center justify-content-between p-3 border rounded mb-2 ${
+                        selectedMethod === 'worldpay' ? 'border-warning border-2' : ''
+                    }`}>
+                        <div className="d-flex align-items-center">
+                            <div className="me-3">
+                                <div className={`rounded-circle d-flex align-items-center justify-content-center ${
+                                    selectedMethod === 'worldpay' ? 'bg-warning text-dark' : 'border'
+                                }`} style={{ width: '20px', height: '20px' }}>
+                                    {selectedMethod === 'worldpay' && <Check size={12} />}
+                                </div>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <div className="me-3">
+                                    <div className="bg-danger text-white px-2 py-1 rounded fw-bold" style={{ fontSize: '12px' }}>
+                                        Worldpay
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="fw-semibold text-dark">Credit/Debit Card</div>
+                                    <small className="text-muted">Visa, Mastercard, Amex accepted</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span className="badge bg-warning text-dark me-1">Secure</span>
+                            <span className="badge bg-info">Fast</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Payment Features */}
+                <div className="mt-3 p-3 bg-light rounded">
+                    <div className="row text-center">
+                        <div className="col-4">
+                            <Shield size={20} className="text-success mb-1" />
+                            <div className="small text-muted">SSL Encrypted</div>
+                        </div>
+                        <div className="col-4">
+                            <Clock size={20} className="text-primary mb-1" />
+                            <div className="small text-muted">Instant Processing</div>
+                        </div>
+                        <div className="col-4">
+                            <CreditCard size={20} className="text-warning mb-1" />
+                            <div className="small text-muted">Secure Payments</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Checkout Button */}
+            <button 
+                className={`btn btn-lg w-100 fw-bold mb-3 ${
+                    selectedMethod === 'paypal' ? 'btn-primary' : 'btn-danger'
+                }`}
+                onClick={handleCheckout}
+                disabled={checkoutLoading || cartItems.length === 0}
+                style={{ transition: 'all 0.3s ease' }}
+            >
+                {checkoutLoading ? (
+                    <>
+                        <div className="spinner-border spinner-border-sm me-2" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                        <span>Processing Payment...</span>
+                    </>
+                ) : (
+                    <>
+                        {selectedMethod === 'paypal' ? (
+                            <>
+                                <span className="me-2">💳</span>
+                                Pay with PayPal - £{total}
+                            </>
+                        ) : (
+                            <>
+                                <CreditCard className="me-2" size={20} />
+                                Pay with Card - £{total}
+                            </>
+                        )}
+                        <ArrowRight className="ms-2" size={16} />
+                    </>
+                )}
+            </button>
+
+            {/* Security Note */}
+            <div className="text-center">
+                <small className="text-muted d-flex align-items-center justify-content-center">
+                    <Shield size={14} className="me-1" />
+                    Your payment information is secure and encrypted
+                </small>
+            </div>
+        </div>
+    );
+};
+
 const CartPage = () => {
     const [cartItems, setCartItems] = useState([]);
     const [couponCode, setCouponCode] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [shippingOption, setShippingOption] = useState('tracked');
     const [loading, setLoading] = useState(true);
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
     
     const navigate = useNavigate();
 
-    // Load cart items from localStorage on component mount
+    // Load cart items from localStorage on component mount (your original logic)
     useEffect(() => {
         loadCartItems();
         
@@ -37,7 +195,7 @@ const CartPage = () => {
 
     const loadCartItems = () => {
         try {
-            const items = getCartItems();
+            const items = getCartItems(); // Your original function
             setCartItems(items);
             setLoading(false);
         } catch (error) {
@@ -46,7 +204,7 @@ const CartPage = () => {
         }
     };
 
-    // Remove item from cart
+    // Remove item from cart (your original logic)
     const handleRemoveItem = (id) => {
         const result = removeFromCart(id);
         if (result.success) {
@@ -54,7 +212,7 @@ const CartPage = () => {
         }
     };
 
-    // Update quantity
+    // Update quantity (your original logic)
     const handleUpdateQuantity = (id, newQuantity) => {
         const result = updateCartItemQuantity(id, newQuantity);
         if (result.success) {
@@ -62,7 +220,7 @@ const CartPage = () => {
         }
     };
 
-    // Clear all items
+    // Clear all items (your original logic)
     const handleClearCart = () => {
         if (window.confirm('Are you sure you want to clear your cart?')) {
             const result = clearCart();
@@ -73,7 +231,7 @@ const CartPage = () => {
         }
     };
 
-    // Apply coupon
+    // Apply coupon (your original logic)
     const applyCoupon = () => {
         const coupons = {
             'Save15': { discount: 0.15, type: 'percentage' },
@@ -87,7 +245,166 @@ const CartPage = () => {
         }
     };
 
-    // Calculate totals
+    // UPDATED: Handle checkout with Worldpay
+    const handlePayPalCheckout = async () => {
+        setCheckoutLoading(true);
+
+        try {
+            const response = await fetch('http://localhost:5000/create-paypal-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: total.toFixed(2),
+                    currency: 'GBP'
+                }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server error: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('PayPal order created:', data);
+
+            if (data.id) {
+                // Store payment data for success page
+                localStorage.setItem('pendingPayment', JSON.stringify({
+                    cartItems,
+                    total: total.toFixed(2),
+                    appliedCoupon,
+                    shippingOption,
+                    paymentId: data.id,
+                    provider: 'paypal'
+                }));
+                
+                // Redirect to PayPal
+                const approvalUrl = data.links.find(link => link.rel === 'approve')?.href;
+                if (approvalUrl) {
+                    window.location.href = approvalUrl;
+                }
+            } else {
+                throw new Error('Failed to create PayPal order');
+            }
+
+        } catch (error) {
+            console.error('PayPal checkout error:', error);
+            alert('PayPal checkout failed: ' + error.message);
+        } finally {
+            setCheckoutLoading(false);
+        }
+    };
+
+    const handleCheckout = async () => {
+        setCheckoutLoading(true);
+
+        try {
+            // Calculate the total amount
+            const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+            const discount = appliedCoupon 
+                ? appliedCoupon.type === 'percentage' 
+                    ? subtotal * appliedCoupon.discount 
+                    : appliedCoupon.discount
+                : 0;
+            const shippingCost = shippingOption === 'next-day' ? 7.99 : 0;
+            const taxRate = 0.20; // 20% VAT
+            const afterDiscount = subtotal - discount;
+            const tax = afterDiscount * taxRate;
+            const total = afterDiscount + shippingCost + tax;
+
+            // Prepare customer info
+            const customerInfo = {
+                name: 'John Doe', // In real app, collect from form
+                email: 'john@example.com',
+                phone: '+44 123 456 7890'
+            };
+
+            // Prepare order details
+            const orderDetails = {
+                items: cartItems.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    unitPrice: Math.round(item.price * 100), // Convert to pence
+                    totalAmount: Math.round(item.subtotal * 100)
+                })),
+                quantity: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+                subtotal: subtotal.toFixed(2),
+                discount: discount.toFixed(2),
+                shipping: shippingCost.toFixed(2),
+                tax: tax.toFixed(2),
+                total: total.toFixed(2)
+            };
+
+            console.log('Sending Worldpay checkout request:', {
+                amount: total.toFixed(2),
+                currency: 'GBP',
+                customerInfo,
+                orderDetails
+            });
+
+            // Call Worldpay endpoint
+            const response = await fetch('http://localhost:5000/create-worldpay-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: total.toFixed(2),
+                    currency: 'GBP',
+                    customerInfo,
+                    orderDetails
+                }),
+            });
+
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server response:', errorText);
+                throw new Error(`Server error: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('Worldpay payment data:', data);
+
+            if (data.success && data.paymentId) {
+                // Store payment data for success page
+                localStorage.setItem('pendingPayment', JSON.stringify({
+                    cartItems,
+                    total: total.toFixed(2),
+                    appliedCoupon,
+                    shippingOption,
+                    paymentId: data.paymentId,
+                    transactionReference: data.transactionReference,
+                    provider: 'worldpay'
+                }));
+                
+                console.log('Payment created successfully, redirecting...');
+                
+                // For direct API integration, redirect to success page immediately
+                // In a real hosted payment page setup, you'd redirect to Worldpay's payment form
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    // Fallback redirect
+                    navigate(`/payment-success?paymentId=${data.paymentId}&transactionRef=${data.transactionReference}`);
+                }
+            } else {
+                throw new Error(data.error || 'Failed to create Worldpay payment');
+            }
+
+        } catch (error) {
+            console.error('Checkout error:', error);
+            alert('Checkout failed: ' + error.message + '\n\nPlease make sure the backend server is running on http://localhost:5000');
+        } finally {
+            setCheckoutLoading(false);
+        }
+    };
+
+    // Calculate totals (your original logic)
     const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
     const discount = appliedCoupon 
         ? appliedCoupon.type === 'percentage' 
@@ -153,7 +470,7 @@ const CartPage = () => {
                     </div>
                 ) : (
                     <div className="row g-4">
-                        {/* Cart Items */}
+                        {/* Cart Items - Same as before */}
                         <div className="col-lg-8">
                             <div className="card border-0 shadow-sm">
                                 <div className="card-header bg-warning text-dark">
@@ -206,7 +523,6 @@ const CartPage = () => {
                                                 </div>
                                                 <div className="col-2 text-center">
                                                     {item.type === 'fixing-kit' ? (
-                                                        // Fixed quantity for fixing kit - no controls
                                                         <div className="text-center">
                                                             <span className="fw-bold bg-success text-white px-2 py-1 rounded">
                                                                 1 Kit
@@ -216,7 +532,6 @@ const CartPage = () => {
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                        // Normal quantity controls for plates
                                                         <div className="input-group" style={{ width: '120px', margin: '0 auto' }}>
                                                             <button
                                                                 className="btn btn-outline-warning btn-sm"
@@ -245,12 +560,10 @@ const CartPage = () => {
                                                 </div>
                                                 <div className="col-1 text-center">
                                                     {item.type === 'fixing-kit' ? (
-                                                        // No remove button for fixing kit
                                                         <span className="text-muted small">
                                                             <i>Included</i>
                                                         </span>
                                                     ) : (
-                                                        // Normal remove button for plates
                                                         <button
                                                             className="btn btn-outline-danger btn-sm"
                                                             onClick={() => handleRemoveItem(item.id)}
@@ -265,7 +578,7 @@ const CartPage = () => {
                                 </div>
                             </div>
 
-                            {/* Coupon Section */}
+                            {/* Coupon Section - Same as before */}
                             <div className="card border-0 shadow-sm mt-4">
                                 <div className="card-body">
                                     <div className="row align-items-center">
@@ -397,15 +710,15 @@ const CartPage = () => {
                                         </span>
                                     </div>
 
-                                    <button className="btn btn-warning btn-lg w-100 fw-bold mb-3">
-                                        PROCEED TO CHECKOUT
-                                    </button>
+                                    <PaymentMethodSelector
+                                        total={total.toFixed(2)}
+                                        onPayPalCheckout={handlePayPalCheckout}
+                                        onWorldpayCheckout={handleCheckout}
+                                        checkoutLoading={checkoutLoading}
+                                        cartItems={cartItems}
+                                    />
 
-                                    <div className="text-center">
-                                        <small className="text-muted">
-                                            Secure checkout powered by SSL encryption
-                                        </small>
-                                    </div>
+                                    {/* Security message is now handled by PaymentMethodSelector */}
                                 </div>
                             </div>
                         </div>

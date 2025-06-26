@@ -226,7 +226,7 @@ const Footer = () => {
               </div>
               <div className="col-lg-6 text-lg-end mt-2 mt-lg-0">
                 <p className="mb-0 small">
-                  Designed with ❤️ in the UK | Company Reg: 12345678
+                  Designed with ❤️ in the India | Company Reg: 12345678
                 </p>
               </div>
             </div>

@@ -14,6 +14,7 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 // import AdminDashboard from './dashboard/AdminDashboard'
 import AdminDashboard from './components/AdminDashboard'
 import AdminRegister from './components/AdminRegister'
+import UnifiedPaymentSuccessPage from './components/Cart/PaymentSuccessPage';
 
 // Create a Layout component to handle conditional rendering
 function Layout() {
@@ -33,6 +34,7 @@ function Layout() {
           <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
           <Route path='/dashboard' element={<AdminDashboard/>} />
           <Route path='/admin/register' element={<AdminRegister/>} />
+          <Route path="/payment-success" element={<UnifiedPaymentSuccessPage />} />
         </Routes>
       </div>
       {!isAdminRoute && <Footer/>}
