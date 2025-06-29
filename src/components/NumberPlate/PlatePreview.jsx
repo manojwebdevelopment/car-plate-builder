@@ -2855,7 +2855,7 @@ const PlatePreview = ({
 
   // Plate dimensions based on vehicle type - INCREASE width when badge is present
   const plateDimensions = {
-    "18-oblong": { width: 5.8, height: 1.4, depth: 0.03, scale: 1 },
+    "18-oblong": { width: 5.9, height: 1.4, depth: 0.03, scale: 1 },
     "21-oblong": { width: 8.0, height: 1.5, depth: 0.03, scale: 1 },
     "4x4": { width: 8.5, height: 1.5, depth: 0.03, scale: 1 },
   };
@@ -2967,7 +2967,7 @@ const PlatePreview = ({
     if (hasBadge) {
       // Text should be positioned in the usable area (inside the border frame)
       // Since border frame is offset, position text within that area
-      const frameOffsetX = badgePosition === "left" ? -0.6 : -1.7; // Offset text away from badge side plate text center 
+      const frameOffsetX = badgePosition === "left" ? -0.7 : -1.3; // Offset text away from badge side plate text center 
       xPosition = frameOffsetX - totalTextWidth / 2;
     } else {
       // No badge: center text perfectly on plate
@@ -2985,11 +2985,11 @@ const PlatePreview = ({
     if (selectedBorderObj) {
       const borderType = selectedBorderObj.type;
       if (borderType === "4d") {
-        textZ = baseZ + 0.15; // Much higher for 4D borders
+        textZ = baseZ + 0.1; // Much higher for 4D borders
       } else if (borderType === "crystal") {
-        textZ = baseZ + 0.08; // Higher for crystal borders
+        textZ = baseZ + 0.03; // Higher for crystal borders
       } else if (borderType === "printed" || borderType === "standard") {
-        textZ = baseZ + 0.05; // Higher for printed/standard borders
+        textZ = baseZ + 0.03; // Higher for printed/standard borders
       } else {
         textZ = baseZ + 0.03; // Slightly higher for any other border
       }
@@ -3052,19 +3052,19 @@ const getLighting = () => {
       <pointLight
         position={[0, 0, 6]}
         intensity={1.0}
-        color="#ffffff"
+        color="#757575"
         distance={15}
       />
       <pointLight
         position={[2, 2, 4]} // Positioned to the side for additional lighting
         intensity={0.8}
-        color="#ffffff"
+        color="#757575"
         distance={12}
       />
       <pointLight
         position={[-2, 2, 4]} // Positioned to the side for additional lighting
         intensity={0.8}
-        color="#ffffff"
+        color="#757575"
         distance={12}
       />
     </>
@@ -3430,7 +3430,7 @@ const getLighting = () => {
 
     // Badge Z position - HIGHEST to show above everything including borders
     const badgeZ = is4dBorder
-      ? dimensions.depth / 2 + 0.1
+      ? dimensions.depth / 2 + 0.01
       : dimensions.depth / 2 + 0.01;
     const position = [xPosition, 0, badgeZ];
 
@@ -3455,8 +3455,8 @@ const getLighting = () => {
           />
         </mesh>
 
-        {/* Flag area - TOP 60% of badge like reference */}
-        <mesh
+        {/* Flag area - TOP 60% of badge like reference image background area */}
+        {/* <mesh
           position={[
             position[0], // Centered horizontally
             position[1] + badgeHeight * 0.18, // Upper portion - higher up
@@ -3465,25 +3465,25 @@ const getLighting = () => {
         >
           <primitive
             object={createRoundedBoxGeometry(
-              badgeWidth * 0.88, // Wider flag area
-              badgeHeight * 0.52, // 52% height for flag
+              badgeWidth * 0.82, // Wider flag area
+              badgeHeight * 0.68, // 52% height for flag
               0.012,
-              0.02
+              0.08
             )}
           />
           <meshBasicMaterial color="#FFFFFF" />
-        </mesh>
+        </mesh> */}
 
         {/* Flag image - CENTERED in flag area */}
         {flagData.flagImage && (
           <mesh
             position={[
               position[0], // X
-              position[1] + badgeHeight * 0.18, // Y
+              position[1] + badgeHeight * 0.08, // Y
               position[2] + 0.04, // Z (on top of badge background)
             ]}
           >
-            <planeGeometry args={[badgeWidth * 0.82, badgeHeight * 0.48]} />
+            <planeGeometry args={[badgeWidth * 0.82, badgeHeight * 0.68]} />
             <meshBasicMaterial
               attach="material"
               transparent={true}
@@ -3515,11 +3515,11 @@ const getLighting = () => {
           <mesh
             position={[
               position[0], // X
-              position[1] + badgeHeight * 0.18, // Y
-              position[2] + 0.06, // ✅ Z (above everything)
+              position[1] + badgeHeight * 0.08, // Y
+              position[2] + 0.04, // ✅ Z (above everything)
             ]}
           >
-            <planeGeometry args={[badgeWidth * 0.78, badgeHeight * 0.44]} />
+            <planeGeometry args={[badgeWidth * 0.82, badgeHeight * 0.68]} />
             <meshBasicMaterial
               attach="material"
               transparent={true}
@@ -3553,8 +3553,8 @@ const getLighting = () => {
             size={0.15 * dimensions.scale} // Appropriate text size for badge
             height={0.015} // Good thickness
             position={[
-              position[0] - (flagText.length * 0.075 * dimensions.scale) / 1.1, // PERFECT CENTER
-              position[1] - badgeHeight * 0.26, // Bottom portion of badge
+              position[0] - (flagText.length * 0.075 * dimensions.scale) / 1.4, // PERFECT CENTER
+              position[1] - badgeHeight * 0.44, // Bottom portion of badge
               position[2] + 0.02, // Above badge background
             ]}
             bevelEnabled={true}
@@ -3672,7 +3672,7 @@ const getLighting = () => {
                   const innerShape = new THREE.Shape();
                   
                   // Outer border shape
-                  const outerWidth = dimensions.width + 0.08;
+                  const outerWidth = dimensions.width + 0.04;
                   const outerHeight = dimensions.height + 0.04;
                   const outerRadius = 0.09;
                   const outerX = outerWidth / 2 - outerRadius;
@@ -3718,7 +3718,7 @@ const getLighting = () => {
               />
               <meshStandardMaterial
                 // color="#3a3a3a" // Dark gray border
-                color="#8D8D8D" // Dark gray border
+                color="#757575" // Dark gray border
                 metalness={0.2}
                 roughness={0.3}
                 clearcoat={0.4}
@@ -3770,7 +3770,8 @@ const getLighting = () => {
               >
                 {text}
                 <meshStandardMaterial
-                  color={finalFontColor}
+                  // color={finalFontColor}
+                  color="#181818"
                   metalness={0.1}
                   roughness={0.2}
                   clearcoat={0.7}
