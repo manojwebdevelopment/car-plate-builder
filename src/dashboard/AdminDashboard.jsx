@@ -131,96 +131,476 @@ const AdminDashboard = () => {
     setEditingContact(null);
   };
 
-  const ViewOrderModal = ({ order, onClose, loading }) => {
-    if (!order && !loading) return null;
+const EnhancedOrderViewModal = ({ order, onClose, loading }) => {
+  if (!order && !loading) return null;
 
-    return (
-      <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Order Details</h5>
-              <button type="button" className="btn-close" onClick={onClose}></button>
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'paid': return 'bg-success';
+      case 'pending': return 'bg-warning text-dark';
+      case 'processing': return 'bg-info';
+      case 'shipped': return 'bg-primary';
+      case 'delivered': return 'bg-success';
+      case 'cancelled': return 'bg-danger';
+      case 'failed': return 'bg-danger';
+      case 'refunded': return 'bg-secondary';
+      default: return 'bg-secondary';
+    }
+  };
+
+  const PlateConfigurationCard = ({ item, index }) => (
+    <div className="card mb-3 border-start border-warning border-4">
+      <div className="card-header bg-light d-flex justify-content-between align-items-center">
+        <h6 className="mb-0 fw-bold text-dark">
+          <i className="bi bi-card-text me-2"></i>
+          Plate {index + 1}: {item.plateConfiguration?.text || 'N/A'}
+        </h6>
+        <span className="badge bg-warning text-dark">
+          {item.plateConfiguration?.side?.toUpperCase() || 'UNKNOWN'}
+        </span>
+      </div>
+      <div className="card-body">
+        <div className="row g-3">
+          {/* Basic Info */}
+          <div className="col-md-6">
+            <h6 className="text-warning mb-2">
+              <i className="bi bi-info-circle me-1"></i>Basic Information
+            </h6>
+            <div className="small mb-2">
+              <strong>Registration:</strong> 
+              <span className="ms-2 font-monospace">{item.plateConfiguration?.text || 'N/A'}</span>
             </div>
-            <div className="modal-body">
-              {loading ? (
-                <div className="text-center p-4">
-                  <div className="spinner-border text-warning" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <p className="mt-2">Loading order details...</p>
-                </div>
-              ) : order ? (
-                <div className="row">
-                  <div className="col-md-6">
-                    <h6 className="text-warning mb-3">Order Information</h6>
-                    <div className="mb-3">
-                      <strong>Order ID:</strong> {order.orderId}
-                    </div>
-                    <div className="mb-3">
-                      <strong>Customer Name:</strong> {order.customer}
-                    </div>
-                    <div className="mb-3">
-                      <strong>Product:</strong> {order.product}
-                    </div>
-                    <div className="mb-3">
-                      <strong>Amount:</strong> ₹{order.amount}
-                    </div>
-                    <div className="mb-3">
-                      <strong>Payment Status:</strong> 
-                      <span className={`badge ms-2 ${
-                        order.status === 'Completed' ? 'bg-success' :
-                        order.status === 'Pending' ? 'bg-warning text-dark' :
-                        order.status === 'Shipped' ? 'bg-info' : 'bg-secondary'
-                      }`}>
-                        {order.status}
-                      </span>
-                    </div>
-                    <div className="mb-3">
-                      <strong>Order Date:</strong> {formatDate(order.date)}
-                    </div>
-                  </div>
-                  
-                  <div className="col-md-6">
-                    <h6 className="text-warning mb-3">Shipping Address</h6>
-                    {order.shippingAddress ? (
-                      <div>
-                        <div className="mb-2">
-                          <strong>Street:</strong> {order.shippingAddress.street}
-                        </div>
-                        <div className="mb-2">
-                          <strong>City:</strong> {order.shippingAddress.city}
-                        </div>
-                        <div className="mb-2">
-                          <strong>State:</strong> {order.shippingAddress.state}
-                        </div>
-                        <div className="mb-2">
-                          <strong>Pincode:</strong> {order.shippingAddress.pincode}
-                        </div>
-                        <div className="mb-2">
-                          <strong>Country:</strong> {order.shippingAddress.country}
-                        </div>
-                        <div className="mb-2">
-                          <strong>Phone:</strong> {order.shippingAddress.phone}
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-muted">No shipping address available</p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-muted">No order details available</p>
+            <div className="small mb-2">
+              <strong>Spacing:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.spacing === 'legal' ? 'Legal Spacing' : "As Typed"}</span>
+            </div>
+            <div className="small mb-2">
+              <strong>Side:</strong> 
+              <span className="ms-2 text-capitalize">{item.plateConfiguration?.side || 'Unknown'}</span>
+            </div>
+            <div className="small mb-2">
+              <strong>Quantity:</strong> 
+              <span className="ms-2">{item.quantity || 1}</span>
+            </div>
+            <div className="small mb-2">
+              <strong>Road Legal:</strong> 
+              <span className={`ms-2 badge ${item.plateConfiguration?.roadLegal === 'Yes' ? 'bg-success' : 'bg-warning text-dark'}`}>
+                {item.plateConfiguration?.roadLegal || 'No'}
+              </span>
+            </div>
+          </div>
+
+          {/* Style & Design */}
+          <div className="col-md-6">
+            <h6 className="text-warning mb-2">
+              <i className="bi bi-palette me-1"></i>Style & Design
+            </h6>
+            <div className="small mb-2">
+              <strong>Plate Style:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.plateStyle?.label || 'Standard'}</span>
+              {item.plateConfiguration?.plateStyle?.price > 0 && (
+                <span className="ms-1 text-success">+£{item.plateConfiguration.plateStyle.price}</span>
               )}
             </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
+            <div className="small mb-2">
+              <strong>Font Color:</strong> 
+              <span className="ms-2 d-flex align-items-center">
+                {item.plateConfiguration?.fontColor?.color && (
+                  <span 
+                    className="me-2 border rounded" 
+                    style={{
+                      width: '16px', 
+                      height: '16px', 
+                      backgroundColor: item.plateConfiguration.fontColor.color,
+                      display: 'inline-block'
+                    }}
+                  ></span>
+                )}
+                {item.plateConfiguration?.fontColor?.name || 'Black'}
+                {item.plateConfiguration?.fontColor?.price > 0 && (
+                  <span className="ms-1 text-success">+£{item.plateConfiguration.fontColor.price}</span>
+                )}
+              </span>
+            </div>
+            <div className="small mb-2">
+              <strong>Size:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.size?.label || 'Standard'}</span>
+              <br />
+              <small className="text-muted ms-4">{item.plateConfiguration?.size?.dimensions || 'N/A'}</small>
+            </div>
+          </div>
+
+          {/* Border & Effects */}
+          <div className="col-md-6">
+            <h6 className="text-warning mb-2">
+              <i className="bi bi-border-all me-1"></i>Border & Effects
+            </h6>
+            <div className="small mb-2">
+              <strong>Border:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.border?.name || 'No Border'}</span>
+              {item.plateConfiguration?.border?.price > 0 && (
+                <span className="ms-1 text-success">+£{item.plateConfiguration.border.price}</span>
+              )}
+            </div>
+            {item.plateConfiguration?.border?.type !== 'none' && (
+              <div className="small mb-2 ms-3 text-muted">
+                Type: {item.plateConfiguration.border.type}, 
+                Width: {item.plateConfiguration.border.borderWidth}mm
+              </div>
+            )}
+            <div className="small mb-2">
+              <strong>Shadow Effect:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.shadowEffect?.name || 'None'}</span>
+              {item.plateConfiguration?.shadowEffect?.price > 0 && (
+                <span className="ms-1 text-success">+£{item.plateConfiguration.shadowEffect.price}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Badge & Finish */}
+          <div className="col-md-6">
+            <h6 className="text-warning mb-2">
+              <i className="bi bi-award me-1"></i>Badge & Finish
+            </h6>
+            <div className="small mb-2">
+              <strong>Country Badge:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.countryBadge?.name || 'No Badge'}</span>
+              {item.plateConfiguration?.countryBadge?.price > 0 && (
+                <span className="ms-1 text-success">+£{item.plateConfiguration.countryBadge.price}</span>
+              )}
+            </div>
+            {item.plateConfiguration?.countryBadge?.position && (
+              <div className="small mb-2 ms-3 text-muted">
+                Position: {item.plateConfiguration.countryBadge.position}
+              </div>
+            )}
+            <div className="small mb-2">
+              <strong>Finish:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.finish?.label || 'Standard'}</span>
+              {item.plateConfiguration?.finish?.price > 0 && (
+                <span className="ms-1 text-success">+£{item.plateConfiguration.finish.price}</span>
+              )}
+            </div>
+            <div className="small mb-2">
+              <strong>Thickness:</strong> 
+              <span className="ms-2">{item.plateConfiguration?.thickness?.label || '3mm'}</span>
+              {item.plateConfiguration?.thickness?.price > 0 && (
+                <span className="ms-1 text-success">+£{item.plateConfiguration.thickness.price}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Pricing for this item */}
+          <div className="col-12">
+            <div className="bg-light p-2 rounded mt-2">
+              <div className="d-flex justify-content-between align-items-center">
+                <span className="fw-bold">Item Total:</span>
+                <span className="fw-bold text-success">£{item.subtotal?.toFixed(2) || (item.price * item.quantity).toFixed(2)}</span>
+              </div>
+              <small className="text-muted">
+                £{item.price?.toFixed(2)} × {item.quantity} = £{(item.price * item.quantity).toFixed(2)}
+              </small>
             </div>
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+
+  return (
+    <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+      <div className="modal-dialog modal-xl">
+        <div className="modal-content">
+          <div className="modal-header bg-warning">
+            <h5 className="modal-title text-dark fw-bold">
+              <i className="bi bi-receipt me-2"></i>
+              Order Details
+            </h5>
+            <button type="button" className="btn-close" onClick={onClose}></button>
+          </div>
+          <div className="modal-body" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+            {loading ? (
+              <div className="text-center p-4">
+                <div className="spinner-border text-warning" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-2">Loading order details...</p>
+              </div>
+            ) : order ? (
+              <div className="row">
+                {/* Order Summary */}
+                <div className="col-md-4 mb-4">
+                  <div className="card h-100">
+                    <div className="card-header bg-primary text-white">
+                      <h6 className="mb-0">
+                        <i className="bi bi-file-text me-2"></i>Order Summary
+                      </h6>
+                    </div>
+                    <div className="card-body">
+                      <div className="mb-3">
+                        <strong>Order ID:</strong>
+                        <br />
+                        <span className="font-monospace small">{order.orderId}</span>
+                      </div>
+                      <div className="mb-3">
+                        <strong>Status:</strong>
+                        <br />
+                        <span className={`badge ${getStatusBadgeClass(order.orderStatus)}`}>
+                          {order.orderStatus?.toUpperCase() || 'PENDING'}
+                        </span>
+                      </div>
+                      <div className="mb-3">
+                        <strong>Payment Status:</strong>
+                        <br />
+                        <span className={`badge ${getStatusBadgeClass(order.paymentStatus)}`}>
+                          {order.paymentStatus?.toUpperCase() || 'PENDING'}
+                        </span>
+                      </div>
+                      <div className="mb-3">
+                        <strong>Order Date:</strong>
+                        <br />
+                        <small>{formatDate(order.dates?.ordered || order.dateOfOrder)}</small>
+                      </div>
+                      {order.dates?.paid && (
+                        <div className="mb-3">
+                          <strong>Payment Date:</strong>
+                          <br />
+                          <small>{formatDate(order.dates.paid)}</small>
+                        </div>
+                      )}
+                      <div className="mb-3">
+                        <strong>Items:</strong>
+                        <br />
+                        <span className="badge bg-info">{order.items?.length || 0} plate(s)</span>
+                      </div>
+                      <div className="mb-3">
+                        <strong>Total Amount:</strong>
+                        <br />
+                        <span className="h5 text-success fw-bold">£{order.pricing?.total?.toFixed(2) || order.amount?.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Customer Information */}
+                <div className="col-md-4 mb-4">
+                  <div className="card h-100">
+                    <div className="card-header bg-success text-white">
+                      <h6 className="mb-0">
+                        <i className="bi bi-person me-2"></i>Customer Information
+                      </h6>
+                    </div>
+                    <div className="card-body">
+                      <div className="mb-3">
+                        <strong>Name:</strong>
+                        <br />
+                        {order.customer?.name || order.customerName || 'N/A'}
+                      </div>
+                      <div className="mb-3">
+                        <strong>Email:</strong>
+                        <br />
+                        <small>{order.customer?.email || order.customerEmail || 'N/A'}</small>
+                      </div>
+                      <div className="mb-3">
+                        <strong>Phone:</strong>
+                        <br />
+                        {order.customer?.phone || order.customerPhone || 'N/A'}
+                      </div>
+                      
+                      <hr />
+                      <h6 className="text-success mb-2">Shipping Address</h6>
+                      {order.shippingAddress ? (
+                        <address className="small">
+                          {order.shippingAddress.name && (
+                            <>{order.shippingAddress.name}<br /></>
+                          )}
+                          {order.shippingAddress.street}<br />
+                          {order.shippingAddress.city}{order.shippingAddress.state && `, ${order.shippingAddress.state}`}<br />
+                          {order.shippingAddress.postcode}<br />
+                          {order.shippingAddress.country}<br />
+                          {order.shippingAddress.phone && (
+                            <>Phone: {order.shippingAddress.phone}</>
+                          )}
+                        </address>
+                      ) : (
+                        <small className="text-muted">No shipping address provided</small>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Information */}
+                <div className="col-md-4 mb-4">
+                  <div className="card h-100">
+                    <div className="card-header bg-info text-white">
+                      <h6 className="mb-0">
+                        <i className="bi bi-credit-card me-2"></i>Payment Information
+                      </h6>
+                    </div>
+                    <div className="card-body">
+                      <div className="mb-3">
+                        <strong>Payment Provider:</strong>
+                        <br />
+                        <span className="badge bg-primary text-capitalize">
+                          {order.payment?.provider || 'PayPal'}
+                        </span>
+                      </div>
+                      <div className="mb-3">
+                        <strong>Transaction ID:</strong>
+                        <br />
+                        <small className="font-monospace">
+                          {order.payment?.transactionId || order.paypalPaymentId || 'N/A'}
+                        </small>
+                      </div>
+                      {order.payment?.paypalOrderId && (
+                        <div className="mb-3">
+                          <strong>PayPal Order ID:</strong>
+                          <br />
+                          <small className="font-monospace">{order.payment.paypalOrderId}</small>
+                        </div>
+                      )}
+                      <div className="mb-3">
+                        <strong>Amount:</strong>
+                        <br />
+                        <span className="fw-bold">
+                          £{order.payment?.amount?.toFixed(2) || order.amount?.toFixed(2)} {order.payment?.currency || 'GBP'}
+                        </span>
+                      </div>
+
+                      {/* Pricing Breakdown */}
+                      {order.pricing && (
+                        <>
+                          <hr />
+                          <h6 className="text-info mb-2">Pricing Breakdown</h6>
+                          <div className="small">
+                            <div className="d-flex justify-content-between mb-1">
+                              <span>Subtotal:</span>
+                              <span>£{order.pricing.subtotal?.toFixed(2)}</span>
+                            </div>
+                            {order.pricing.discount > 0 && (
+                              <div className="d-flex justify-content-between mb-1 text-success">
+                                <span>Discount:</span>
+                                <span>-£{order.pricing.discount?.toFixed(2)}</span>
+                              </div>
+                            )}
+                            <div className="d-flex justify-content-between mb-1">
+                              <span>Shipping:</span>
+                              <span>£{order.pricing.shipping?.toFixed(2)}</span>
+                            </div>
+                            <div className="d-flex justify-content-between mb-1">
+                              <span>VAT ({(order.pricing.taxRate * 100) || 20}%):</span>
+                              <span>£{order.pricing.tax?.toFixed(2)}</span>
+                            </div>
+                            <hr className="my-2" />
+                            <div className="d-flex justify-content-between fw-bold">
+                              <span>Total:</span>
+                              <span>£{order.pricing.total?.toFixed(2)}</span>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plate Configurations */}
+                <div className="col-12">
+                  <h5 className="mb-3 fw-bold text-dark">
+                    <i className="bi bi-card-list me-2"></i>
+                    Plate Configurations ({order.items?.length || 0})
+                  </h5>
+                  
+                  {order.items && order.items.length > 0 ? (
+                    <div className="row">
+                      {order.items.map((item, index) => (
+                        <div key={index} className="col-lg-6 mb-3">
+                          <PlateConfigurationCard item={item} index={index} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="alert alert-warning">
+                      <i className="bi bi-exclamation-triangle me-2"></i>
+                      No detailed plate configurations found for this order.
+                    </div>
+                  )}
+                </div>
+
+                {/* Order Notes & Timeline */}
+                {(order.notes || order.adminNotes || order.trackingNumber) && (
+                  <div className="col-12 mt-4">
+                    <div className="card">
+                      <div className="card-header bg-secondary text-white">
+                        <h6 className="mb-0">
+                          <i className="bi bi-journal-text me-2"></i>Additional Information
+                        </h6>
+                      </div>
+                      <div className="card-body">
+                        {order.notes && (
+                          <div className="mb-3">
+                            <strong>Order Notes:</strong>
+                            <div className="mt-1 p-2 bg-light rounded small">
+                              {order.notes}
+                            </div>
+                          </div>
+                        )}
+                        {order.adminNotes && (
+                          <div className="mb-3">
+                            <strong>Admin Notes:</strong>
+                            <div className="mt-1 p-2 bg-warning bg-opacity-25 rounded small">
+                              {order.adminNotes}
+                            </div>
+                          </div>
+                        )}
+                        {order.trackingNumber && (
+                          <div className="mb-3">
+                            <strong>Tracking Number:</strong>
+                            <span className="ms-2 font-monospace">{order.trackingNumber}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="alert alert-danger">
+                <i className="bi bi-exclamation-triangle me-2"></i>
+                Failed to load order details.
+              </div>
+            )}
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
+              <i className="bi bi-x-circle me-2"></i>Close
+            </button>
+            {order && (
+              <>
+                <button type="button" className="btn btn-primary">
+                  <i className="bi bi-pencil me-2"></i>Edit Order
+                </button>
+                <button type="button" className="btn btn-success">
+                  <i className="bi bi-printer me-2"></i>Print Details
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
   const OrderModal = ({ order, onSave, onClose }) => {
     const [formData, setFormData] = useState(order);
@@ -645,13 +1025,10 @@ const AdminDashboard = () => {
       )}
 
       {(viewingOrder || loadingOrderDetails) && (
-        <ViewOrderModal
-          order={viewingOrder}
-          loading={loadingOrderDetails}
-          onClose={() => {
-            setViewingOrder(null);
-            setLoadingOrderDetails(false);
-          }}
+        <EnhancedOrderViewModal 
+          order={viewingOrder} 
+          onClose={() => setViewingOrder(null)} 
+          loading={loadingOrderDetails} 
         />
       )}
     </div>

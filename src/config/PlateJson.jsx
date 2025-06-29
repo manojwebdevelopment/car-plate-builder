@@ -426,7 +426,8 @@ export const plateStyles = [
         price: 15.99,
         description: 'Classic flat finish',
         font: 'Arial',
-        fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
+        // fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
+        fontUrl: 'fonts/charles_wright.json',
         fontSize: 0.65,
         outlineColor: null,
         thickness: 0.01, // 3mm default

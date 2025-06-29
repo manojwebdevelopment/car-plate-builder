@@ -1,5 +1,3 @@
-// App.js - Complete App with Cart Integration
-import { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import Navbar from './components/Navbar/Navbar'
@@ -7,14 +5,14 @@ import Home from './pages/Home'
 import PlateBuilder from './components/NumberPlate/PlateBuilder'
 import './App.css'
 import CartPage from './components/Cart/CartPage'
+import CheckoutPage from './pages/CheckoutPage' // NEW: Add this import
 import Footer from './components/Footer/Footer'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
-// import AdminDashboard from './dashboard/AdminDashboard'
-import AdminDashboard from './components/AdminDashboard'
+import AdminDashboard from './dashboard/AdminDashboard'
 import AdminRegister from './components/AdminRegister'
-import UnifiedPaymentSuccessPage from './components/Cart/PaymentSuccessPage';
+import UnifiedPaymentSuccessPage from './components/Cart/PaymentSuccessPage'
 
 // Create a Layout component to handle conditional rendering
 function Layout() {
@@ -29,6 +27,7 @@ function Layout() {
           <Route path="/" element={<Home/>} />
           <Route path='/platebuilder' element={<PlateBuilder/>} />
           <Route path='/basket' element={<CartPage/>} />
+          <Route path='/checkout' element={<CheckoutPage/>} />
           <Route path='/about' element={<AboutPage/>} />
           <Route path='/contact' element={<ContactPage/>} />
           <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
