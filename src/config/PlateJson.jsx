@@ -428,7 +428,7 @@ export const plateStyles = [
         font: 'Arial',
         // fontUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/fonts/droid/droid_sans_bold.typeface.json',
         fontUrl: 'fonts/Charles Wright_Bold (1).json',
-        fontSize: 0.65,
+        fontSize: 0.67,
         outlineColor: null,
         thickness: 0.01, // 3mm default
         image: 'images/4D-Gel-3mm-Main-Image-Pair-Web-v2-white-640x360.webp'

@@ -350,7 +350,7 @@ const PlateBuilder = () => {
                                         onChange={(e) => setPlateText(e.target.value.toUpperCase())}
                                         className="form-control form-control-lg text-center fw-bold border-warning"
                                         placeholder="GHELLO"
-                                        maxLength="8"
+                                        maxLength="10"
                                         style={{ fontSize: '1.5rem', letterSpacing: '0.3em' }}
                                     />
                                 </div>
@@ -1295,9 +1295,10 @@ case 'border':
     };
 
     return (
-        <div className="container bg-light min-vh-100">
+        <div className="container-fluid" style={{ backgroundColor: '#dddddd' }}>
+        <div className="container min-vh-100" style={{ backgroundColor: '#dddddd' }}>
             {/* Top Tab Navigation */}
-            <div className="row g-0 bg-white shadow-sm">
+            <div className="row g-0 shadow-sm">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
@@ -1366,7 +1367,7 @@ case 'border':
                                 </div>
                             </div>
                         </div>
-                        <div className="card-body">
+                        <div className="card-body p-0">
                             {/* Preview Type Tabs */}
                             <div className="row g-0 mb-3">
                                 <div className="col-6">
@@ -1556,6 +1557,7 @@ case 'border':
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     );
 };

@@ -1,6 +1,10 @@
 /* theme.css - PlateForge Theme Colors and Fonts */
 
 /* ========== CSS CUSTOM PROPERTIES (VARIABLES) ========== */
+body{
+  background-color: #dddddd;
+}
+
 :root {
   /* Primary Theme Colors */
   --primary-yellow: #FFEB00;
