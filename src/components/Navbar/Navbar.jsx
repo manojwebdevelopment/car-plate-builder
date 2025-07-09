@@ -296,7 +296,7 @@ import { getCartItemCount } from '../Cart/cartUtils'; // Import our cart utiliti
 
 
 const Navbar = () => {
-  const [showCoupon, setShowCoupon] = useState(true);
+  const [showCoupon, setShowCoupon] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
 

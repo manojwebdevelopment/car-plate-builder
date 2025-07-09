@@ -494,21 +494,23 @@
 
 
 
-// Updated CheckoutPage.jsx - Fixed to use direct localStorage access like CartPage
+
+
+
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Check, Shield, Clock, CreditCard, ArrowLeft } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  
-  // BYPASS CONTEXT - Load directly from localStorage (same as CartPage)
-  const [cart, setCart] = useState([]);
-  const [cartLoading, setCartLoading] = useState(true);
+  const { cart, loading: cartLoading, getCartTotal, getCartItemCount, clearCart } = useCart();
   
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [errors, setErrors] = useState({});
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('paypal');
   
   const [customerInfo, setCustomerInfo] = useState({
     firstName: '',
@@ -521,47 +523,15 @@ const CheckoutPage = () => {
     country: 'IN'
   });
 
-  // DIRECT CART LOADING (same logic as CartPage)
+  // Check if cart is empty and redirect
   useEffect(() => {
-    console.log('🔥 DIRECT CART LOADING IN CHECKOUT');
-    
-    // Try all possible cart storage keys
-    const possibleKeys = ['plateCart', 'cart', 'plateBuilderCart'];
-    let loadedCart = [];
-    
-    for (const key of possibleKeys) {
-      try {
-        const data = localStorage.getItem(key);
-        console.log(`Checking ${key}:`, data);
-        
-        if (data && data !== '[]' && data !== 'null' && data !== 'undefined') {
-          const parsed = JSON.parse(data);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            console.log(`✅ Found cart data in ${key}:`, parsed);
-            loadedCart = parsed;
-            break;
-          }
-        }
-      } catch (error) {
-        console.error(`Error parsing ${key}:`, error);
-      }
-    }
-    
-    console.log('🛒 Final loaded cart in checkout:', loadedCart);
-    setCart(loadedCart);
-    setCartLoading(false);
-    
-    // Check if cart is empty AFTER loading
-    if (loadedCart.length === 0) {
+    if (!cartLoading && cart.length === 0) {
       console.log('❌ Cart is empty, redirecting to basket');
       navigate('/basket');
     }
-  }, [navigate]);
+  }, [cart, cartLoading, navigate]);
 
   // Calculate totals
-  const getCartTotal = () => cart.reduce((total, item) => total + (item.subtotal || 0), 0);
-  const getCartItemCount = () => cart.reduce((count, item) => count + (item.quantity || 0), 0);
-
   const subtotal = getCartTotal();
   const taxRate = 0.18; // 18% GST for India
   const tax = subtotal * taxRate;
@@ -582,12 +552,6 @@ const CheckoutPage = () => {
     return emailRegex.test(email);
   };
 
-  // Validate phone (Indian format)
-  const validatePhone = (phone) => {
-    const phoneRegex = /^[6-9]\d{9}$/;
-    return phoneRegex.test(phone.replace(/\s/g, ''));
-  };
-
   const validateForm = () => {
     const newErrors = {};
 
@@ -604,11 +568,6 @@ const CheckoutPage = () => {
     if (customerInfo.email && !validateEmail(customerInfo.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    
-    // Remove phone validation for now
-    // if (customerInfo.phone && !validatePhone(customerInfo.phone)) {
-    //   newErrors.phone = 'Please enter a valid 10-digit Indian mobile number';
-    // }
     
     if (customerInfo.postcode && !validatePostcode(customerInfo.postcode)) {
       newErrors.postcode = 'Please enter a valid 6-digit Indian postcode';
@@ -634,7 +593,7 @@ const CheckoutPage = () => {
     }
   };
 
-  const createOrderAndProceedToPayPal = async () => {
+  const createOrderAndProceedToPayment = async () => {
     if (!validateForm()) {
       return;
     }
@@ -646,10 +605,9 @@ const CheckoutPage = () => {
     }
 
     setLoading(true);
-    setLoadingMessage('Creating your order...');
 
     try {
-      // Prepare order data
+      // Prepare order data with complete cart information from database
       const orderData = {
         customer: customerInfo,
         items: cart.map(item => ({
@@ -727,12 +685,12 @@ const CheckoutPage = () => {
           taxRate,
           total
         },
-        originalCartData: cart // Store for restoration if needed
+        originalCartData: cart // Store complete cart data for backup
       };
 
       console.log('Creating order with data:', orderData);
 
-      // Create order in database
+      // Create order in database with PENDING status
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders/create`, {
         method: 'POST',
         headers: {
@@ -747,18 +705,28 @@ const CheckoutPage = () => {
         throw new Error(result.error || 'Failed to create order');
       }
 
-      console.log('Order created:', result.orderId);
+      console.log('Order created successfully:', result.data.orderId);
       
-      // Store order ID and cart data for payment processing
-      localStorage.setItem('currentOrderId', result.orderId);
-      localStorage.setItem('customerInfo', JSON.stringify(customerInfo));
-      localStorage.setItem('shippingAddress', JSON.stringify(customerInfo)); // Using same info for shipping
-      localStorage.setItem('pricing', JSON.stringify({ subtotal, tax, shipping, total }));
-      localStorage.setItem('cartItems', JSON.stringify(cart));
-      
-      setLoadingMessage('Redirecting to PayPal...');
+      // Proceed to selected payment method
+      if (selectedPaymentMethod === 'paypal') {
+        await proceedToPayPal(result.data.orderId);
+      } else {
+        await proceedToWorldpay(result.data.orderId);
+      }
 
-      // Create PayPal order
+    } catch (error) {
+      console.error('Error creating order:', error);
+      setErrors({ submit: error.message });
+      setLoading(false);
+      setLoadingMessage('');
+    }
+  };
+
+  const proceedToPayPal = async (orderId) => {
+    setLoadingMessage('Creating PayPal order...');
+
+    try {
+      // Create PayPal order with our database order ID
       const paypalResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/create-paypal-order`, {
         method: 'POST',
         headers: {
@@ -767,7 +735,7 @@ const CheckoutPage = () => {
         body: JSON.stringify({
           amount: total.toFixed(2),
           currency: 'GBP',
-          orderId: result.orderId // Pass our order ID to PayPal
+          orderId: orderId // Pass our database order ID
         }),
       });
 
@@ -777,31 +745,181 @@ const CheckoutPage = () => {
         throw new Error('Failed to create PayPal order');
       }
 
-      // Update our order with PayPal order ID
-      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders/${result.orderId}/paypal`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          paypalOrderId: paypalResult.id
-        }),
-      });
+      console.log('PayPal order created:', paypalResult.id, 'for DB order:', orderId);
 
-      // Redirect to PayPal
+      // Redirect to PayPal (backend already linked PayPal order to our DB order)
       const approvalUrl = paypalResult.links.find(link => link.rel === 'approve')?.href;
       if (approvalUrl) {
+        setLoadingMessage('Redirecting to PayPal...');
         window.location.href = approvalUrl;
       } else {
         throw new Error('PayPal approval URL not found');
       }
 
     } catch (error) {
-      console.error('Error creating order:', error);
-      setErrors({ submit: error.message });
+      console.error('PayPal error:', error);
+      setErrors({ submit: `PayPal Error: ${error.message}` });
       setLoading(false);
       setLoadingMessage('');
     }
+  };
+
+  const proceedToWorldpay = async (orderId) => {
+    setLoadingMessage('Creating Worldpay payment...');
+
+    try {
+      // Create Worldpay payment
+      const worldpayResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/create-worldpay-payment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: total.toFixed(2),
+          currency: 'GBP',
+          customerInfo: {
+            name: `${customerInfo.firstName} ${customerInfo.lastName}`,
+            email: customerInfo.email,
+            phone: customerInfo.phone
+          },
+          orderDetails: {
+            orderId: orderId,
+            items: cart.length,
+            quantity: cart.reduce((sum, item) => sum + item.quantity, 0)
+          }
+        }),
+      });
+
+      const worldpayResult = await worldpayResponse.json();
+      
+      if (!worldpayResult.success) {
+        throw new Error(worldpayResult.error || 'Failed to create Worldpay payment');
+      }
+
+      // Update our order with Worldpay payment ID
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders/${orderId}/worldpay`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          worldpayPaymentId: worldpayResult.paymentId,
+          transactionReference: worldpayResult.transactionReference
+        }),
+      });
+
+      // Redirect to Worldpay or success page
+      if (worldpayResult.redirectUrl) {
+        setLoadingMessage('Redirecting to Worldpay...');
+        window.location.href = worldpayResult.redirectUrl;
+      } else {
+        // For demo purposes, redirect to success page
+        navigate(`/payment-success?paymentId=${worldpayResult.paymentId}&transactionRef=${worldpayResult.transactionReference}&provider=worldpay`);
+      }
+
+    } catch (error) {
+      console.error('Worldpay error:', error);
+      setErrors({ submit: `Worldpay Error: ${error.message}` });
+      setLoading(false);
+      setLoadingMessage('');
+    }
+  };
+
+  // Payment Method Selector Component
+  const PaymentMethodSelector = () => {
+    return (
+      <div className="payment-methods mb-4">
+        <h5 className="text-warning mb-3">Choose Payment Method</h5>
+        
+        {/* PayPal Option */}
+        <div 
+          className={`payment-option ${selectedPaymentMethod === 'paypal' ? 'selected' : ''}`}
+          onClick={() => setSelectedPaymentMethod('paypal')}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className={`d-flex align-items-center justify-content-between p-3 border rounded mb-3 ${
+            selectedPaymentMethod === 'paypal' ? 'border-warning border-2 bg-light' : 'border-secondary'
+          }`}>
+            <div className="d-flex align-items-center">
+              <div className="me-3">
+                <div className={`rounded-circle d-flex align-items-center justify-content-center ${
+                  selectedPaymentMethod === 'paypal' ? 'bg-warning text-dark' : 'border'
+                }`} style={{ width: '20px', height: '20px' }}>
+                  {selectedPaymentMethod === 'paypal' && <Check size={12} />}
+                </div>
+              </div>
+              <div className="d-flex align-items-center">
+                <div className="me-3">
+                  <span className="fw-bold text-primary" style={{ fontSize: '18px' }}>PayPal</span>
+                </div>
+                <div>
+                  <div className="fw-semibold text-dark">PayPal Account</div>
+                  <small className="text-muted">Pay with your PayPal account or card</small>
+                </div>
+              </div>
+            </div>
+            <div>
+              <span className="badge bg-primary me-1">Instant</span>
+              <span className="badge bg-success">Trusted</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Worldpay Option */}
+        <div 
+          className={`payment-option ${selectedPaymentMethod === 'worldpay' ? 'selected' : ''}`}
+          onClick={() => setSelectedPaymentMethod('worldpay')}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className={`d-flex align-items-center justify-content-between p-3 border rounded mb-3 ${
+            selectedPaymentMethod === 'worldpay' ? 'border-warning border-2 bg-light' : 'border-secondary'
+          }`}>
+            <div className="d-flex align-items-center">
+              <div className="me-3">
+                <div className={`rounded-circle d-flex align-items-center justify-content-center ${
+                  selectedPaymentMethod === 'worldpay' ? 'bg-warning text-dark' : 'border'
+                }`} style={{ width: '20px', height: '20px' }}>
+                  {selectedPaymentMethod === 'worldpay' && <Check size={12} />}
+                </div>
+              </div>
+              <div className="d-flex align-items-center">
+                <div className="me-3">
+                  <div className="bg-danger text-white px-2 py-1 rounded fw-bold" style={{ fontSize: '12px' }}>
+                    Worldpay
+                  </div>
+                </div>
+                <div>
+                  <div className="fw-semibold text-dark">Worldpay Secure Checkout</div>
+                  <small className="text-muted">Cards, Digital Wallets, EMI & more</small>
+                </div>
+              </div>
+            </div>
+            <div>
+              <span className="badge bg-success me-1">Multiple Options</span>
+              <span className="badge bg-info">Secure</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Security Features */}
+        <div className="mt-3 p-3 bg-light rounded">
+          <div className="row text-center">
+            <div className="col-4">
+              <Shield size={20} className="text-success mb-1" />
+              <div className="small text-muted">SSL Encrypted</div>
+            </div>
+            <div className="col-4">
+              <Clock size={20} className="text-primary mb-1" />
+              <div className="small text-muted">Instant Processing</div>
+            </div>
+            <div className="col-4">
+              <CreditCard size={20} className="text-warning mb-1" />
+              <div className="small text-muted">Secure Payments</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Show loading while cart is being loaded
@@ -887,8 +1005,11 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
+              {/* Payment Method Selection */}
+              <PaymentMethodSelector />
+
               {/* Customer Information Form */}
-              <form onSubmit={(e) => { e.preventDefault(); createOrderAndProceedToPayPal(); }}>
+              <form onSubmit={(e) => { e.preventDefault(); createOrderAndProceedToPayment(); }}>
                 <h5 className="text-warning mb-3">Customer Information</h5>
                 
                 <div className="row g-3">
@@ -1022,17 +1143,30 @@ const CheckoutPage = () => {
                     className="btn btn-outline-secondary"
                     onClick={() => navigate('/basket')}
                   >
-                    <i className="bi bi-arrow-left me-2"></i>
+                    <ArrowLeft className="me-2" size={16} />
                     Back to Cart
                   </button>
                   
                   <button
                     type="submit"
-                    className="btn btn-warning btn-lg"
+                    className={`btn btn-lg ${
+                      selectedPaymentMethod === 'paypal' 
+                        ? 'btn-primary' 
+                        : 'btn-danger'
+                    }`}
                     disabled={loading || cart.length === 0}
                   >
-                    <i className="bi bi-paypal me-2"></i>
-                    Proceed to PayPal (£{total.toFixed(2)})
+                    {selectedPaymentMethod === 'paypal' ? (
+                      <>
+                        <i className="bi bi-paypal me-2"></i>
+                        Pay with PayPal (£{total.toFixed(2)})
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="me-2" size={16} />
+                        Pay with Worldpay (£{total.toFixed(2)})
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
