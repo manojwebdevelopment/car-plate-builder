@@ -316,7 +316,7 @@ const AuthNavbar = () => {
   return (
     <>
       {/* Top Promotional Banner */}
-      {showCoupon && (
+      {false && showCoupon && (
         <div className="alert alert-info text-center mb-0 py-2 position-relative" 
              style={{ backgroundColor: '#4285f4', color: 'white', border: 'none' }}>
           <div className="container">

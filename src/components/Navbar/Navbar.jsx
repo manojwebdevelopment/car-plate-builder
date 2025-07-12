@@ -348,7 +348,7 @@ const Navbar = () => {
   return (
     <>
       {/* Top Promotional Banner */}
-      {showCoupon && (
+      {false && showCoupon && (
         <div className="alert text-center mb-0 py-3 position-relative promotional-banner">
           <div className="container">
             <strong>GET 15% OFF & FREE SHIPPING | USE CODE 'Save15'</strong>
