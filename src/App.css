@@ -1,5 +1,5 @@
 /* theme.css - PlateForge Theme Colors and Fonts */
-
+  @import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap');
 /* ========== CSS CUSTOM PROPERTIES (VARIABLES) ========== */
 body{
   background-color: #dddddd;
