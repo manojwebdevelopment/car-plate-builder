@@ -28,7 +28,8 @@ import {
   sizeOptions,
   finishOptions,
 } from "../../config/PlateJson";
-import { addToCart, getCartItemCount } from "../Cart/cartUtils";
+// import { addToCart, getCartItemCount, getCartItemCountAsync } from "../Cart/cartUtils";
+import { useCart } from "../../context/CartContext";
 
 const PlateBuilder = () => {
 
@@ -39,7 +40,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
 
   const [activeTab, setActiveTab] = useState("start");
   const [previewType, setPreviewType] = useState("front");
-  const [cartItemCount, setCartItemCount] = useState(0);
+  const { addToCart: addToCartContext, getCartItemCount } = useCart();
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const location = useLocation();
@@ -55,18 +56,16 @@ const [isTransitioning, setIsTransitioning] = useState(false);
       setPlateText(reg);
     }
 
-    // Load cart count on component mount
-    setCartItemCount(getCartItemCount());
-
-    // Listen for cart updates
-    const handleCartUpdate = (event) => {
-      setCartItemCount(getCartItemCount());
-    };
-
-    window.addEventListener("cartUpdated", handleCartUpdate);
+    // Smooth loading sequence
+    const loadingTimer = setTimeout(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 800);
+    }, 1500);
 
     return () => {
-      window.removeEventListener("cartUpdated", handleCartUpdate);
+      clearTimeout(loadingTimer);
     };
   }, [location.search]);
 
@@ -144,19 +143,6 @@ const [isTransitioning, setIsTransitioning] = useState(false);
     }
     return "";
   };
-
-  //   // NEW: Handle plate text change with validation and character limit
-  //   const handlePlateTextChange = (value) => {
-  //     const upperValue = value.toUpperCase();
-  //     const textWithoutSpaces = upperValue.replace(/\s/g, "");
-
-  //     // Only allow up to 7 characters (excluding spaces)
-  //     if (textWithoutSpaces.length <= 7) {
-  //       setPlateText(upperValue);
-  //     }
-  //     // If more than 7 characters, don't update the input but keep the validation message
-  //   };
-  // Replace the handlePlateTextChange function with this improved version:
 
   const handlePlateTextChange = (value) => {
     const upperValue = value.toUpperCase();
@@ -273,8 +259,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
     return features;
   };
 
-  // UPDATED: Add to cart function
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     try {
       // Check if legal checkbox is checked
       if (!isLegalCheckboxChecked) {
@@ -290,49 +275,86 @@ const [isTransitioning, setIsTransitioning] = useState(false);
         return;
       }
 
-      // Check if at least one quantity is selected for wanted plates
-      if (
-        wantFrontPlate &&
-        frontQuantity === 0 &&
-        wantRearPlate &&
-        rearQuantity === 0
-      ) {
-        alert("Please select at least one front or rear plate.");
-        return;
-      }
-
       let addedItems = 0;
       let totalSuccess = true;
 
       // Add Front Plates if wanted and quantity > 0
       if (wantFrontPlate && frontQuantity > 0) {
-        const frontPlateData = {
-          // Basic info
-          text: plateText,
-          plateType: "front",
-          styleLabel: selected?.label || "Standard Plate",
+        // Create enhanced plate item with all required fields (same as original cartUtils)
+        const frontPlateItem = {
+          id: `plate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          type: 'plate',
+          name: `${selected?.label || 'Custom'} Number Plate`,
+          side: 'FRONT',
+          registration: plateText,
+          roadLegal: 'No',
+          spacing: spacing === 'legal' ? 'Legal spacing' : 'As I\'ve typed',
+          
+          // Size data
+          size: selectedSize,
+          sizeLabel: selectedSizeObj?.label || 'Standard Size',
+          sizeDimensions: selectedSizeObj?.dimensions || '520mm x 111mm',
+          sizePrice: selectedSizeObj?.price || 0,
+          
+          // Style data
           plateStyle: selectedStyle,
-          price: basePrice,
-          quantity: frontQuantity,
-
-          // Style details
+          styleLabel: selected?.label || 'Standard Plate',
+          stylePrice: selected?.price || 0,
+          
+          // Thickness data
+          thickness: '3mm',
+          thicknessLabel: '3mm Standard',
+          thicknessValue: 3,
+          thicknessPrice: 0,
+          
+          // Color data
           fontColor: finalFontColor,
+          fontColorName: selectedColorObj?.name || 'Black',
+          fontColorPrice: selectedColorObj?.price || 0,
+          customTextColor: finalFontColor,
+          
+          // Border data
           borderStyle: selectedBorder,
-          selectedSize: selectedSize,
-          sizeLabel: selectedSizeObj?.label || "Standard Oblong",
-
-          // Badge details
+          borderName: selectedBorderObj?.name || 'No Border',
+          borderType: selectedBorderObj?.type || 'none',
+          borderColor: selectedBorderObj?.color || '',
+          borderWidth: selectedBorderObj?.borderWidth || 0,
+          borderPrice: selectedBorderObj?.price || 0,
+          
+          // Shadow effect data
+          shadowEffect: 'none',
+          shadowName: 'No Effect',
+          shadowDescription: '',
+          shadowPrice: 0,
+          
+          // Badge data
           countryBadge: selectedFlag,
           selectedCountry: selectedCountry,
+          badgeName: selectedFlagObj?.name || 'No Badge',
           badgePosition: badgePosition,
-          customTextColor: customTextColor,
-
-          // Additional info
-          roadLegal: "No", // Since most customizations make plates non-road legal
-          spacing: spacing === "legal" ? "Legal spacing" : "As I've typed",
+          flagImage: selectedFlagObj?.flagImage || '',
+          badgePrice: selectedFlagObj?.price || 0,
+          
+          // Finish data
+          finish: selectedFinish,
+          finishLabel: selectedFinishObj?.label || 'Standard Finish',
+          finishDescription: selectedFinishObj?.description || '',
+          finishPrice: selectedFinishObj?.price || 0,
+          
+          // Additional fields
+          displayText: spacing === 'legal' ? plateText.split('').join(' ') : plateText,
+          font: 'Charles Wright',
+          fontSize: 79,
+          
+          // Pricing
+          price: basePrice,
+          quantity: frontQuantity,
+          subtotal: basePrice * frontQuantity,
+          
+          addedAt: new Date().toISOString()
         };
 
-        const frontResult = addToCart(frontPlateData);
+        const frontResult = await addToCartContext(frontPlateItem);
         if (frontResult.success) {
           addedItems += frontQuantity;
         } else {
@@ -342,33 +364,83 @@ const [isTransitioning, setIsTransitioning] = useState(false);
 
       // Add Rear Plates if wanted and quantity > 0
       if (wantRearPlate && rearQuantity > 0) {
-        const rearPlateData = {
-          // Basic info
-          text: plateText,
-          plateType: "rear",
-          styleLabel: selected?.label || "Standard Plate",
+        // Small delay to ensure different IDs
+        await new Promise(resolve => setTimeout(resolve, 10));
+        
+        const rearPlateItem = {
+          id: `plate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          type: 'plate',
+          name: `${selected?.label || 'Custom'} Number Plate`,
+          side: 'REAR',
+          registration: plateText,
+          roadLegal: 'No',
+          spacing: spacing === 'legal' ? 'Legal spacing' : 'As I\'ve typed',
+          
+          // Size data
+          size: selectedSize,
+          sizeLabel: selectedSizeObj?.label || 'Standard Size',
+          sizeDimensions: selectedSizeObj?.dimensions || '520mm x 111mm',
+          sizePrice: selectedSizeObj?.price || 0,
+          
+          // Style data
           plateStyle: selectedStyle,
-          price: basePrice,
-          quantity: rearQuantity,
-
-          // Style details
+          styleLabel: selected?.label || 'Standard Plate',
+          stylePrice: selected?.price || 0,
+          
+          // Thickness data
+          thickness: '3mm',
+          thicknessLabel: '3mm Standard',
+          thicknessValue: 3,
+          thicknessPrice: 0,
+          
+          // Color data
           fontColor: finalFontColor,
+          fontColorName: selectedColorObj?.name || 'Black',
+          fontColorPrice: selectedColorObj?.price || 0,
+          customTextColor: finalFontColor,
+          
+          // Border data
           borderStyle: selectedBorder,
-          selectedSize: selectedSize,
-          sizeLabel: selectedSizeObj?.label || "Standard Oblong",
-
-          // Badge details
+          borderName: selectedBorderObj?.name || 'No Border',
+          borderType: selectedBorderObj?.type || 'none',
+          borderColor: selectedBorderObj?.color || '',
+          borderWidth: selectedBorderObj?.borderWidth || 0,
+          borderPrice: selectedBorderObj?.price || 0,
+          
+          // Shadow effect data
+          shadowEffect: 'none',
+          shadowName: 'No Effect',
+          shadowDescription: '',
+          shadowPrice: 0,
+          
+          // Badge data
           countryBadge: selectedFlag,
           selectedCountry: selectedCountry,
+          badgeName: selectedFlagObj?.name || 'No Badge',
           badgePosition: badgePosition,
-          customTextColor: customTextColor,
-
-          // Additional info
-          roadLegal: "No", // Since most customizations make plates non-road legal
-          spacing: spacing === "legal" ? "Legal spacing" : "As I've typed",
+          flagImage: selectedFlagObj?.flagImage || '',
+          badgePrice: selectedFlagObj?.price || 0,
+          
+          // Finish data
+          finish: selectedFinish,
+          finishLabel: selectedFinishObj?.label || 'Standard Finish',
+          finishDescription: selectedFinishObj?.description || '',
+          finishPrice: selectedFinishObj?.price || 0,
+          
+          // Additional fields
+          displayText: spacing === 'legal' ? plateText.split('').join(' ') : plateText,
+          font: 'Charles Wright',
+          fontSize: 79,
+          
+          // Pricing
+          price: basePrice,
+          quantity: rearQuantity,
+          subtotal: basePrice * rearQuantity,
+          
+          addedAt: new Date().toISOString()
         };
 
-        const rearResult = addToCart(rearPlateData);
+        const rearResult = await addToCartContext(rearPlateItem);
         if (rearResult.success) {
           addedItems += rearQuantity;
         } else {
@@ -382,9 +454,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
         setTimeout(() => setShowSuccessMessage(false), 3000);
 
         if (!totalSuccess) {
-          alert(
-            "Some items were added to cart, but there were errors with others."
-          );
+          alert("Some items were added to cart, but there were errors with others.");
         }
       } else {
         alert("Please select at least one front or rear plate.");
@@ -395,7 +465,6 @@ const [isTransitioning, setIsTransitioning] = useState(false);
     }
   };
 
-  // Navigate to cart page
   const goToCart = () => {
     navigate("/basket");
   };
@@ -722,30 +791,6 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                 </div>
               ))}
             </div>
-
-            {/* <div className="col-12">
-              <label className="form-label fw-bold">Font Color</label>
-              <select
-                className="form-select form-select-lg border-warning"
-                value={selectedFontColor}
-                onChange={(e) => setSelectedFontColor(e.target.value)}
-              >
-                {colorOptions.map((color) => (
-                  <option key={color.color} value={color.color}>
-                    {color.name} - £{color.price}
-                  </option>
-                ))}
-              </select>
-              {selectedFontColor === "custom" && (
-                <input
-                  type="color"
-                  value={customColor}
-                  onChange={(e) => setCustomColor(e.target.value)}
-                  className="form-control form-control-color mt-2 w-100"
-                  style={{ height: "50px" }}
-                />
-              )}
-            </div> */}
           </div>
         );
 
@@ -1251,15 +1296,7 @@ useEffect(() => {
     setPlateText(reg);
   }
 
-  // Load cart count on component mount
-  setCartItemCount(getCartItemCount());
 
-  // Listen for cart updates
-  const handleCartUpdate = (event) => {
-    setCartItemCount(getCartItemCount());
-  };
-
-  window.addEventListener("cartUpdated", handleCartUpdate);
 
   // Smooth loading sequence
   const loadingTimer = setTimeout(() => {
@@ -1273,7 +1310,6 @@ useEffect(() => {
   }, 1500); // 1.5 seconds initial loading
 
   return () => {
-    window.removeEventListener("cartUpdated", handleCartUpdate);
     clearTimeout(loadingTimer);
   };
 }, [location.search]);
@@ -1588,29 +1624,19 @@ useEffect(() => {
                 </button>
 
                 {/* Cart Link */}
-                {cartItemCount > 0 && (
+                {getCartItemCount() > 0 && (
                   <div className="text-center mb-3">
                     <button
                       className="btn btn-outline-warning"
                       onClick={goToCart}
                     >
-                      View Cart ({cartItemCount} items)
+                      View Cart ({getCartItemCount()} items)
                     </button>
                   </div>
                 )}
 
                 {/* Action Buttons */}
                 <div className="row g-2">
-                  {/* <div className="col-4">
-                    <button className="btn btn-outline-primary btn-sm w-100">
-                      Save
-                    </button>
-                  </div>
-                  <div className="col-4">
-                    <button className="btn btn-outline-info btn-sm w-100">
-                      Share
-                    </button>
-                  </div> */}
                   <div className="col-4">
                     <button
                       onClick={resetAll}

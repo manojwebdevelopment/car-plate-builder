@@ -201,19 +201,6 @@ const ColorfulLoader = ({ isLoading, isTransitioning, loadingText = "Loading Pla
     }
   `;
 
-  // Function to split text into individual letters - not needed anymore
-  // const renderColorfulText = (text) => {
-  //   return text.split('').map((char, index) => {
-  //     if (char === ' ') {
-  //       return <span key={index} className="space"></span>;
-  //     }
-  //     return (
-  //       <span key={index} className="letter">
-  //         {char}
-  //       </span>
-  //     );
-  //   });
-  // };
 
   if (!isLoading) return null;
 
