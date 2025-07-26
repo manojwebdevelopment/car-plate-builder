@@ -133,184 +133,54 @@ const UnifiedPaymentSuccessPage = () => {
         setIsDownloading(true);
         
         try {
-            // Load jsPDF library if not already loaded
-            if (!window.jspdf) {
-                await new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                    script.onload = resolve;
-                    script.onerror = reject;
-                    document.head.appendChild(script);
-                });
+            console.log('Downloading receipt for order:', orderData?.orderId);
+            
+            // Call your backend API to generate and download the premium PDF
+            const response = await fetch(`http://localhost:5000/api/orders/download-receipt/${orderData?.orderId}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            });
+            
+            // Check if the response is successful
+            if (!response.ok) {
+                let errorMessage = 'Failed to generate PDF receipt';
+                
+                // Try to get error details from response
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+                } catch (parseError) {
+                    // Response might not be JSON, use status text
+                    errorMessage = response.statusText || errorMessage;
+                }
+                
+                throw new Error(errorMessage);
             }
             
-            // Wait for library to initialize
-            await new Promise(resolve => setTimeout(resolve, 300));
+            // Convert response to blob for download
+            const blob = await response.blob();
             
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('portrait', 'mm', 'a4');
+            // Create download link and trigger download
+            const url = window.URL.createObjectURL(blob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = `PlateForge-Receipt-${orderData?.displayOrderNumber || orderData?.orderId || 'Order'}.pdf`;
             
-            // Set up fonts and colors
-            doc.setFont('helvetica');
+            // Append to body, click, and remove
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
             
-            // Header
-            doc.setFontSize(24);
-            doc.setFont('helvetica', 'bold');
-            doc.text('PlateForge', 105, 30, { align: 'center' });
+            // Clean up the blob URL
+            window.URL.revokeObjectURL(url);
             
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Premium Number Plates', 105, 40, { align: 'center' });
-            doc.text('Tax Invoice/Receipt', 105, 48, { align: 'center' });
-            
-            // Header line
-            doc.setLineWidth(0.5);
-            doc.line(20, 55, 190, 55);
-            
-            // Order Information Section
-            let yPos = 70;
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Order Information', 20, yPos);
-            
-            yPos += 8;
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Order ID: ${orderData?.orderId || 'N/A'}`, 20, yPos);
-            
-            yPos += 6;
-            doc.text(`Order Date: ${new Date().toLocaleDateString('en-GB', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            })}`, 20, yPos);
-            
-            yPos += 6;
-            doc.text('Payment Method: PayPal', 20, yPos);
-            
-            yPos += 6;
-            doc.text('Status: Confirmed', 20, yPos);
-            
-            // Payment Details Section (Right side)
-            let yPos2 = 70;
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Payment Details', 110, yPos2);
-            
-            yPos2 += 8;
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Amount Paid: £${orderData?.amount || '0.00'}`, 110, yPos2);
-            
-            yPos2 += 6;
-            doc.text(`Currency: ${orderData?.currency || 'GBP'}`, 110, yPos2);
-            
-            yPos2 += 6;
-            doc.text(`Transaction ID: ${orderData?.paymentId || 'N/A'}`, 110, yPos2);
-            
-            yPos2 += 6;
-            doc.text('Payment Status: Paid', 110, yPos2);
-            
-            // Order Items Section
-            yPos = Math.max(yPos, yPos2) + 20;
-            
-            // Items box
-            doc.setDrawColor(200, 200, 200);
-            doc.setFillColor(248, 249, 250);
-            doc.rect(20, yPos, 170, 8, 'FD');
-            
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Order Items', 22, yPos + 5);
-            
-            yPos += 8;
-            doc.setDrawColor(200, 200, 200);
-            doc.rect(20, yPos, 170, 15, 'S');
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Custom Number Plate', 22, yPos + 6);
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text('Personalized design • High quality materials • Professional finish', 22, yPos + 12);
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text(`£${orderData?.amount || '0.00'}`, 180, yPos + 9, { align: 'right' });
-            
-            // Totals Section
-            yPos += 25;
-            doc.setLineWidth(0.5);
-            doc.line(20, yPos, 190, yPos);
-            
-            yPos += 10;
-            const subtotal = ((orderData?.amount || 0) / 1.18).toFixed(2);
-            const vat = ((orderData?.amount || 0) * 0.18 / 1.18).toFixed(2);
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text('Subtotal:', 130, yPos);
-            doc.text(`£${subtotal}`, 180, yPos, { align: 'right' });
-            
-            yPos += 6;
-            doc.text('VAT (18%):', 130, yPos);
-            doc.text(`£${vat}`, 180, yPos, { align: 'right' });
-            
-            yPos += 6;
-            doc.text('Shipping:', 130, yPos);
-            doc.text('Free', 180, yPos, { align: 'right' });
-            
-            yPos += 8;
-            doc.setLineWidth(0.3);
-            doc.line(130, yPos, 190, yPos);
-            
-            yPos += 6;
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Total Amount:', 130, yPos);
-            doc.text(`£${orderData?.amount || '0.00'}`, 180, yPos, { align: 'right' });
-            
-            // Footer Section
-            yPos += 20;
-            doc.setLineWidth(0.3);
-            doc.line(20, yPos, 190, yPos);
-            
-            yPos += 10;
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Thank you for your order!', 105, yPos, { align: 'center' });
-            
-            yPos += 8;
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Your custom number plates will be manufactured within 3-5 business days.', 105, yPos, { align: 'center' });
-            
-            yPos += 6;
-            doc.text('You will receive tracking information once your order has been shipped.', 105, yPos, { align: 'center' });
-            
-            yPos += 6;
-            doc.text('Estimated delivery: 5-7 business days', 105, yPos, { align: 'center' });
-            
-            // Company info
-            yPos += 15;
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 100);
-            doc.text('PlateForge Ltd | London, UK | www.plateforge.com', 105, yPos, { align: 'center' });
-            
-            yPos += 4;
-            doc.text('For support, contact us at info@plateforge.com', 105, yPos, { align: 'center' });
-            
-            yPos += 4;
-            doc.text(`Order ID: ${orderData?.orderId} | Transaction: ${orderData?.paymentId}`, 105, yPos, { align: 'center' });
-            
-            // Save the PDF
-            doc.save(`PlateForge-Receipt-${orderData?.displayOrderNumber || 'Order'}.pdf`);
-            
-            showToast('PDF receipt downloaded successfully! 📄', 'success');
+            showToast('Premium PDF receipt downloaded successfully! 📄', 'success');
             
         } catch (error) {
-            console.error('Error generating PDF:', error);
-            showToast('Failed to generate PDF receipt. Please try again.', 'error');
+            console.error('Error downloading PDF receipt:', error);
+            showToast(`Failed to download receipt: ${error.message}`, 'error');
         } finally {
             setIsDownloading(false);
         }

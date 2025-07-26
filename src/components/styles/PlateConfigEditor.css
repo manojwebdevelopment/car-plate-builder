@@ -1,0 +1,66 @@
+/* src/components/styles/PlateConfigEditor.css */
+.config-editor-modal {
+  z-index: 1055;
+}
+
+.config-editor-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.config-editor-table td {
+  vertical-align: middle;
+  padding: 12px 8px;
+}
+
+.config-editor-input {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+}
+
+.config-editor-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: 0;
+}
+
+.previous-value {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.config-item-index {
+  background-color: #e9ecef;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* Add these styles to PlateConfigEditor.css */
+.config-editor-input.is-invalid {
+  border-color: #dc3545;
+}
+
+.config-editor-input.is-valid {
+  border-color: #28a745;
+}
+
+.unsaved-indicator {
+  color: #ffc107;
+  font-size: 0.8rem;
+}
+
+.modal-footer small {
+  align-self: center;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}

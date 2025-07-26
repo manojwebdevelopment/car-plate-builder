@@ -5,6 +5,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const navItems = [
     { id: 'orders', icon: '📦', label: 'Orders' },
     { id: 'pricing', icon: '💰', label: 'Price Management' },
+    { id: 'plate-configurations', icon: '💰', label: 'Plate Configurations' },
     { id: 'users', icon: '👥', label: 'User Management' },
     { id: 'contacts', icon: '📞', label: 'Contacts' },
     { id: 'settings', icon: '⚙️', label: 'Site Settings' }
