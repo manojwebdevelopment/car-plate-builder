@@ -1,0 +1,97 @@
+/* Minimal Navbar CSS - Theme Colors Only */
+
+/* ========== COLOR VARIABLES ========== */
+:root {
+  --primary-red: #a4161a;
+  --primary-red-light: #d41b1f;
+  --navbar-text: #ffffff;
+  --accent-yellow: #ffc107;
+}
+
+/* ========== NAVBAR BACKGROUND ========== */
+.navbar-theme {
+  background-color: var(--primary-red) !important;
+}
+
+/* ========== NAVBAR BRAND ========== */
+.navbar-brand-theme .brand-primary {
+  color: var(--navbar-text) !important;
+}
+
+.navbar-brand-theme .brand-accent {
+  color: var(--accent-yellow) !important;
+}
+
+/* ========== NAVIGATION LINKS ========== */
+.nav-link-theme {
+  color: var(--navbar-text) !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link-theme:hover {
+  color: var(--accent-yellow) !important;
+}
+
+/* ========== MOBILE TOGGLE ========== */
+.navbar-toggler-theme {
+  border-color: var(--navbar-text) !important;
+}
+
+.navbar-toggler-theme .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ========== CART BUTTON ========== */
+.btn-cart-theme {
+  border-color: var(--accent-yellow) !important;
+  color: var(--accent-yellow) !important;
+  transition: all 0.3s ease;
+}
+
+.btn-cart-theme:hover {
+  background-color: var(--accent-yellow) !important;
+  color: #000 !important;
+}
+
+/* ========== AUTH BUTTONS ========== */
+.btn-login-theme {
+  border-color: var(--navbar-text) !important;
+  color: var(--navbar-text) !important;
+  transition: all 0.3s ease;
+}
+
+.btn-login-theme:hover {
+  background-color: var(--navbar-text) !important;
+  color: var(--primary-red) !important;
+}
+
+.btn-signup-theme {
+  background-color: var(--accent-yellow) !important;
+  border-color: var(--accent-yellow) !important;
+  color: #000 !important;
+}
+
+.btn-signup-theme:hover {
+  background-color: #000 !important;
+  color: var(--accent-yellow) !important;
+}
+
+/* ========== USER DROPDOWN ========== */
+.user-btn-theme {
+  color: var(--navbar-text) !important;
+}
+
+.user-avatar-theme {
+  background-color: var(--accent-yellow) !important;
+  color: #000 !important;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    background-color: var(--primary-red);
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+}

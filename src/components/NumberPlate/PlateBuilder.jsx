@@ -44,9 +44,14 @@ const [isTransitioning, setIsTransitioning] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
+  // NEW: Check if registration is passed in state
+  const registration = location.state?.registration || "";
+  // If registration is passed, set it as the initial plate text
+  const initialPlateText = registration;
+  // State for plate text
 
   // State management - all plate configuration
-  const [plateText, setPlateText] = useState("YOUR REG");
+  const [plateText, setPlateText] = useState(initialPlateText || "YOUR REG");
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -471,8 +476,8 @@ const [isTransitioning, setIsTransitioning] = useState(false);
         return (
           <div className="row g-4">
             <div className="col-12">
-              <div className="card border-warning">
-                <div className="card-header bg-warning text-dark fw-bold">
+              <div className="card border-danger">
+                <div className="card-header bg-danger text-white fw-bold">
                   <Car className="me-2" size={20} />
                   Enter Your Plate Text
                 </div>
@@ -487,7 +492,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                         e.target.select();
                       }
                     }}
-                    className="form-control form-control-lg text-center fw-bold border-warning"
+                    className="form-control form-control-lg text-center fw-bold border-danger"
                     placeholder="YOUR REG"
                     maxLength="10"
                     style={{ fontSize: "1.5rem", letterSpacing: "0.3em" }}
@@ -506,7 +511,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
             {/* NEW: Toggle switches for front and rear plates */}
             <div className="col-12">
               <div className="card border-warning">
-                <div className="card-header bg-warning text-dark fw-bold">
+                <div className="card-header bg-danger text-white fw-bold">
                   <Move className="me-2" size={20} />
                   Plate Options
                 </div>
@@ -557,7 +562,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                 <label className="form-label fw-bold">Front Plates</label>
                 <div className="input-group">
                   <button
-                    className="btn btn-outline-warning"
+                    className="btn btn-outline-danger"
                     onClick={() =>
                       setFrontQuantity(Math.max(1, frontQuantity - 1))
                     }
@@ -566,7 +571,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                   </button>
                   <input
                     type="number"
-                    className="form-control text-center fw-bold border-warning"
+                    className="form-control text-center fw-bold border-danger"
                     value={frontQuantity}
                     onChange={(e) =>
                       setFrontQuantity(
@@ -577,7 +582,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     max="10"
                   />
                   <button
-                    className="btn btn-outline-warning"
+                    className="btn btn-outline-danger"
                     onClick={() =>
                       setFrontQuantity(Math.min(10, frontQuantity + 1))
                     }
@@ -593,7 +598,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                 <label className="form-label fw-bold">Rear Plates</label>
                 <div className="input-group">
                   <button
-                    className="btn btn-outline-warning"
+                    className="btn btn-outline-danger"
                     onClick={() =>
                       setRearQuantity(Math.max(1, rearQuantity - 1))
                     }
@@ -602,7 +607,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                   </button>
                   <input
                     type="number"
-                    className="form-control text-center fw-bold border-warning"
+                    className="form-control text-center fw-bold border-danger"
                     value={rearQuantity}
                     onChange={(e) =>
                       setRearQuantity(
@@ -613,7 +618,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     max="10"
                   />
                   <button
-                    className="btn btn-outline-warning"
+                    className="btn btn-outline-danger"
                     onClick={() =>
                       setRearQuantity(Math.min(10, rearQuantity + 1))
                     }
@@ -639,7 +644,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     onClick={() => setSelectedStyle(style.key)}
                     className={`card border-2 cursor-pointer ${
                       selectedStyle === style.key
-                        ? "border-warning bg-warning bg-opacity-25"
+                        ? "border-danger bg-danger bg-opacity-25"
                         : "border-light"
                     }`}
                     style={{ cursor: "pointer" }}
@@ -656,7 +661,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                           objectFit: "cover",
                           border:
                             selectedStyle === style.key
-                              ? "2px solid #ffc107"
+                              ? "2px solid #a4161a"
                               : "1px solid #dee2e6",
                         }}
                         onError={(e) => {
@@ -676,13 +681,13 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                           fontSize: "16px",
                           color:
                             style.outlineColor === "#FFFFFF" ||
-                            style.outlineColor === "#FFD700"
+                            style.outlineColor === "#a4161a"
                               ? "#000"
                               : "#fff",
                         }}
                       >
                         <span
-                          className="position-absolute top-0 start-0 bg-warning text-dark px-2 py-1"
+                          className="position-absolute top-0 start-0 bg-danger text-white px-2 py-1"
                           style={{
                             fontSize: "10px",
                             borderRadius: "0 0 8px 0",
@@ -762,7 +767,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     onClick={() => setSelectedSize(size.key)}
                     className={`card border-2 cursor-pointer ${
                       selectedSize === size.key
-                        ? "border-warning bg-warning bg-opacity-25"
+                        ? "border-danger bg-danger bg-opacity-25"
                         : "border-light"
                     }`}
                     style={{ cursor: "pointer" }}
@@ -779,7 +784,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                           objectFit: "cover",
                           border:
                             selectedSize === size.key
-                              ? "2px solid #ffc107"
+                              ? "2px solid #a4161a"
                               : "1px solid #dee2e6",
                         }}
                         onError={(e) => {
@@ -792,7 +797,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                         className="d-none align-items-center justify-content-center text-dark fw-bold position-absolute top-0 start-0 w-100"
                         style={{
                           height: "120px",
-                          background: "#FFD700",
+                          background: "#a4161a",
                           fontSize: "16px",
                         }}
                       >
@@ -852,7 +857,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                       onClick={() => setSelectedBorder(border.key)}
                       className={`card border-2 cursor-pointer ${
                         selectedBorder === border.key
-                          ? "border-warning bg-warning bg-opacity-25"
+                          ? "border-danger bg-danger bg-opacity-25"
                           : "border-light"
                       }`}
                       style={{ cursor: "pointer" }}
@@ -869,7 +874,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                             objectFit: "cover",
                             border:
                               selectedBorder === border.key
-                                ? "2px solid #ffc107"
+                                ? "2px solid #a4161a"
                                 : "1px solid #dee2e6",
                           }}
                           onError={(e) => {
@@ -883,7 +888,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                           style={{
                             height: "120px",
                             backgroundColor:
-                              border.key === "none" ? "#FFD700" : border.color,
+                              border.key === "none" ? "#a4161a" : border.color,
                             borderRadius: "4px",
                             border:
                               border.key === "none"
@@ -897,7 +902,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                             style={{
                               width: border.key === "none" ? "200px" : "160px",
                               height: border.key === "none" ? "80px" : "60px",
-                              backgroundColor: "#FFD700",
+                              backgroundColor: "#a4161a",
                               borderRadius: "2px",
                               fontSize: "16px",
                               color: "#000",
@@ -977,7 +982,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
             <div className="col-12">
               <label className="form-label fw-bold">Country Badge</label>
               <select
-                className="form-select form-select-lg border-warning"
+                className="form-select form-select-lg border-danger"
                 value={selectedCountry}
                 onChange={(e) => handleCountryChange(e.target.value)}
               >
@@ -998,7 +1003,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                       <div
                         className={`card cursor-pointer border-2 h-100 ${
                           selectedFlag === flag.key
-                            ? "border-warning bg-warning bg-opacity-25"
+                            ? "border-danger bg-danger bg-opacity-25"
                             : "border-light"
                         }`}
                         onClick={() => setSelectedFlag(flag.key)}
@@ -1049,7 +1054,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="form-control form-control-lg border-warning"
+                    className="form-control form-control-lg border-danger"
                   />
                   <div className="form-text">
                     Max size: 2MB. Recommended: 240x144px
@@ -1059,7 +1064,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                       <img
                         src={customFlagImage}
                         alt="Custom Flag Preview"
-                        className="border border-warning rounded"
+                        className="border border-danger rounded"
                         style={{ maxWidth: "120px", maxHeight: "72px" }}
                       />
                       <div className="small text-success mt-1 fw-bold">
@@ -1077,7 +1082,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     onChange={(e) =>
                       setCustomFlagText(e.target.value.toUpperCase())
                     }
-                    className="form-control form-control-lg border-warning"
+                    className="form-control form-control-lg border-danger"
                     placeholder="Enter flag text (max 6 chars)"
                     maxLength="6"
                   />
@@ -1091,7 +1096,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                   <div className="col-6">
                     <label className="form-label fw-bold">Badge Position</label>
                     <select
-                      className="form-select border-warning"
+                      className="form-select border-danger"
                       value={badgePosition}
                       onChange={(e) => setBadgePosition(e.target.value)}
                     >
@@ -1104,7 +1109,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                       Badge Text Color
                     </label>
                     <select
-                      className="form-select border-warning"
+                      className="form-select border-danger"
                       value={customTextColor}
                       onChange={(e) => setCustomTextColor(e.target.value)}
                     >
@@ -1123,7 +1128,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     <div className="row g-2">
                       <div className="col-8">
                         <select
-                          className="form-select border-warning"
+                          className="form-select border-danger"
                           value={badgeBorderColor}
                           onChange={(e) => setBadgeBorderColor(e.target.value)}
                         >
@@ -1166,7 +1171,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                     onClick={() => setSelectedFinish(finish.key)}
                     className={`card border-2 cursor-pointer ${
                       selectedFinish === finish.key
-                        ? "border-warning bg-warning bg-opacity-25"
+                        ? "border-danger bg-danger bg-opacity-25"
                         : "border-light"
                     }`}
                     style={{ cursor: "pointer" }}
@@ -1186,7 +1191,7 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                                 objectFit: "cover",
                                 border:
                                   selectedFinish === finish.key
-                                    ? "2px solid #ffc107"
+                                    ? "2px solid #a4161a"
                                     : "1px solid #dee2e6",
                               }}
                               onError={(e) => {
@@ -1201,12 +1206,12 @@ const [isTransitioning, setIsTransitioning] = useState(false);
                               style={{
                                 width: "60px",
                                 height: "30px",
-                                background: "#FFD700",
+                                background: "#a4161a",
                                 borderRadius: "4px",
                                 fontSize: "8px",
                                 border:
                                   selectedFinish === finish.key
-                                    ? "2px solid #ffc107"
+                                    ? "2px solid #a4161a"
                                     : "1px solid #dee2e6",
                               }}
                             >
@@ -1296,7 +1301,7 @@ useEffect(() => {
         style={{ backgroundColor: "#dddddd" }}
       >
         {/* Top Tab Navigation */}
-        <div className="row g-0 shadow-sm">
+        <div className="row g-0 shadow-sm pt-3">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -1305,7 +1310,7 @@ useEffect(() => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`btn w-100 py-3 fw-bold border-0 ${
                     activeTab === tab.id
-                      ? "bg-warning text-dark"
+                      ? "bg-danger text-white"
                       : "bg-light text-dark hover:bg-gray-100"
                   }`}
                   style={{ borderRadius: 0 }}
@@ -1325,7 +1330,7 @@ useEffect(() => {
           {/* Left Panel - Controls */}
           <div className="col-lg-3">
             <div className="card border-0 shadow-sm">
-              <div className="card-header bg-warning text-dark fw-bold">
+              <div className="card-header bg-danger text-white fw-bold">
                 <h5 className="mb-0">{activeTab.toUpperCase()}</h5>
               </div>
               <div className="card-body">{renderTabContent()}</div>
@@ -1337,7 +1342,7 @@ useEffect(() => {
                 <button
                   onClick={prevTab}
                   disabled={activeTab === "start"}
-                  className="btn btn-secondary flex-fill"
+                  className="btn btn-secondary text-dark flex-fill fw-bold"
                 >
                   <ChevronLeft size={16} className="me-1" />
                   BACK
@@ -1347,7 +1352,7 @@ useEffect(() => {
               <button
                 onClick={nextTab}
                 disabled={activeTab === "finish"}
-                className="btn btn-warning text-dark flex-fill fw-bold"
+                className="btn btn-danger text-white flex-fill fw-bold"
               >
                 NEXT
                 <ChevronRight size={16} className="ms-1" />
@@ -1358,7 +1363,7 @@ useEffect(() => {
           {/* Center Panel - Preview */}
           <div className="col-lg-6">
             <div className="card" style={{ backgroundColor: "#dddddd" }}>
-              <div className="card-header bg-warning text-dark fw-bold">
+              <div className="card-header bg-danger text-white fw-bold">
                 <div className="d-flex align-items-center justify-content-between">
                   <div className="d-flex align-items-center">
                     <Eye className="me-2" size={20} />
@@ -1375,12 +1380,12 @@ useEffect(() => {
                         onClick={() => setPreviewType("front")}
                         className={`btn w-100 fw-bold ${
                           previewType === "front"
-                            ? "btn-warning text-dark"
+                            ? "btn-danger text-white"
                             : "btn-outline-secondary bg-light text-dark"
                         }`}
                         style={{ borderRadius: 0, border: "none" }}
                       >
-                        FRONT <span className="text-muted small">PREVIEW</span>
+                        FRONT PREVIEW
                       </button>
                     </div>
                   )}
@@ -1390,12 +1395,12 @@ useEffect(() => {
                         onClick={() => setPreviewType("rear")}
                         className={`btn w-100 fw-bold ${
                           previewType === "rear"
-                            ? "btn-warning text-dark"
+                            ? "btn-danger text-white"
                             : "btn-outline-secondary bg-light text-dark"
                         }`}
                         style={{ borderRadius: 0, border: "none" }}
                       >
-                        REAR <span className="text-muted small">PREVIEW</span>
+                        REAR PREVIEW
                       </button>
                     </div>
                   )}
@@ -1441,7 +1446,7 @@ useEffect(() => {
           {/* Right Panel - Order Summary */}
           <div className="col-lg-3">
             <div className="card border-0 shadow-sm">
-              <div className="card-header bg-warning text-dark fw-bold">
+              <div className="card-header bg-danger text-white fw-bold">
                 <div className="d-flex align-items-center">
                   <ShoppingCart className="me-2" size={20} />
                   <span>Your Plates</span>

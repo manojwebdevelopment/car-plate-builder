@@ -803,7 +803,7 @@ const getLighting = () => {
           style={{
             height: "300px",
             backgroundColor: "#F5F5F5", // Light background for contrast
-            border: "2px solid #FFD320",
+            border: "2px solid #a4161a",
           }}
           camera={{ position: [0, 0, cameraDistance], fov: 35 }}
           shadows

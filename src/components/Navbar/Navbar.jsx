@@ -369,7 +369,7 @@ const Navbar = () => {
       )}
 
       {/* Navigation Header */}
-      <nav className="navbar navbar-expand-lg sticky-top navbar-custom">
+      <nav className="navbar navbar-expand-lg sticky-top navbar-custom" style={{ backgroundColor: '#a4161a' }}>
         <div className="container-fluid px-4">
           {/* Brand */}
           <Link className="navbar-brand navbar-brand-custom" to="/">
