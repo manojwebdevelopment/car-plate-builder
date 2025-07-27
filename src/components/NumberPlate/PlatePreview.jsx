@@ -650,25 +650,6 @@ const getLighting = () => {
           />
         </mesh>
 
-        {/* Flag area - TOP 60% of badge like reference image background area */}
-        {/* <mesh
-          position={[
-            position[0], // Centered horizontally
-            position[1] + badgeHeight * 0.18, // Upper portion - higher up
-            position[2] + 0.015, // Above badge background
-          ]}
-        >
-          <primitive
-            object={createRoundedBoxGeometry(
-              badgeWidth * 0.82, // Wider flag area
-              badgeHeight * 0.68, // 52% height for flag
-              0.012,
-              0.08
-            )}
-          />
-          <meshBasicMaterial color="#FFFFFF" />
-        </mesh> */}
-
         {/* Flag image - CENTERED in flag area */}
         {flagData.flagImage && (
           <mesh

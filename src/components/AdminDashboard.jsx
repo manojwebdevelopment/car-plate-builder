@@ -11,6 +11,7 @@ import PricingTab from './PricingTab.jsx';
 import UsersTab from './UsersTab';
 import ContactsTab from './ContactsTab.jsx';
 import SettingsTab from './SettingsTab.jsx';
+import PlateConfigurationsTab from './PlateConfigurationsTab.jsx';
 
 // Import hooks
 import { useAuth } from './hooks/useAuth';
@@ -18,6 +19,7 @@ import { useToast } from './hooks/useToast';
 import { useOrders } from './hooks/useOrders';
 import { useUsers } from './hooks/useUsers';
 import { useConfigurations } from './hooks/useConfigurations';
+import { usePlateConfigurations } from './hooks/usePlateConfigurations';
 
 const AdminDashboard = () => {
   // State management
@@ -31,6 +33,7 @@ const AdminDashboard = () => {
   const ordersHook = useOrders();
   const usersHook = useUsers();
   const configurationsHook = useConfigurations();
+  const plateConfigurationsHook = usePlateConfigurations();
 
   // Static data (should be moved to API later)
   const [contacts, setContacts] = useState([
@@ -57,6 +60,9 @@ const AdminDashboard = () => {
         break;
       case 'users':
         usersHook.fetchUsers();
+        break;
+      case 'plate-configurations':
+        plateConfigurationsHook.fetchConfigurations();
         break;
       default:
         break;
@@ -118,6 +124,13 @@ const AdminDashboard = () => {
           {activeTab === 'pricing' && (
             <PricingTab 
               {...configurationsHook}
+              showToast={showToast}
+            />
+          )}
+
+          {activeTab === 'plate-configurations' && (
+            <PlateConfigurationsTab 
+              {...plateConfigurationsHook}
               showToast={showToast}
             />
           )}
