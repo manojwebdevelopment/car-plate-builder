@@ -42,7 +42,7 @@
   font-size: 0.8rem;
 }
 
-/* Add these styles to PlateConfigEditor.css */
+/* Validation styles */
 .config-editor-input.is-invalid {
   border-color: #dc3545;
 }
@@ -63,4 +63,203 @@
 .spinner-border-sm {
   width: 1rem;
   height: 1rem;
+}
+
+/* Add/Delete button styles */
+.btn-add-item {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-add-item:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+  transform: translateY(-1px);
+}
+
+.btn-delete-item {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  padding: 4px 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-item:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+  transform: scale(1.05);
+}
+
+.btn-delete-item:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Color input styles */
+input[type="color"] {
+  width: 50px;
+  height: 35px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+input[type="color"]:hover {
+  border-color: #007bff;
+}
+
+/* Empty state styles */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.empty-state i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Action column styles */
+.action-column {
+  width: 80px;
+  text-align: center;
+}
+
+/* Responsive table improvements */
+@media (max-width: 768px) {
+  .config-editor-table {
+    font-size: 0.8rem;
+  }
+
+  .config-editor-input {
+    font-size: 0.8rem;
+    padding: 4px 6px;
+  }
+
+  .btn-delete-item {
+    padding: 2px 6px;
+    font-size: 0.8rem;
+  }
+
+  .config-item-index {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+  }
+}
+
+/* Animation for new rows */
+@keyframes fadeInRow {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.config-editor-table tbody tr:last-child {
+  animation: fadeInRow 0.3s ease-in-out;
+}
+
+/* Improved modal sizing */
+.modal-xl {
+  max-width: 95%;
+}
+
+/* Better spacing for add button */
+.add-item-section {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Highlight new items */
+.new-item-row {
+  background-color: #f8f9fa;
+  border-left: 3px solid #28a745;
+}
+
+/* Improved previous values display */
+.previous-value {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+  font-style: italic;
+  padding: 2px 4px;
+  background-color: #f8f9fa;
+  border-radius: 2px;
+  border-left: 2px solid #dee2e6;
+}
+
+/* Table header improvements */
+.config-editor-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Loading overlay for table */
+.table-loading-overlay {
+  position: relative;
+}
+
+.table-loading-overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 5;
+}
+
+/* Success/Error states for rows */
+.row-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.row-error {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+/* Enhanced button groups */
+.btn-group-actions {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tooltip styles for action buttons */
+.action-btn-tooltip {
+  position: relative;
+}
+
+.action-btn-tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 5px;
 }

@@ -1,7 +1,7 @@
 // OrdersTab.jsx - Enhanced version with advanced filtering, sorting, and quick actions
-import React, { useState } from 'react';
-import { useOrders } from './hooks/useOrders';
-import OrderViewModal from './modals/OrderViewModal';
+import React, { useState, useEffect } from "react";
+import { useOrders } from "./hooks/useOrders";
+import OrderViewModal from "./modals/OrderViewModal";
 
 const OrdersTab = ({ showToast }) => {
   const {
@@ -22,7 +22,7 @@ const OrdersTab = ({ showToast }) => {
     handleViewOrder,
     closeOrderView,
     updateOrderStatus,
-    exportOrders
+    exportOrders,
   } = useOrders();
 
   // UI state
@@ -32,11 +32,23 @@ const OrdersTab = ({ showToast }) => {
   // Utility functions
   const formatRupees = (amount) => `${parseFloat(amount).toFixed(2)}`;
   const formatDate = (date) => {
-    if (!date) return 'N/A';
+    if (!date) return "N/A";
     const d = new Date(date);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const day = d.getDate().toString().padStart(2, '0');
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const day = d.getDate().toString().padStart(2, "0");
     const month = months[d.getMonth()];
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
@@ -44,49 +56,102 @@ const OrdersTab = ({ showToast }) => {
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Completed': return 'bg-success';
-      case 'Pending': return 'bg-warning text-dark';
-      case 'Shipped': return 'bg-info';
-      case 'Cancelled': return 'bg-danger';
-      case 'Failed': return 'bg-secondary';
-      case 'Processing': return 'bg-primary';
-      default: return 'bg-secondary';
+      case "Completed":
+        return "bg-success";
+      case "Pending":
+        return "bg-warning text-dark";
+      case "Shipped":
+        return "bg-info";
+      case "Cancelled":
+        return "bg-danger";
+      case "Failed":
+        return "bg-secondary";
+      case "Processing":
+        return "bg-primary";
+      default:
+        return "bg-secondary";
     }
   };
 
   // Handle row click (but not on status column)
   const handleRowClick = async (order, event) => {
     // Don't open modal if clicking on status column
-    if (event.target.closest('.status-dropdown')) {
+    if (event.target.closest(".status-dropdown")) {
       return;
     }
-    
+
     const result = await handleViewOrder(order);
     if (!result.success) {
-      showToast(result.error || 'Failed to fetch order details', 'error');
+      showToast(result.error || "Failed to fetch order details", "error");
     }
   };
 
-  // Handle quick status update
   const handleQuickStatusUpdate = async (order, newStatus) => {
     const result = await updateOrderStatus(order.orderId, newStatus);
     if (result.success) {
-      showToast(result.message, 'success');
+      showToast(result.message, "success");
+      refreshOrders();
     } else {
-      showToast(result.error || 'Failed to update order status', 'error');
+      showToast(result.error || "Failed to update order status", "error");
     }
   };
 
   // Handle export
+  // Update the handleExport function
+  // Update the handleExport function
   const handleExport = async (exportType) => {
     setShowExportDropdown(false);
-    const result = await exportOrders(exportType);
+
+    // Build query parameters based on export type
+    const params = new URLSearchParams({
+      exportType,
+      format: "csv",
+      sortBy: pagination.sortBy,
+      sortOrder: pagination.sortOrder,
+    });
+
+    // Only add pagination for 'current' export type
+    if (exportType === "current") {
+      params.append("page", pagination.currentPage);
+      params.append("limit", pagination.itemsPerPage);
+    }
+
+    // Add filters for 'current' and 'filtered' types
+    if (exportType === "current" || exportType === "filtered") {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value && value !== "all" && value !== "") {
+          params.append(key, value);
+        }
+      });
+    }
+
+    const result = await exportOrders(exportType, params.toString());
     if (result.success) {
-      showToast(result.message, 'success');
+      showToast(result.message, "success");
     } else {
-      showToast(result.error || 'Export failed', 'error');
+      showToast(result.error || "Export failed", "error");
     }
   };
+
+  // Add this useEffect to handle clicking outside the dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if click is outside the dropdown container
+      if (showExportDropdown && !event.target.closest(".dropdown")) {
+        setShowExportDropdown(false);
+      }
+    };
+
+    // Only add listener when dropdown is open
+    if (showExportDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showExportDropdown]);
 
   // Handle filter change
   const handleFilterChange = (field, value) => {
@@ -99,9 +164,9 @@ const OrdersTab = ({ showToast }) => {
   };
 
   const handleItemsPerPageChange = (itemsPerPage) => {
-    updatePagination({ 
+    updatePagination({
       itemsPerPage: parseInt(itemsPerPage),
-      currentPage: 1 
+      currentPage: 1,
     });
   };
 
@@ -112,45 +177,96 @@ const OrdersTab = ({ showToast }) => {
         <h2 className="mb-0">Order Management</h2>
         <div className="d-flex align-items-center gap-3">
           {/* Refresh Button */}
-          <button 
+          <button
             className="btn btn-outline-primary"
             onClick={refreshOrders}
             disabled={loading}
             title="Refresh orders"
           >
             <i className="bi bi-arrow-clockwise me-2"></i>
-            {loading ? 'Refreshing...' : 'Refresh'}
+            {loading ? "Refreshing..." : "Refresh"}
           </button>
 
           {/* Filters Toggle */}
-          <button 
-            className={`btn ${showFilters ? 'btn-warning' : 'btn-outline-warning'}`}
+          <button
+            className={`btn ${
+              showFilters ? "btn-warning" : "btn-outline-warning"
+            }`}
             onClick={() => setShowFilters(!showFilters)}
           >
             <i className="bi bi-funnel me-2"></i>
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
+            {showFilters ? "Hide Filters" : "Show Filters"}
           </button>
-          
+
           {/* Export Button */}
-          <button 
-            className="btn btn-success"
-            onClick={handleExport.bind(null, 'current')}
-            disabled={exporting}
-            title="Export current view to CSV"
-          >
-            {exporting ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2"></span>
-                Exporting...
-              </>
-            ) : (
-              <>
-                <i className="bi bi-download me-2"></i>
-                Export CSV
-              </>
+          {/* Export Dropdown - Replace the existing Export Button */}
+          <div className="dropdown">
+            <button
+              className="btn btn-success dropdown-toggle"
+              onClick={() => setShowExportDropdown(!showExportDropdown)}
+              disabled={exporting}
+              title="Export orders"
+            >
+              {exporting ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2"></span>
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-download me-2"></i>
+                  Export
+                </>
+              )}
+            </button>
+
+            {showExportDropdown && (
+              <div
+                className="dropdown-menu show"
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  zIndex: 1000,
+                }}
+              >
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    handleExport("current");
+                    setShowExportDropdown(false);
+                  }}
+                  disabled={exporting}
+                >
+                  <i className="bi bi-eye me-2"></i>
+                  Export Current View ({orders.length} orders)
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    handleExport("filtered");
+                    setShowExportDropdown(false);
+                  }}
+                  disabled={exporting}
+                >
+                  <i className="bi bi-funnel me-2"></i>
+                  Export All Filtered ({pagination.totalOrders} orders)
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    handleExport("all");
+                    setShowExportDropdown(false);
+                  }}
+                  disabled={exporting}
+                >
+                  <i className="bi bi-database me-2"></i>
+                  Export All Orders
+                </button>
+              </div>
             )}
-          </button>
-          
+          </div>
+
           <span className="badge bg-warning text-dark fs-6">
             Showing: {orders.length} of {pagination.totalOrders}
           </span>
@@ -166,7 +282,10 @@ const OrdersTab = ({ showToast }) => {
                 <i className="bi bi-funnel me-2"></i>
                 Filter Orders
               </h6>
-              <button className="btn btn-sm btn-outline-secondary" onClick={clearFilters}>
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={clearFilters}
+              >
                 Clear All Filters
               </button>
             </div>
@@ -176,10 +295,10 @@ const OrdersTab = ({ showToast }) => {
               {/* Status Filter */}
               <div className="col-md-3">
                 <label className="form-label">Status</label>
-                <select 
+                <select
                   className="form-select form-select-sm"
                   value={filters.status}
-                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  onChange={(e) => handleFilterChange("status", e.target.value)}
                 >
                   <option value="all">All Statuses</option>
                   <option value="Completed">Completed</option>
@@ -194,10 +313,12 @@ const OrdersTab = ({ showToast }) => {
               {/* Date Range Filter */}
               <div className="col-md-3">
                 <label className="form-label">Date Range</label>
-                <select 
+                <select
                   className="form-select form-select-sm"
                   value={filters.dateRange}
-                  onChange={(e) => handleFilterChange('dateRange', e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("dateRange", e.target.value)
+                  }
                 >
                   <option value="all">All Time</option>
                   <option value="today">Today</option>
@@ -210,10 +331,12 @@ const OrdersTab = ({ showToast }) => {
               {/* Payment Method Filter */}
               <div className="col-md-3">
                 <label className="form-label">Payment Method</label>
-                <select 
+                <select
                   className="form-select form-select-sm"
                   value={filters.paymentMethod}
-                  onChange={(e) => handleFilterChange('paymentMethod', e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("paymentMethod", e.target.value)
+                  }
                 >
                   <option value="all">All Methods</option>
                   <option value="paypal">PayPal</option>
@@ -223,7 +346,7 @@ const OrdersTab = ({ showToast }) => {
               {/* Items Per Page */}
               <div className="col-md-3">
                 <label className="form-label">Items Per Page</label>
-                <select 
+                <select
                   className="form-select form-select-sm"
                   value={pagination.itemsPerPage}
                   onChange={(e) => handleItemsPerPageChange(e.target.value)}
@@ -237,7 +360,7 @@ const OrdersTab = ({ showToast }) => {
               </div>
 
               {/* Custom Date Range */}
-              {filters.dateRange === 'custom' && (
+              {filters.dateRange === "custom" && (
                 <>
                   <div className="col-md-3">
                     <label className="form-label">Start Date</label>
@@ -245,7 +368,9 @@ const OrdersTab = ({ showToast }) => {
                       type="date"
                       className="form-control form-control-sm"
                       value={filters.customStartDate}
-                      onChange={(e) => handleFilterChange('customStartDate', e.target.value)}
+                      onChange={(e) =>
+                        handleFilterChange("customStartDate", e.target.value)
+                      }
                     />
                   </div>
                   <div className="col-md-3">
@@ -254,7 +379,9 @@ const OrdersTab = ({ showToast }) => {
                       type="date"
                       className="form-control form-control-sm"
                       value={filters.customEndDate}
-                      onChange={(e) => handleFilterChange('customEndDate', e.target.value)}
+                      onChange={(e) =>
+                        handleFilterChange("customEndDate", e.target.value)
+                      }
                     />
                   </div>
                 </>
@@ -268,10 +395,12 @@ const OrdersTab = ({ showToast }) => {
                   className="form-control form-control-sm"
                   placeholder="Search by customer..."
                   value={filters.customer}
-                  onChange={(e) => handleFilterChange('customer', e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("customer", e.target.value)
+                  }
                 />
               </div>
-              
+
               <div className="col-md-3">
                 <label className="form-label">Product</label>
                 <input
@@ -279,7 +408,9 @@ const OrdersTab = ({ showToast }) => {
                   className="form-control form-control-sm"
                   placeholder="Search by product..."
                   value={filters.product}
-                  onChange={(e) => handleFilterChange('product', e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("product", e.target.value)
+                  }
                 />
               </div>
 
@@ -291,10 +422,12 @@ const OrdersTab = ({ showToast }) => {
                   className="form-control form-control-sm"
                   placeholder="0"
                   value={filters.amountMin}
-                  onChange={(e) => handleFilterChange('amountMin', e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("amountMin", e.target.value)
+                  }
                 />
               </div>
-              
+
               <div className="col-md-3">
                 <label className="form-label">Max Amount</label>
                 <input
@@ -302,7 +435,9 @@ const OrdersTab = ({ showToast }) => {
                   className="form-control form-control-sm"
                   placeholder="999999"
                   value={filters.amountMax}
-                  onChange={(e) => handleFilterChange('amountMax', e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("amountMax", e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -326,23 +461,32 @@ const OrdersTab = ({ showToast }) => {
                 <i className="bi bi-exclamation-triangle me-2"></i>
                 {error}
               </div>
-              <button className="btn btn-outline-primary" onClick={refreshOrders}>
+              <button
+                className="btn btn-outline-primary"
+                onClick={refreshOrders}
+              >
                 Try Again
               </button>
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center p-4">
               <div className="mb-3">
-                <i className="bi bi-box-seam text-muted" style={{ fontSize: '3rem' }}></i>
+                <i
+                  className="bi bi-box-seam text-muted"
+                  style={{ fontSize: "3rem" }}
+                ></i>
               </div>
               <h5 className="text-muted">No orders found</h5>
               <p className="text-muted">
-                {Object.values(filters).some(f => f && f !== 'all') 
-                  ? 'Try adjusting your filters to see more results.' 
-                  : 'Orders will appear here when customers make purchases.'}
+                {Object.values(filters).some((f) => f && f !== "all")
+                  ? "Try adjusting your filters to see more results."
+                  : "Orders will appear here when customers make purchases."}
               </p>
-              {Object.values(filters).some(f => f && f !== 'all') && (
-                <button className="btn btn-outline-warning" onClick={clearFilters}>
+              {Object.values(filters).some((f) => f && f !== "all") && (
+                <button
+                  className="btn btn-outline-warning"
+                  onClick={clearFilters}
+                >
                   Clear Filters
                 </button>
               )}
@@ -354,14 +498,14 @@ const OrdersTab = ({ showToast }) => {
                   <thead className="table-warning sticky-top">
                     <tr>
                       {[
-                        { key: 'orderId', label: 'Order ID' },
-                        { key: 'customer', label: 'Customer' },
-                        { key: 'product', label: 'Product' },
-                        { key: 'amount', label: 'Amount (in £)' },
-                        { key: 'status', label: 'Status' },
-                        { key: 'date', label: 'Date' }
+                        { key: "orderId", label: "Order ID" },
+                        { key: "customer", label: "Customer" },
+                        { key: "product", label: "Product" },
+                        { key: "amount", label: "Amount (in £)" },
+                        { key: "status", label: "Status" },
+                        { key: "date", label: "Date" },
                       ].map(({ key, label }) => (
-                        <th 
+                        <th
                           key={key}
                           className="cursor-pointer user-select-none"
                           onClick={() => handleSort(key)}
@@ -369,10 +513,30 @@ const OrdersTab = ({ showToast }) => {
                           <div className="d-flex align-items-center justify-content-between">
                             {label}
                             <div className="d-flex flex-column">
-                              <i className={`bi bi-caret-up-fill ${pagination.sortBy === key && pagination.sortOrder === 'asc' ? 'text-primary' : 'text-muted'}`} 
-                                 style={{ fontSize: '0.6rem', lineHeight: '0.5' }}></i>
-                              <i className={`bi bi-caret-down-fill ${pagination.sortBy === key && pagination.sortOrder === 'desc' ? 'text-primary' : 'text-muted'}`} 
-                                 style={{ fontSize: '0.6rem', lineHeight: '0.5' }}></i>
+                              <i
+                                className={`bi bi-caret-up-fill ${
+                                  pagination.sortBy === key &&
+                                  pagination.sortOrder === "asc"
+                                    ? "text-primary"
+                                    : "text-muted"
+                                }`}
+                                style={{
+                                  fontSize: "0.6rem",
+                                  lineHeight: "0.5",
+                                }}
+                              ></i>
+                              <i
+                                className={`bi bi-caret-down-fill ${
+                                  pagination.sortBy === key &&
+                                  pagination.sortOrder === "desc"
+                                    ? "text-primary"
+                                    : "text-muted"
+                                }`}
+                                style={{
+                                  fontSize: "0.6rem",
+                                  lineHeight: "0.5",
+                                }}
+                              ></i>
                             </div>
                           </div>
                         </th>
@@ -380,17 +544,17 @@ const OrdersTab = ({ showToast }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map(order => (
-                      <tr 
+                    {orders.map((order) => (
+                      <tr
                         key={order.id || order.orderId}
                         className="cursor-pointer"
                         onClick={(e) => handleRowClick(order, e)}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#fff3cd';
+                          e.currentTarget.style.backgroundColor = "#fff3cd";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = '';
+                          e.currentTarget.style.backgroundColor = "";
                         }}
                         title="Click to view order details"
                       >
@@ -410,7 +574,9 @@ const OrdersTab = ({ showToast }) => {
                         <td>
                           <div className="product-info">
                             <div className="fw-bold">{order.product}</div>
-                            <small className="text-muted">via {order.paymentMethod}</small>
+                            <small className="text-muted">
+                              via {order.paymentMethod}
+                            </small>
                           </div>
                         </td>
                         <td>
@@ -421,35 +587,39 @@ const OrdersTab = ({ showToast }) => {
                         <td>
                           <div className="status-dropdown position-relative">
                             <div className="dropdown">
-                              <span 
-                                className={`badge ${getStatusBadgeClass(order.status)} dropdown-toggle`}
+                              <span
+                                className={`badge ${getStatusBadgeClass(
+                                  order.status
+                                )} dropdown-toggle`}
                                 data-bs-toggle="dropdown"
+                                data-bs-auto-close="true"
                                 aria-expanded="false"
-                                style={{ cursor: 'pointer' }}
+                                style={{ cursor: "pointer" }}
                                 title="Click to change status"
                               >
                                 {order.status}
                               </span>
                               <ul className="dropdown-menu">
                                 <li>
-                                  <button 
+                                  <button
                                     className="dropdown-item"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleQuickStatusUpdate(order, 'shipped');
-                                    }}
+                                    onClick={() =>
+                                      handleQuickStatusUpdate(order, "shipped")
+                                    }
                                   >
                                     <i className="bi bi-truck me-2"></i>
                                     Mark as Shipped
                                   </button>
                                 </li>
                                 <li>
-                                  <button 
+                                  <button
                                     className="dropdown-item"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleQuickStatusUpdate(order, 'completed');
-                                    }}
+                                    onClick={() =>
+                                      handleQuickStatusUpdate(
+                                        order,
+                                        "completed"
+                                      )
+                                    }
                                   >
                                     <i className="bi bi-check-circle me-2"></i>
                                     Mark as Completed
@@ -476,52 +646,87 @@ const OrdersTab = ({ showToast }) => {
                 <div className="card-footer bg-light">
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="text-muted small">
-                      Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1} to{' '}
-                      {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalOrders)} of{' '}
-                      {pagination.totalOrders} orders
+                      Showing{" "}
+                      {(pagination.currentPage - 1) * pagination.itemsPerPage +
+                        1}{" "}
+                      to{" "}
+                      {Math.min(
+                        pagination.currentPage * pagination.itemsPerPage,
+                        pagination.totalOrders
+                      )}{" "}
+                      of {pagination.totalOrders} orders
                     </div>
-                    
+
                     <nav>
                       <ul className="pagination pagination-sm mb-0">
-                        <li className={`page-item ${pagination.currentPage === 1 ? 'disabled' : ''}`}>
-                          <button 
+                        <li
+                          className={`page-item ${
+                            pagination.currentPage === 1 ? "disabled" : ""
+                          }`}
+                        >
+                          <button
                             className="page-link"
-                            onClick={() => handlePageChange(pagination.currentPage - 1)}
+                            onClick={() =>
+                              handlePageChange(pagination.currentPage - 1)
+                            }
                             disabled={pagination.currentPage === 1}
                           >
                             Previous
                           </button>
                         </li>
-                        
-                        {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                          let pageNumber;
-                          if (pagination.totalPages <= 5) {
-                            pageNumber = i + 1;
-                          } else if (pagination.currentPage <= 3) {
-                            pageNumber = i + 1;
-                          } else if (pagination.currentPage >= pagination.totalPages - 2) {
-                            pageNumber = pagination.totalPages - 4 + i;
-                          } else {
-                            pageNumber = pagination.currentPage - 2 + i;
-                          }
-                          
-                          return (
-                            <li key={pageNumber} className={`page-item ${pagination.currentPage === pageNumber ? 'active' : ''}`}>
-                              <button 
-                                className="page-link"
-                                onClick={() => handlePageChange(pageNumber)}
+
+                        {Array.from(
+                          { length: Math.min(5, pagination.totalPages) },
+                          (_, i) => {
+                            let pageNumber;
+                            if (pagination.totalPages <= 5) {
+                              pageNumber = i + 1;
+                            } else if (pagination.currentPage <= 3) {
+                              pageNumber = i + 1;
+                            } else if (
+                              pagination.currentPage >=
+                              pagination.totalPages - 2
+                            ) {
+                              pageNumber = pagination.totalPages - 4 + i;
+                            } else {
+                              pageNumber = pagination.currentPage - 2 + i;
+                            }
+
+                            return (
+                              <li
+                                key={pageNumber}
+                                className={`page-item ${
+                                  pagination.currentPage === pageNumber
+                                    ? "active"
+                                    : ""
+                                }`}
                               >
-                                {pageNumber}
-                              </button>
-                            </li>
-                          );
-                        })}
-                        
-                        <li className={`page-item ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}`}>
-                          <button 
+                                <button
+                                  className="page-link"
+                                  onClick={() => handlePageChange(pageNumber)}
+                                >
+                                  {pageNumber}
+                                </button>
+                              </li>
+                            );
+                          }
+                        )}
+
+                        <li
+                          className={`page-item ${
+                            pagination.currentPage === pagination.totalPages
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
                             className="page-link"
-                            onClick={() => handlePageChange(pagination.currentPage + 1)}
-                            disabled={pagination.currentPage === pagination.totalPages}
+                            onClick={() =>
+                              handlePageChange(pagination.currentPage + 1)
+                            }
+                            disabled={
+                              pagination.currentPage === pagination.totalPages
+                            }
                           >
                             Next
                           </button>
